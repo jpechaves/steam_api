@@ -4,7 +4,7 @@ module SteamApiClient
     # @see https://developer.valvesoftware.com/wiki/Steam_Web_API#GetPlayerSummaries_.28v0002.29
     class PlayerSummary < Dry::Struct
       # 64bit SteamID of the user
-      attribute :steamid, Types::String
+      attribute :steamid, Types::Integer
       # The player's persona name (display name)
       attribute :personaname, Types::String
       # The full URL of the player's Steam Community profile.
@@ -24,7 +24,7 @@ module SteamApiClient
       # This represents whether the profile is visible or not, and if it is visible, why you are allowed to see it.
       attribute :communityvisibilitystate, Types::Integer
       # If set, indicates the user has a community profile configured (will be set to '1')
-      attribute :profilestate, Types::String
+      attribute :profilestate, Types::Integer
       # The last time the user was online, in unix time.
       attribute :lastlogoff, Types::Optional::Integer
       # If set, indicates the profile allows public comments.

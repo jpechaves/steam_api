@@ -7,7 +7,7 @@ RSpec.describe SteamApiClient::Structs::Requests::GetPlayerLevel do
     let(:params) { {steamid: "123456789"} }
 
     it "initializes with the given steamid" do
-      expect(subject).to have_attributes(steamid: "123456789")
+      expect(subject).to have_attributes(steamid: 123456789)
     end
 
     context "when steamid is missing" do

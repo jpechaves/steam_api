@@ -7,7 +7,7 @@ RSpec.describe SteamApiClient::Structs::Requests::GetPlayerOwnedGames do
     let(:params) { {steamid: "123456789", include_appinfo: true, include_played_free_games: false} }
 
     it "initializes with the given steamid and additional parameters" do
-      expect(subject).to have_attributes(steamid: "123456789", include_appinfo: true, include_played_free_games: false)
+      expect(subject).to have_attributes(steamid: 123456789, include_appinfo: true, include_played_free_games: false)
     end
 
     context "when steamid is missing" do

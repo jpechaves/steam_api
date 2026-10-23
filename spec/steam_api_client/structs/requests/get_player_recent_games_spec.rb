@@ -7,7 +7,7 @@ RSpec.describe SteamApiClient::Structs::Requests::GetPlayerRecentGames do
     let(:params) { {steamid: "123456789", count: 10} }
 
     it "initializes with the given steamid and count" do
-      expect(subject).to have_attributes(steamid: "123456789", count: 10)
+      expect(subject).to have_attributes(steamid: 123456789, count: 10)
     end
 
     context "when count is missing" do

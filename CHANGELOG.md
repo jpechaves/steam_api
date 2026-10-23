@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- **Breaking:** response structs now validate their declared types (#15). Integer, Float and String fields convert Steam's values (Steam often sends numbers as strings), and a value that can't be converted raises `SteamApiClient::Errors::ResponseParseError` instead of passing through unchanged. `null` values still come through as `nil`.
+  - `PlayerSummary#steamid` is now an Integer, like every other SteamID in the gem (it was a String).
+  - `PlayerSummary#profilestate` is now an Integer (it was declared String; Steam sends `1`).
+  - Global achievement `percent` is now a Float (it held Steam's raw value, e.g. `"49.6"`).
 - The gem homepage and README links point to `github.com/jpechaves/steam_api` instead of the old `sosolidkk` account (#22).
 
 ## [0.9.1] - 2026-10-23

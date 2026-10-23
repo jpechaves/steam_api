@@ -20,8 +20,8 @@ RSpec.describe SteamApiClient::Structs::PlayerFriends do
         is_expected.to have_attributes(
           friendslist: have_attributes(
             friends: contain_exactly(
-              have_attributes(**friends_list[:friends][0]),
-              have_attributes(**friends_list[:friends][1])
+              have_attributes(**friends_list[:friends][0], steamid: 76561198010665131),
+              have_attributes(**friends_list[:friends][1], steamid: 76561198027904893)
             )
           )
         )

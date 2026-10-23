@@ -42,8 +42,8 @@ RSpec.describe SteamApiClient::Structs::PlayerSummaries do
         is_expected.to have_attributes(
           response: have_attributes(
             players: contain_exactly(
-              have_attributes(**players[0]),
-              have_attributes(**players[1])
+              have_attributes(**players[0], steamid: players[0][:steamid].to_i),
+              have_attributes(**players[1], steamid: players[1][:steamid].to_i)
             )
           )
         )
