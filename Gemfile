@@ -10,6 +10,14 @@ group :development, :test do
   # See: [https://rubygems.org/gems/standard]
   gem "standard", "~> 1.4"
 
+  # Code analysis (Flay, Flog, Reek): `bundle exec rubycritic lib`
+  # See: [https://rubygems.org/gems/rubycritic]
+  gem "rubycritic", require: false
+
+  # Known advisories in Gemfile.lock: `bundle exec bundler-audit check --update`
+  # See: [https://rubygems.org/gems/bundler-audit]
+  gem "bundler-audit", require: false
+
   # Debugging tool for Ruby.
   # See: [https://rubygems.org/gems/debug]
   gem "debug", "~> 1.9"

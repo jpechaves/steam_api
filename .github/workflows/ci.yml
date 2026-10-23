@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+      - name: Check the code style (Standard Ruby)
+        run: bundle exec standardrb
+
+  analysis:
+    runs-on: ubuntu-latest
+    env:
+      LANG: C.UTF-8 # the HTML report has non-ASCII text
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+      # Score was 93.34 when this gate was added; raise the minimum as it improves.
+      - name: Analyse the code (RubyCritic)
+        run: bundle exec rubycritic lib --no-browser --format html --format console --minimum-score 92.5
+      - name: Upload the RubyCritic report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rubycritic-report
+          path: tmp/rubycritic
+          if-no-files-found: ignore
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: ["3.2", "3.3"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - name: Run the tests
+        run: bundle exec rspec

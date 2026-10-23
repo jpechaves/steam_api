@@ -17,7 +17,11 @@ bin/rspec spec/steam_api/request_spec.rb:42  # single example by line
 bin/rspec --only-failures                    # re-run failures (.rspec_status persistence is enabled)
 bin/lint                                     # standardrb --no-fix (target ruby_version 3.3)
 bin/standardrb --fix                         # autofix style
+bundle exec rubycritic lib --no-browser      # Flay/Flog/Reek analysis (report in tmp/rubycritic; Reek reads .reek.yml)
+bundle exec bundler-audit check --update     # known advisories in Gemfile.lock
 ```
+
+CI (`.github/workflows/ci.yml`) runs three jobs: `lint` (standardrb), `analysis` (RubyCritic with a `--minimum-score` gate; raise it when the score improves) and `test` (rspec matrix). `.github/workflows/audit.yml` runs bundler-audit on push, PRs and weekly.
 
 SimpleCov runs automatically with the specs. Specs never hit the network: they stub `Typhoeus::Request`/responses with `instance_double`.
 
