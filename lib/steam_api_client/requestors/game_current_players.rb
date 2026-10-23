@@ -7,7 +7,7 @@ module SteamApiClient
       # @param [Integer] appid The Steam app id
       # @return [SteamApiClient::Structs::GameCurrentPlayers] instance with the
       #   game current players count.
-      def retrieve(appid)
+      def retrieve(appid:)
         build_request_and_run(
           SteamApiClient::Structs::Requests::GetGameCurrentPlayers,
           SteamApiClient::Structs::GameCurrentPlayers,

@@ -8,7 +8,7 @@ module SteamApiClient
       # @param [String] relationship Relationship filter. Possibles values: 'all', 'friend'.
       # @return [SteamApiClient::Structs::PlayerFriends] instance with the
       #   player friends list.
-      def retrieve(steamid, relationship = "all")
+      def retrieve(steamid:, relationship: "all")
         build_request_and_run(
           SteamApiClient::Structs::Requests::GetPlayerFriends,
           SteamApiClient::Structs::PlayerFriends,

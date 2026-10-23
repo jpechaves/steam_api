@@ -6,7 +6,7 @@ module SteamApiClient
       # @param [Integer] steamid The Steam user id
       # @return [SteamApiClient::Structs::PlayerLevel] instance with the
       #   player level.
-      def retrieve(steamid)
+      def retrieve(steamid:)
         build_request_and_run(
           SteamApiClient::Structs::Requests::GetPlayerLevel,
           SteamApiClient::Structs::PlayerLevel,

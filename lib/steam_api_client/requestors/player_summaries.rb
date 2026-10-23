@@ -7,7 +7,7 @@ module SteamApiClient
       # @param [Array<Integer>] steamids - The Steam order's id
       # @return [SteamApiClient::Structs::PlayerSummaries] instance with the
       #   player summary details.
-      def retrieve(steamids)
+      def retrieve(steamids:)
         build_request_and_run(
           SteamApiClient::Structs::Requests::GetPlayerSummaries,
           SteamApiClient::Structs::PlayerSummaries,

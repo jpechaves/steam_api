@@ -9,7 +9,7 @@ module SteamApiClient
       # @param [Boolean] include_played_free_games Flag to include free games
       # @return [SteamApiClient::Structs::PlayerOwnedGames] instance with the
       #   player owned games details.
-      def retrieve(steamid, include_appinfo: false, include_played_free_games: false)
+      def retrieve(steamid:, include_appinfo: false, include_played_free_games: false)
         build_request_and_run(
           SteamApiClient::Structs::Requests::GetPlayerOwnedGames,
           SteamApiClient::Structs::PlayerOwnedGames,
