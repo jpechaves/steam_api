@@ -175,5 +175,12 @@ RSpec.describe Release do
       expect(shell.commands).not_to include(build, push, tag, push_tag)
       expect(output.string).to include("[dry run] #{build}", "[dry run] #{push}", "[dry run] #{tag}", "[dry run] #{push_tag}")
     end
+
+    it "doesn't claim the version was released" do
+      release.call
+
+      expect(output.string).to include("Dry run: v1.2.3 would be released.")
+      expect(output.string).not_to include("Released v1.2.3")
+    end
   end
 end

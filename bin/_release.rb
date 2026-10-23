@@ -45,7 +45,7 @@ class Release
 
     publish_gem
     tag_release unless remote_tag
-    say "🚀 Released #{tag}."
+    say(@dry_run ? "Dry run: #{tag} would be released." : "🚀 Released #{tag}.")
     :released
   end
 
