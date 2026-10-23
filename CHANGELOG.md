@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Changed
+
+- The gem homepage and README links point to `github.com/jpechaves/steam_api` instead of the old `sosolidkk` account (#22).
+
 ## [0.9.1] - 2026-10-23
 
 ### Fixed
