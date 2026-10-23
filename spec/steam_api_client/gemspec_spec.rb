@@ -22,6 +22,10 @@ RSpec.describe "steam_api_client.gemspec" do
     expect(gemspec.metadata["homepage_uri"]).to eq(gemspec.homepage)
   end
 
+  it "requires a maintained Ruby (3.3 or newer)" do
+    expect(gemspec.required_ruby_version).to eq(Gem::Requirement.new(">= 3.3"))
+  end
+
   it "ships no executables" do
     expect(gemspec.executables).to be_empty
   end

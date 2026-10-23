@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- **Breaking:** requires Ruby 3.3 or newer (#17). Ruby 3.0, 3.1 and 3.2 have reached end of life. CI now tests 3.3, 3.4 and 4.0.
 - **Breaking:** response structs now validate their declared types (#15). Integer, Float and String fields convert Steam's values (Steam often sends numbers as strings), and a value that can't be converted raises `SteamApiClient::Errors::ResponseParseError` instead of passing through unchanged. `null` values still come through as `nil`.
   - `PlayerSummary#steamid` is now an Integer, like every other SteamID in the gem (it was a String).
   - `PlayerSummary#profilestate` is now an Integer (it was declared String; Steam sends `1`).

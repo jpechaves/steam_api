@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-`steam_api_client` is a Ruby gem wrapping the Steam Web API (`https://api.steampowered.com`) and the Storefront API (`https://store.steampowered.com/api/`). Runtime dependencies are only `dry-configurable`, `dry-struct`, and `typhoeus`. Ruby 3.3.4 is used locally (`.ruby-version`); the gemspec allows `>= 3.0`, CI tests 3.2 and 3.3.
+`steam_api_client` is a Ruby gem wrapping the Steam Web API (`https://api.steampowered.com`) and the Storefront API (`https://store.steampowered.com/api/`). Runtime dependencies are only `dry-configurable`, `dry-struct`, and `typhoeus`. Ruby 3.3.4 is used locally (`.ruby-version`); the gemspec requires `>= 3.3` (3.0–3.2 are end-of-life), CI tests 3.3, 3.4 and 4.0.
 
 ## Commands
 
