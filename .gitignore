@@ -13,3 +13,8 @@
 
 # Built gems
 *.gem
+
+# Editor swap/backup files
+*.swp
+*.swo
+*~
