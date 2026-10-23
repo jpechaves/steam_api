@@ -113,7 +113,6 @@ For more examples, see the [Usage](#usage) section above.
 ### Requirements
 
 - Ruby >= 3.3
-- Docker (optional, for consistent development environments)
 
 ### Initial Setup
 
