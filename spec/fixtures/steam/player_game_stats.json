@@ -1,0 +1,38 @@
+{
+  "playerstats": {
+    "steamID": "76561198000000001",
+    "gameName": "Team Fortress 2",
+    "stats": [
+      {
+        "name": "Scout.accum.iBuildingsDestroyed",
+        "value": 1
+      },
+      {
+        "name": "Scout.accum.iDamageDealt",
+        "value": 26580
+      },
+      {
+        "name": "Scout.accum.iDominations",
+        "value": 8
+      },
+      {
+        "name": "Scout.accum.iKillAssists",
+        "value": 59
+      }
+    ],
+    "achievements": [
+      {
+        "name": "TF_PLAY_GAME_EVERYCLASS",
+        "achieved": 1
+      },
+      {
+        "name": "TF_PLAY_GAME_EVERYMAP",
+        "achieved": 1
+      },
+      {
+        "name": "TF_GET_HEALPOINTS",
+        "achieved": 1
+      }
+    ]
+  }
+}
