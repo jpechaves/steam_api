@@ -7,7 +7,8 @@ module SteamApi
         attribute :appid, Types::Coercible::Integer
         attribute :response do
           attribute :success, Types::Bool
-          attribute :data do
+          # Steam omits data when the app is unavailable (success: false)
+          attribute? :data do
             attribute? :type, Types::String
             attribute? :name, Types::String
             attribute? :required_age, Types::Coercible::Integer
