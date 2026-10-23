@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.summary = "A ruby client to fetch from the public Steam Web API"
   spec.homepage = "https://github.com/jpechaves/steam_api"
   spec.license = "MIT"
-  spec.required_ruby_version = ">= 3.0"
+  spec.required_ruby_version = ">= 3.3"
 
   spec.metadata["homepage_uri"] = spec.homepage
   # Require MFA for every `gem push` of this gem
