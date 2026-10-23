@@ -12,7 +12,7 @@ group :development, :test do
 
   # Code analysis (Flay, Flog, Reek): `bundle exec rubycritic lib`
   # See: [https://rubygems.org/gems/rubycritic]
-  gem "rubycritic", require: false
+  gem "rubycritic", "~> 5.0", require: false
 
   # Known advisories in Gemfile.lock: `bundle exec bundler-audit check --update`
   # See: [https://rubygems.org/gems/bundler-audit]
