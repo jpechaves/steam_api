@@ -12,6 +12,7 @@ require_relative "steam_api_client/response"
 require_relative "steam_api_client/failure_handler"
 
 require_relative "steam_api_client/errors/api_error"
+require_relative "steam_api_client/errors/missing_api_token"
 require_relative "steam_api_client/errors/response_parse_error"
 require_relative "steam_api_client/errors/url_error"
 

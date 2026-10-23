@@ -6,8 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- `SteamApiClient::Errors::MissingApiToken`, raised before any request when an endpoint needs an API token and the client has none (nil or empty). Previously the request was sent and Steam's HTML "key is missing" page came back as `HttpBadRequest` (#25).
+
 ### Changed
 
+- Missing or invalid request parameters raise `ArgumentError` instead of a bare `StandardError` (#25). `ArgumentError` is a `StandardError`, so existing `rescue StandardError` code keeps working.
 - **Breaking:** every `retrieve` method takes keyword arguments (#24), so IDs can't be swapped by position. Defaults are unchanged.
 
   | Before | After |

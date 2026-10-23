@@ -8,7 +8,7 @@ module SteamApiClient
         # @params [Hash] params The hash params.
         # @return an instance of the Struct
         def self.build_from_params(params)
-          raise StandardError, ":appid is missing" unless params.key?(:appid)
+          raise ArgumentError, ":appid is missing" unless params.key?(:appid)
 
           new(params)
         end

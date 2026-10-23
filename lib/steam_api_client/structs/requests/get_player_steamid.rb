@@ -8,7 +8,7 @@ module SteamApiClient
         # @params [Hash] params The hash params.
         # @return an instance of the Struct
         def self.build_from_params(params)
-          raise StandardError, ":vanityurl is missing" unless params.key?(:vanityurl)
+          raise ArgumentError, ":vanityurl is missing" unless params.key?(:vanityurl)
 
           new(params)
         end

@@ -26,7 +26,7 @@ RSpec.describe "Request structs .build_from_params" do
 
       (params.keys - unchecked.fetch(struct, [])).each do |key|
         it "raises when :#{key} is missing" do
-          expect { struct.build_from_params(params.except(key)) }.to raise_error(StandardError, /#{key}.* missing/)
+          expect { struct.build_from_params(params.except(key)) }.to raise_error(ArgumentError, /#{key}.* missing/)
         end
       end
     end
@@ -34,7 +34,7 @@ RSpec.describe "Request structs .build_from_params" do
 
   describe SteamApiClient::Structs::Requests::GetPlayerFriends do
     it "only allows the all and friend relationships" do
-      expect { described_class.build_from_params(steamid: 1, relationship: "enemy") }.to raise_error(StandardError, /relationship value not allowed/)
+      expect { described_class.build_from_params(steamid: 1, relationship: "enemy") }.to raise_error(ArgumentError, /relationship value not allowed/)
     end
   end
 end
