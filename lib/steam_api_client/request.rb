@@ -13,7 +13,7 @@ module SteamApiClient
     def run
       freeze
 
-      raw_response = @raw_request.run
+      raw_response = perform
 
       Response.new(raw_response: raw_response, response_struct: response_struct, request: self).tap do |response|
         failure_handler.call(response)
@@ -22,7 +22,44 @@ module SteamApiClient
 
     private
 
-    attr_accessor :request_struct, :response_struct, :client, :raw_request, :failure_handler
+    attr_accessor :request_struct, :response_struct, :client, :url, :failure_handler
+
+    # Sends the request through the client's Faraday connection, turning
+    # Faraday's network errors into the gem's errors (the original is #cause)
+    def perform
+      client.connection.run_request(request_struct.method, url, body, headers) do |request|
+        request_options.each { |option, value| request.options.public_send(:"#{option}=", value) }
+      end
+    rescue ::Faraday::TimeoutError
+      raise_timeout
+    rescue ::Faraday::ConnectionFailed => error
+      # Faraday reports a connect timeout (Net::OpenTimeout) as ConnectionFailed
+      raise_timeout if error.wrapped_exception.is_a?(::Timeout::Error)
+      raise SteamApiClient::Errors::ConnectionError, "Could not connect to Steam: #{error.message}"
+    rescue ::Faraday::SSLError => error
+      raise SteamApiClient::Errors::ConnectionError, "Could not connect to Steam: #{error.message}"
+    end
+
+    def raise_timeout
+      raise SteamApiClient::Errors::HttpTimeout.new(
+        nil, "The request to Steam timed out (timeout: #{client.timeout}s, connect_timeout: #{client.connect_timeout}s)"
+      )
+    end
+
+    def request_options
+      {timeout: client.timeout, open_timeout: client.connect_timeout}
+    end
+
+    # GET requests (every Steam endpoint so far) carry their params in the query string
+    def body
+      request_struct.body.to_json unless request_struct.method == :get
+    end
+
+    def headers
+      return {} if request_struct.method == :get
+
+      {"Content-Type" => "application/json"}
+    end
 
     def ensure_api_token!
       return unless request_struct.needs_authorization?
@@ -40,7 +77,7 @@ module SteamApiClient
       else raise SteamApiClient::Errors::EndpointKindNotSupported
       end
 
-      @raw_request = ::Typhoeus::Request.new(url.to_s, build_options)
+      @url = url.to_s
     end
 
     def build_base_url
@@ -72,22 +109,6 @@ module SteamApiClient
       end
 
       URI.encode_www_form(all_params)
-    end
-
-    def build_options
-      options = {
-        method: request_struct.method,
-        headers: {},
-        followlocation: true,
-        timeout_ms: (client.timeout * 1000).to_i,
-        connecttimeout_ms: (client.connect_timeout * 1000).to_i,
-        # Required for sub-second timeouts and safe use of timeouts across threads
-        nosignal: true
-      }
-      # GET requests (every Steam endpoint so far) carry their params in the query string
-      return options if request_struct.method == :get
-
-      options.merge(headers: {"Content-Type" => "application/json"}, body: request_struct.body.to_json)
     end
   end
 end

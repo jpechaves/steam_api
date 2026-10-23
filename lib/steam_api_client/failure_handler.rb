@@ -10,8 +10,6 @@ module SteamApiClient
     def call(response)
       return unless response.fail?
 
-      raise_timedout(response) if response.timed_out?
-
       raise_response_4xx(response) if (400..499).cover?(response.status_code)
       raise_response_5xx(response) if (500..599).cover?(response.status_code)
 
@@ -20,16 +18,13 @@ module SteamApiClient
 
     private
 
-    def raise_timedout(response)
-      raise SteamApiClient::Errors::HttpTimeout, response
-    end
-
     def raise_response_4xx(response)
       case response.status_code
       when 400 then raise SteamApiClient::Errors::HttpBadRequest, response
       when 401 then raise SteamApiClient::Errors::HttpUnauthorized, response
       when 403 then raise SteamApiClient::Errors::HttpForbidden, response
       when 404 then raise SteamApiClient::Errors::HttpNotFound, response
+      when 408 then raise SteamApiClient::Errors::HttpTimeout, response
       when 429 then raise SteamApiClient::Errors::HttpTooManyRequests, response
       end
     end

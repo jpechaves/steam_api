@@ -67,6 +67,33 @@ RSpec.describe SteamApiClient::Client do
     end
   end
 
+  describe "adapter" do
+    after { described_class.config.adapter = described_class::DEFAULT_ADAPTER }
+
+    it "defaults to Faraday's Net::HTTP adapter" do
+      expect(described_class.new.adapter).to eq(:net_http)
+    end
+
+    it "falls back to the configured adapter" do
+      described_class.configure { |config| config.adapter = :test }
+
+      expect(described_class.new.adapter).to eq(:test)
+    end
+
+    it "prefers the adapter given to the instance" do
+      described_class.configure { |config| config.adapter = :test }
+
+      expect(described_class.new(adapter: :net_http).adapter).to eq(:net_http)
+    end
+
+    it "builds one Faraday connection with that adapter" do
+      client = described_class.new
+
+      expect(client.connection).to be_a(Faraday::Connection).and(be(client.connection))
+      expect(client.connection.builder.adapter).to eq(Faraday::Adapter::NetHttp)
+    end
+  end
+
   describe "#base_endpoint" do
     subject { described_class.new.base_endpoint }
 

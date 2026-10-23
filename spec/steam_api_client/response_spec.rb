@@ -1,7 +1,7 @@
 require "spec_helper"
 
 RSpec.describe SteamApiClient::Response do
-  let(:raw_response) { double("raw_response", code: 200, body: '{"key":"value"}') }
+  let(:raw_response) { double("raw_response", status: 200, body: '{"key":"value"}') }
   let(:response_struct) { double("response_struct", build_from_response: {}) }
   let(:request) { double("request") }
 
@@ -51,7 +51,7 @@ RSpec.describe SteamApiClient::Response do
     end
 
     context "when the body has duplicate keys" do
-      let(:raw_response) { double("raw_response", code: 200, body: '{"key":"first","key":"value"}') }
+      let(:raw_response) { double("raw_response", status: 200, body: '{"key":"first","key":"value"}') }
 
       it "keeps the last value, as Steam's JSON is parsed regardless of the json gem version" do
         expect(response_struct).to receive(:build_from_response).with({key: "value"})
@@ -60,7 +60,7 @@ RSpec.describe SteamApiClient::Response do
     end
 
     context "when the body is not JSON" do
-      let(:raw_response) { double("raw_response", code: 200, body: "<html>Oops</html>") }
+      let(:raw_response) { double("raw_response", status: 200, body: "<html>Oops</html>") }
 
       it "raises a ResponseParseError caused by the JSON error" do
         expect { response.result }.to raise_error(SteamApiClient::Errors::ResponseParseError) { |error|
@@ -71,7 +71,7 @@ RSpec.describe SteamApiClient::Response do
     end
 
     context "when the body is JSON but not an object" do
-      let(:raw_response) { double("raw_response", code: 200, body: "[]") }
+      let(:raw_response) { double("raw_response", status: 200, body: "[]") }
 
       it "raises a ResponseParseError" do
         expect { response.result }.to raise_error(SteamApiClient::Errors::ResponseParseError)
@@ -79,7 +79,7 @@ RSpec.describe SteamApiClient::Response do
     end
 
     context "when the body does not match the response struct" do
-      let(:raw_response) { double("raw_response", code: 200, body: '{"unexpected":{"secret_payload":1}}') }
+      let(:raw_response) { double("raw_response", status: 200, body: '{"unexpected":{"secret_payload":1}}') }
       let(:response_struct) { SteamApiClient::Structs::PlayerLevel }
 
       it "raises a ResponseParseError caused by the struct error, without the payload in the message" do

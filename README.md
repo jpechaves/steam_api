@@ -90,6 +90,18 @@ end
 client = SteamApiClient::Client.new(api_token: "your-API-token-value", timeout: 5)
 ```
 
+If Steam can't be reached at all (DNS failure, refused connection, TLS error), requests raise `SteamApiClient::Errors::ConnectionError` instead.
+
+Requests go through [Faraday](https://github.com/lostisland/faraday) with its default `Net::HTTP` adapter. To use another one, add its gem to your Gemfile and set it globally or per client:
+
+```ruby
+SteamApiClient::Client.configure do |config|
+  config.adapter = :httpx # from the httpx gem
+end
+
+client = SteamApiClient::Client.new(api_token: "your-API-token-value", adapter: :net_http)
+```
+
 ### Example Requests
 
 #### Get Player Summaries

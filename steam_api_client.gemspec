@@ -30,10 +30,9 @@ Gem::Specification.new do |spec|
   # Typed struct and value objects for Ruby.
   # See: [https://rubygems.org/gems/dry-struct]
   spec.add_dependency "dry-struct", "~> 1.6"
-  # Typhoeus runs HTTP requests in parallel while
-  # cleanly encapsulating handling logic.
-  # See [https://rubygems.org/gems/typhoeus]
-  spec.add_dependency "typhoeus", "~> 1.4"
+  # HTTP client with pluggable adapters (Net::HTTP by default) and middleware.
+  # See [https://rubygems.org/gems/faraday]
+  spec.add_dependency "faraday", "~> 2.0"
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html

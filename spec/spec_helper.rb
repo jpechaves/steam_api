@@ -16,8 +16,10 @@ end
 require "steam_api_client"
 require "debug"
 
-# Specs must never reach the network: unstubbed requests raise Typhoeus::Errors::NoStub
-Typhoeus::Config.block_connection = true
+require "webmock/rspec"
+
+# Specs must never reach the network: unstubbed requests raise WebMock::NetConnectNotAllowedError
+WebMock.disable_net_connect!
 
 Dir[File.expand_path("support/**/*.rb", __dir__)].sort.each { |file| require file }
 

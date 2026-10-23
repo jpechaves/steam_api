@@ -16,7 +16,6 @@ RSpec.describe SteamApiClient::FailureHandler do
     double(
       "response",
       fail?: failed,
-      timed_out?: timed_out,
       body: body,
       request: request,
       status_code: status_code
@@ -24,7 +23,6 @@ RSpec.describe SteamApiClient::FailureHandler do
   end
   let(:request) { double("request") }
   let(:failed) { true }
-  let(:timed_out) { false }
   let(:status_code) { 200 }
   let(:body) { "{}" }
 
@@ -35,9 +33,8 @@ RSpec.describe SteamApiClient::FailureHandler do
       it { is_expected.to eql(nil) }
     end
 
-    context "when the request times out" do
+    context "when Steam answers 408 Request Timeout" do
       let(:exception) { SteamApiClient::Errors::HttpTimeout }
-      let(:timed_out) { true }
       let(:status_code) { 408 }
       let(:body) { '{response: "A timeout ocurred!"}' }
 

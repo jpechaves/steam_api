@@ -5,11 +5,12 @@ module SteamApiClient
   class Response
     extend Forwardable
 
-    def_delegators :@raw_response, :timed_out?, :success?, :body
+    # headers: the HTTP response headers (case-insensitive Faraday::Utils::Headers)
+    def_delegators :@raw_response, :success?, :body, :headers
     attr_accessor :request
 
     # Initialize a new instance
-    # @param [Typhoeus::Response] raw_response
+    # @param [Faraday::Response] raw_response
     # @param [SteamApiClient::Structs::Base] response_struct The struct necessary to
     #   build the response received from Api
     # @param [SteamApiClient::Request] request The wrapper Request class
@@ -25,16 +26,10 @@ module SteamApiClient
       !success?
     end
 
-    # Returns the HTTP response headers (case-insensitive)
-    # @return [Typhoeus::Response::Header, nil]
-    def headers
-      raw_response.headers
-    end
-
     # Returns the HTTP status code
     # @return [Integer]
     def status_code
-      raw_response.code
+      raw_response.status
     end
 
     # Parses the response's json body as a Hash. If the response body isn't a json

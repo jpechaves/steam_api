@@ -4,15 +4,17 @@ module SteamApiClient
     #
     class ApiError < ::StandardError
       # Initializes a request API custom error
-      # @param [SteamApiClient::Response] Http response wrapper
+      # @param [SteamApiClient::Response, nil] response Http response wrapper, nil when
+      #   the request failed without one (e.g. it timed out)
+      # @param [String, nil] message Overrides the message built from the response
       # @return A new instance of ApiError
       #
-      def initialize(response)
-        @http_status_code = response.status_code
+      def initialize(response = nil, message = nil)
+        @http_status_code = response&.status_code
         @response = response
-        @request = response.request
+        @request = response&.request
 
-        super(build_description_message)
+        super(message || build_description_message)
       end
 
       private
@@ -27,6 +29,9 @@ module SteamApiClient
       end
     end
 
+    # Raised when the request times out (no response), or when Steam answers 408
+    class HttpTimeout < ApiError; end
+
     # status_code: 400
     class HttpBadRequest < ApiError; end
 
@@ -38,9 +43,6 @@ module SteamApiClient
 
     # status_code: 404
     class HttpNotFound < ApiError; end
-
-    # status_code: 408
-    class HttpTimeout < ApiError; end
 
     # status_code: 500
     class HttpInternalServerError < ApiError; end

@@ -8,7 +8,7 @@ module SteamFixtures
 
   # Runs a fixture through the gem's response pipeline: status handling, then struct parsing
   def parse_steam_fixture(name, struct, status: 200)
-    raw = Typhoeus::Response.new(code: status, body: steam_fixture(name), return_code: :ok)
+    raw = Faraday::Response.new(status: status, body: steam_fixture(name), response_headers: {})
     response = SteamApiClient::Response.new(raw_response: raw, response_struct: struct, request: nil)
     SteamApiClient::FailureHandler.instance.call(response)
     response.result
