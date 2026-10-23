@@ -149,14 +149,23 @@ $ bin/lint
 
 ### Releasing
 
-Bump `lib/steam_api_client/version.rb`, add a matching `## [<version>]` section to `CHANGELOG.md`, and merge to `main`. Then run:
+Each pull request with a user-visible change adds a line under `## [Unreleased]` in `CHANGELOG.md`. Pull requests don't change the version.
+
+To release the merged changes, open a release pull request:
+
+```bash
+$ git checkout -b release/0.10.0
+$ bin/bump minor         # or patch / major: bumps version.rb and Gemfile.lock, moves [Unreleased] under "## [0.10.0] - <today>"
+```
+
+Commit, open the pull request, and merge it. Then publish from `main`:
 
 ```bash
 $ bin/release            # build and push the gem (asks for your RubyGems MFA code), then tag v<version> and push the tag
 $ bin/release --dry-run  # show what would happen without building, pushing or tagging
 ```
 
-It checks out and pulls `main` first, and refuses to run with uncommitted changes or without a CHANGELOG entry. Steps that are already done are skipped, so running it again for a released version does nothing.
+`bin/release` checks out and pulls `main` first, and refuses to run with uncommitted changes or without a CHANGELOG entry. Steps that are already done are skipped, so running it again for a released version does nothing.
 
 ## Contributing
 

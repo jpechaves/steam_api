@@ -19,12 +19,19 @@ bin/lint                                     # standardrb --no-fix (target ruby_
 bin/standardrb --fix                         # autofix style
 bundle exec rubycritic lib --no-browser      # Flay/Flog/Reek analysis (report in tmp/rubycritic; Reek reads .reek.yml)
 bundle exec bundler-audit check --update     # known advisories in Gemfile.lock
+bin/bump patch|minor|major [--date Y-M-D]    # release PR prep: bump version.rb + Gemfile.lock, move [Unreleased] under the new version
 bin/release [--dry-run]                      # publish the gemspec version to RubyGems (MFA prompt) and push tag v<version>; no-op if already released
 ```
 
 CI (`.github/workflows/ci.yml`) runs three jobs: `lint` (standardrb), `analysis` (RubyCritic with a `--minimum-score` gate; raise it when the score improves) and `test` (rspec matrix). `.github/workflows/audit.yml` runs bundler-audit on push, PRs and weekly.
 
 SimpleCov runs automatically with the specs. Specs never hit the network: they stub `Typhoeus::Request`/responses with `instance_double`.
+
+## Changelog & releases
+
+- Every PR with a user-visible change (`lib/` or the gemspec) adds a line under `## [Unreleased]` in `CHANGELOG.md`, grouped as Added / Changed / Fixed / Security, with the issue number. CI-, `bin/`- and spec-only changes get no entry.
+- PRs never bump the version. A release is its own issue and PR: run `bin/bump patch|minor|major` on a release branch, commit, merge, then run `bin/release` from an up-to-date `main`.
+- `bin/` scripts keep their logic in `bin/_*.rb` (`Release`, `Bump`) so it can be tested from `spec/bin/` without running git or touching RubyGems.
 
 ## Architecture
 
