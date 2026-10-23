@@ -3,7 +3,7 @@ module SteamApiClient
     # Struct that holds all user recent played games
     # @see https://developer.valvesoftware.com/wiki/Steam_Web_API#GetRecentlyPlayedGames_.28v0001.29
     class PlayerRecentGames < Base
-      class InternalPlayerRecentGames < Dry::Struct
+      class InternalPlayerRecentGames < Base
         attribute :appid, Types::Integer
         attribute :name, Types::String
         attribute :playtime_2weeks, Types::Integer

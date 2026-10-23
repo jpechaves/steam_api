@@ -2,7 +2,7 @@ module SteamApiClient
   module Structs
     # Struct that holds an App news information
     # @see https://developer.valvesoftware.com/wiki/Steam_Web_API#GetNewsForApp_.28v0002.29
-    class AppNew < Dry::Struct
+    class AppNew < Base
       attribute :gid, Types::String
       attribute :title, Types::String
       attribute :url, Types::String
