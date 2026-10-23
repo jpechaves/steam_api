@@ -4,12 +4,10 @@ require "bundler/setup"
 
 require "simplecov"
 SimpleCov.start do
-  # Measure the gem only: specs and bin/ tooling would inflate the numbers
-  add_filter %r{\A/(?:spec|bin)/}
-  # Report lib files even when no spec loads them
-  track_files "lib/**/*.rb"
+  # Measure the gem only (lib/), including files no spec loads
+  cover "lib/**/*.rb"
   # Loaded by Bundler (through the gemspec) before SimpleCov starts, so it always reads 0%
-  add_filter "lib/steam_api_client/version.rb"
+  skip "lib/steam_api_client/version.rb"
   enable_coverage :branch
   # Only in CI: running a single spec file locally would fail the gate
   minimum_coverage line: 98, branch: 95 if ENV["CI"]
