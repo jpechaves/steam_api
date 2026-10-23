@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.email = ["pedrochaveslimas3@gmail.com"]
 
   spec.summary = "A ruby client to fetch from the public Steam Web API"
-  spec.homepage = "https://github.com/sosolidkk/steam_api"
+  spec.homepage = "https://github.com/jpechaves/steam_api"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 3.0"
 

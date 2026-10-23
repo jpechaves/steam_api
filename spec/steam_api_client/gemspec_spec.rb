@@ -17,6 +17,11 @@ RSpec.describe "steam_api_client.gemspec" do
     )
   end
 
+  it "points the homepage to the GitHub repository" do
+    expect(gemspec.homepage).to eq("https://github.com/jpechaves/steam_api")
+    expect(gemspec.metadata["homepage_uri"]).to eq(gemspec.homepage)
+  end
+
   it "ships no executables" do
     expect(gemspec.executables).to be_empty
   end
