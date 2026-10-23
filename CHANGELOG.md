@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.11.0] - 2026-10-23
+
 ### Added
 
 - `Client` `adapter` setting (`Client.configure { |c| c.adapter = ... }` or `Client.new(adapter:)`) to choose the Faraday adapter, `:net_http` by default (#35).
@@ -151,7 +153,8 @@ The versions below were bumped in `version.rb` during development but **never pu
 
 - Initial gem skeleton.
 
-[Unreleased]: https://github.com/jpechaves/steam_api/compare/v0.10.0...HEAD
+[Unreleased]: https://github.com/jpechaves/steam_api/compare/v0.11.0...HEAD
+[0.11.0]: https://github.com/jpechaves/steam_api/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/jpechaves/steam_api/compare/v0.9.1...v0.10.0
 [0.9.1]: https://github.com/jpechaves/steam_api/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/jpechaves/steam_api/releases/tag/v0.9.0
