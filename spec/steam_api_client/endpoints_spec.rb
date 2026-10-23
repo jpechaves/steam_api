@@ -150,6 +150,18 @@ RSpec.describe "Steam API endpoints" do
     end
   end
 
+  describe "rate limiting" do
+    it "raises HttpTooManyRequests with the Retry-After delay" do
+      Typhoeus.stub("#{web_api}/ISteamUserStats/GetNumberOfCurrentPlayers/v0001/?appid=440").and_return(
+        Typhoeus::Response.new(code: 429, body: "Too Many Requests", response_headers: "HTTP/1.1 429 Too Many Requests\r\nRetry-After: 30\r\n\r\n")
+      )
+
+      expect { client.game_current_players.retrieve(appid: 440) }.to raise_error(SteamApiClient::Errors::HttpTooManyRequests) { |error|
+        expect(error.retry_after).to eq(30)
+      }
+    end
+  end
+
   describe "invalid data" do
     it "raises ResponseParseError when a value can't be coerced to its declared type" do
       stub_steam("#{web_api}/IPlayerService/GetSteamLevel/v0001/?key=test-key&steamid=76561197960435530",

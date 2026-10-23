@@ -3,6 +3,7 @@
 require "dry-configurable"
 require "dry-struct"
 require "json"
+require "time"
 require "singleton"
 require "typhoeus"
 

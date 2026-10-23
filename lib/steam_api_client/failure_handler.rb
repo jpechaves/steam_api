@@ -30,12 +30,15 @@ module SteamApiClient
       when 401 then raise SteamApiClient::Errors::HttpUnauthorized, response
       when 403 then raise SteamApiClient::Errors::HttpForbidden, response
       when 404 then raise SteamApiClient::Errors::HttpNotFound, response
+      when 429 then raise SteamApiClient::Errors::HttpTooManyRequests, response
       end
     end
 
     def raise_response_5xx(response)
       case response.status_code
       when 500 then raise SteamApiClient::Errors::HttpInternalServerError, response
+      when 502 then raise SteamApiClient::Errors::HttpBadGateway, response
+      when 503 then raise SteamApiClient::Errors::HttpServiceUnavailable, response
       end
     end
 
