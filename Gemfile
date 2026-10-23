@@ -30,5 +30,5 @@ end
 group :test do
   # A code coverage analysis tool for Ruby.
   # See: [https://rubygems.org/gems/simplecov]
-  gem "simplecov", "~> 0.22", require: false
+  gem "simplecov", "~> 1.3", require: false
 end
