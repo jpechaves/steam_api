@@ -5,7 +5,7 @@ require "bundler/setup"
 require "simplecov"
 SimpleCov.start
 
-require "steam_api"
+require "steam_api_client"
 require "debug"
 
 # Specs must never reach the network: unstubbed requests raise Typhoeus::Errors::NoStub

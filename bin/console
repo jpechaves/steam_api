@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require_relative "../lib/steam_api"
+require_relative "../lib/steam_api_client"
 require "irb"
 
 IRB.start(__FILE__)
