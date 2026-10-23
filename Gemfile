@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-# Specify your gem's dependencies in steam_api.gemspec
+# Specify your gem's dependencies in steam_api_client.gemspec
 gemspec
 
 group :development, :test do

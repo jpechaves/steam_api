@@ -1,6 +1,6 @@
 # Summary
 - [Summary](#summary)
-- [steam\_api](#steam_api)
+- [steam\_api\_client](#steam_api_client)
   - [Features](#features)
   - [Installation](#installation)
   - [Usage](#usage)
@@ -19,7 +19,9 @@
   - [License](#license)
   - [Code of Conduct](#code-of-conduct)
 
-# steam_api
+# steam_api_client
+
+> Previously developed as `steam_api`. It is not related to the [`steam_api`](https://rubygems.org/gems/steam_api) gem on RubyGems.
 
 A Ruby gem for interacting with the [Steam Web API](https://developer.valvesoftware.com/wiki/Steam_Web_API). This gem provides a structured and user-friendly way to fetch various types of data from Steam's API endpoints, such as game details, player information, and achievements.
 
@@ -36,13 +38,13 @@ A Ruby gem for interacting with the [Steam Web API](https://developer.valvesoftw
 Add this line to your application's Gemfile:
 
 ```ruby
-$ bundle add steam_api
+$ bundle add steam_api_client
 ```
 
 Or install it manually:
 
 ```bash
-$ gem install steam_api
+$ gem install steam_api_client
 ```
 
 Then execute:
@@ -56,7 +58,7 @@ $ bundle install
 ### Configuring the Client
 
 ```ruby
-SteamApi::Client.configure do |config|
+SteamApiClient::Client.configure do |config|
   config.api_token = "your-API-token-value"
 end
 ```
@@ -64,18 +66,18 @@ end
 Alternatively, you can initialize the client directly:
 
 ```ruby
-client = SteamApi::Client.new(api_token: "your-API-token-value")
+client = SteamApiClient::Client.new(api_token: "your-API-token-value")
 ```
 
-Requests time out after 10 seconds (5 seconds to connect) and raise `SteamApi::Errors::HttpTimeout`. You can change this globally or per client, in seconds:
+Requests time out after 10 seconds (5 seconds to connect) and raise `SteamApiClient::Errors::HttpTimeout`. You can change this globally or per client, in seconds:
 
 ```ruby
-SteamApi::Client.configure do |config|
+SteamApiClient::Client.configure do |config|
   config.timeout = 30
   config.connect_timeout = 2
 end
 
-client = SteamApi::Client.new(api_token: "your-API-token-value", timeout: 5)
+client = SteamApiClient::Client.new(api_token: "your-API-token-value", timeout: 5)
 ```
 
 ### Example Requests
@@ -83,14 +85,14 @@ client = SteamApi::Client.new(api_token: "your-API-token-value", timeout: 5)
 #### Get Player Summaries
 
 ```ruby
-client = SteamApi::Client.new(api_token: "your-API-token-value")
+client = SteamApiClient::Client.new(api_token: "your-API-token-value")
 client.player_summaries.retrieve([76561198160009756])
 ```
 
 #### Get App Details
 
 ```ruby
-client = SteamApi::Client.new
+client = SteamApiClient::Client.new
 client.app_details.retrieve(appid: 1091500, filters: ["basic"])
 ```
 

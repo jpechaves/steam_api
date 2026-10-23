@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    steam_api (0.9.0)
+    steam_api_client (0.9.0)
       dry-configurable (~> 1.1.0)
       dry-struct (~> 1.6)
       typhoeus (~> 1.4)
@@ -214,7 +214,7 @@ DEPENDENCIES
   rubycritic
   simplecov (~> 0.22)
   standard (~> 1.4)
-  steam_api!
+  steam_api_client!
 
 BUNDLED WITH
    2.5.15
