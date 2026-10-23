@@ -1,0 +1,14 @@
+{
+  "response": {
+    "total_count": 1,
+    "games": [
+      {
+        "appid": 2868840,
+        "name": "Slay the Spire 2",
+        "playtime_2weeks": 922,
+        "playtime_forever": 8357,
+        "img_icon_url": "f92b09dab91f1d1738f72fe0dd9be18dcc2901f9"
+      }
+    ]
+  }
+}
