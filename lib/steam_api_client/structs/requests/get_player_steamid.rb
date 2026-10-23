@@ -36,12 +36,6 @@ module SteamApiClient
         def query_params
           {vanityurl: vanityurl}
         end
-
-        # Return the class attributes as a Hash
-        # @return [Hash]
-        def body
-          {}
-        end
       end
     end
   end

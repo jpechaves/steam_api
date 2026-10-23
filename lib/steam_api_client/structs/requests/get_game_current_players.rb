@@ -37,12 +37,6 @@ module SteamApiClient
           {appid: appid}
         end
 
-        # Return the class attributes as a Hash
-        # @return [Hash]
-        def body
-          {}
-        end
-
         # Tells if the request require the api_token in the query params
         # @return [Boolean]
         def needs_authorization?
