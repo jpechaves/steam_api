@@ -1,0 +1,38 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "date"
+require_relative "_script_helpers"
+require_relative "_bump"
+
+include ScriptHelpers
+
+USAGE = <<~TEXT
+  Usage: bin/bump patch|minor|major [--date YYYY-MM-DD]
+
+  Prepares a release PR: bumps lib/steam_api_client/version.rb and Gemfile.lock, and moves the
+  CHANGELOG's [Unreleased] entries under "## [<version>] - <date>" (today by default).
+  Nothing is committed or pushed. After the release PR is merged, run bin/release.
+TEXT
+
+if __FILE__ == $0
+  if no_arguments? || is_first_argument?("-h", "--help")
+    puts USAGE
+    exit(no_arguments? ? 1 : 0)
+  end
+
+  level, *options = ARGV
+  date = Date.today.iso8601
+  if options.first == "--date"
+    date = options[1].to_s
+    abort_with_message("❌ --date must be YYYY-MM-DD (got #{date.inspect})") unless date.match?(/\A\d{4}-\d{2}-\d{2}\z/) && Date.valid_date?(*date.split("-").map(&:to_i))
+    options = options.drop(2)
+  end
+  abort_with_message("Unknown arguments: #{options.join(" ")}\n\n#{USAGE}") unless options.empty?
+
+  begin
+    Bump.call(level: level, root: File.expand_path("..", __dir__), date: date)
+  rescue Bump::Error => error
+    abort_with_message("❌ #{error.message}")
+  end
+end
