@@ -21,6 +21,9 @@
 
 # steam_api_client
 
+[![Gem Version](https://img.shields.io/gem/v/steam_api_client)](https://rubygems.org/gems/steam_api_client)
+[![CI](https://github.com/jpechaves/steam_api/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/jpechaves/steam_api/actions/workflows/ci.yml)
+
 > Previously developed as `steam_api`. It is not related to the [`steam_api`](https://rubygems.org/gems/steam_api) gem on RubyGems.
 
 A Ruby gem for interacting with the [Steam Web API](https://developer.valvesoftware.com/wiki/Steam_Web_API). This gem provides a structured and user-friendly way to fetch various types of data from Steam's API endpoints, such as game details, player information, and achievements.
@@ -35,22 +38,28 @@ A Ruby gem for interacting with the [Steam Web API](https://developer.valvesoftw
 
 ## Installation
 
-Add this line to your application's Gemfile:
+Add the gem to your application's Gemfile:
 
 ```ruby
+gem "steam_api_client"
+```
+
+and run `bundle install`. Or let Bundler do both:
+
+```bash
 $ bundle add steam_api_client
 ```
 
-Or install it manually:
+Without Bundler, install it with:
 
 ```bash
 $ gem install steam_api_client
 ```
 
-Then execute:
+and load it with:
 
-```bash
-$ bundle install
+```ruby
+require "steam_api_client"
 ```
 
 ## Usage
