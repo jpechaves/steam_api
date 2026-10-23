@@ -14,6 +14,7 @@
     - [Running the Interactive Console](#running-the-interactive-console)
     - [Running Tests](#running-tests)
     - [Code Quality](#code-quality)
+    - [Releasing](#releasing)
   - [Contributing](#contributing)
     - [How to Contribute](#how-to-contribute)
   - [License](#license)
@@ -145,6 +146,17 @@ We use [standardrb](https://github.com/standardrb/standard) for linting and code
 ```bash
 $ bin/lint
 ```
+
+### Releasing
+
+Bump `lib/steam_api_client/version.rb`, add a matching `## [<version>]` section to `CHANGELOG.md`, and merge to `main`. Then run:
+
+```bash
+$ bin/release            # build and push the gem (asks for your RubyGems MFA code), then tag v<version> and push the tag
+$ bin/release --dry-run  # show what would happen without building, pushing or tagging
+```
+
+It checks out and pulls `main` first, and refuses to run with uncommitted changes or without a CHANGELOG entry. Steps that are already done are skipped, so running it again for a released version does nothing.
 
 ## Contributing
 

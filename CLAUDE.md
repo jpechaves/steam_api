@@ -19,6 +19,7 @@ bin/lint                                     # standardrb --no-fix (target ruby_
 bin/standardrb --fix                         # autofix style
 bundle exec rubycritic lib --no-browser      # Flay/Flog/Reek analysis (report in tmp/rubycritic; Reek reads .reek.yml)
 bundle exec bundler-audit check --update     # known advisories in Gemfile.lock
+bin/release [--dry-run]                      # publish the gemspec version to RubyGems (MFA prompt) and push tag v<version>; no-op if already released
 ```
 
 CI (`.github/workflows/ci.yml`) runs three jobs: `lint` (standardrb), `analysis` (RubyCritic with a `--minimum-score` gate; raise it when the score improves) and `test` (rspec matrix). `.github/workflows/audit.yml` runs bundler-audit on push, PRs and weekly.
