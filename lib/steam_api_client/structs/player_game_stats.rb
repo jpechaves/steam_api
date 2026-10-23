@@ -8,9 +8,17 @@ module SteamApiClient
         attribute :achieved?, Types::Integer
       end
 
+      # A game-defined stat, e.g. "Scout.accum.iDamageDealt" => 26580
+      class Stat < Base
+        attribute :name, Types::String
+        # Integer or Float exactly as Steam sends it (coercing would truncate float stats)
+        attribute :value, (Types::Strict::Integer | Types::Strict::Float).optional
+      end
+
       attribute :playerstats do
         attribute :steamID?, Types::Coercible::Integer.optional.default(nil)
         attribute :gameName?, Types::String
+        attribute :stats?, Types::Strict::Array.of(Stat)
         attribute :achievements?, Types::Strict::Array.of(
           InternalPlayerGameStatsAttributes
         )
