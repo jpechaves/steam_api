@@ -11,6 +11,7 @@ module SteamApi
       # @param [String] locale Localized ISO 639-1 string.
       #   Defaults to 'en'.
       # @return [SteamApi::Structs::AppDetails::Details] instance with the app details.
+      #   When the app is unavailable, `response.success` is false and `response.data` is nil.
       def retrieve(appid:, filters: [], country_code: "US", locale: "en")
         build_request_and_run(
           SteamApi::Structs::Requests::GetAppDetails,

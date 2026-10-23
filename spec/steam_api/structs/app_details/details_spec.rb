@@ -65,4 +65,27 @@ RSpec.describe SteamApi::Structs::AppDetails::Details do
       end
     end
   end
+
+  describe ".build_from_response" do
+    subject { described_class.build_from_response(json_response) }
+
+    context "when the app exists" do
+      let(:json_response) { {"400": {success: true, data: {type: "game", name: "Portal"}}} }
+
+      it "unwraps the appid key" do
+        is_expected.to have_attributes(
+          appid: 400,
+          response: have_attributes(success: true, data: have_attributes(name: "Portal"))
+        )
+      end
+    end
+
+    context "when the app is unavailable" do
+      let(:json_response) { {"1": {success: false}} }
+
+      it "returns an unsuccessful response without data" do
+        is_expected.to have_attributes(appid: 1, response: have_attributes(success: false, data: nil))
+      end
+    end
+  end
 end
