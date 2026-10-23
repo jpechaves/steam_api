@@ -44,5 +44,34 @@ module SteamApiClient
 
     # status_code: 500
     class HttpInternalServerError < ApiError; end
+
+    # Reads the Retry-After header of rate limited / unavailable responses
+    module RetryAfter
+      # Seconds to wait before retrying. Retry-After is either a number of
+      # seconds or an HTTP date.
+      # @return [Integer, nil] nil when the header is missing or invalid
+      def retry_after
+        value = response.headers&.[]("Retry-After").to_s.strip
+        return Integer(value, 10) if value.match?(/\A\d+\z/)
+        return if value.empty?
+
+        [(Time.httpdate(value) - Time.now).ceil, 0].max
+      rescue ArgumentError
+        nil
+      end
+    end
+
+    # status_code: 429. Steam rate limits frequent requests.
+    class HttpTooManyRequests < ApiError
+      include RetryAfter
+    end
+
+    # status_code: 502
+    class HttpBadGateway < ApiError; end
+
+    # status_code: 503
+    class HttpServiceUnavailable < ApiError
+      include RetryAfter
+    end
   end
 end

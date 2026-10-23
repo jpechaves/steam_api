@@ -25,6 +25,12 @@ module SteamApiClient
       !success?
     end
 
+    # Returns the HTTP response headers (case-insensitive)
+    # @return [Typhoeus::Response::Header, nil]
+    def headers
+      raw_response.headers
+    end
+
     # Returns the HTTP status code
     # @return [Integer]
     def status_code

@@ -102,6 +102,30 @@ RSpec.describe SteamApiClient::FailureHandler do
       end
     end
 
+    context "when the request is rate limited (429)" do
+      let(:exception) { SteamApiClient::Errors::HttpTooManyRequests }
+      let(:status_code) { 429 }
+      let(:body) { "Too Many Requests" }
+
+      it_behaves_like "validate exception class and error message"
+    end
+
+    context "when the request status code is 502" do
+      let(:exception) { SteamApiClient::Errors::HttpBadGateway }
+      let(:status_code) { 502 }
+      let(:body) { "Bad Gateway" }
+
+      it_behaves_like "validate exception class and error message"
+    end
+
+    context "when the request status code is 503" do
+      let(:exception) { SteamApiClient::Errors::HttpServiceUnavailable }
+      let(:status_code) { 503 }
+      let(:body) { "Service Unavailable" }
+
+      it_behaves_like "validate exception class and error message"
+    end
+
     context "when the request status code is a mapped 5xx error" do
       context "when the status code is 500" do
         let(:exception) { SteamApiClient::Errors::HttpInternalServerError }
