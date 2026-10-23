@@ -30,7 +30,7 @@ RSpec.describe "Steam API endpoints" do
 
       result = client.player_summaries.retrieve([76561197960435530, 76561197960265731])
 
-      expect(result.response.players.first).to have_attributes(steamid: "76561197960435530", personaname: "Robin")
+      expect(result.response.players.first).to have_attributes(steamid: 76561197960435530, personaname: "Robin")
     end
   end
 
@@ -147,6 +147,15 @@ RSpec.describe "Steam API endpoints" do
       result = client.app_details.retrieve(appid: 570, filters: ["basic", "price_overview"], country_code: "BR", locale: "pt")
 
       expect(result).to have_attributes(appid: 570, response: have_attributes(success: true, data: have_attributes(name: "Dota 2")))
+    end
+  end
+
+  describe "invalid data" do
+    it "raises ResponseParseError when a value can't be coerced to its declared type" do
+      stub_steam("#{web_api}/IPlayerService/GetSteamLevel/v0001/?key=test-key&steamid=76561197960435530",
+        {response: {player_level: "not a number"}})
+
+      expect { client.player_level.retrieve(76561197960435530) }.to raise_error(SteamApiClient::Errors::ResponseParseError)
     end
   end
 end

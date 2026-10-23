@@ -7,7 +7,7 @@ RSpec.describe SteamApiClient::Structs::Requests::GetPlayerAchievements do
     let(:params) { {steamid: "123456789", appid: 12345} }
 
     it "initializes with the given steamid and appid" do
-      expect(subject).to have_attributes(steamid: "123456789", appid: 12345)
+      expect(subject).to have_attributes(steamid: 123456789, appid: 12345)
     end
 
     context "when parameters are missing" do

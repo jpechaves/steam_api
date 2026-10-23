@@ -5,7 +5,7 @@ module SteamApiClient
     class AppGlobalAchievements < Base
       class InternalAppAchievementsAttributes < Dry::Struct
         attribute :name, Types::String
-        attribute :percent, Types::Decimal
+        attribute :percent, Types::Float
       end
 
       attribute :achievementpercentages do

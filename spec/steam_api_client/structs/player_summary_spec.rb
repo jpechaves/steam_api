@@ -21,7 +21,9 @@ RSpec.describe SteamApiClient::Structs::PlayerSummary do
     end
 
     context "when the params are present" do
-      it { is_expected.to have_attributes(**params) }
+      it "coerces the SteamID to an Integer" do
+        is_expected.to have_attributes(**params, steamid: 76561198063576425)
+      end
     end
   end
 end

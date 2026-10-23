@@ -28,4 +28,12 @@ RSpec.describe SteamApiClient::Structs::AppGlobalAchievements do
       end
     end
   end
+
+  describe "percent" do
+    it "coerces Steam's string percentages to Float" do
+      struct = described_class.new(achievementpercentages: {achievements: [{name: "TF_SCOUT_LONG_DISTANCE_RUNNER", percent: "49.6"}]})
+
+      expect(struct.achievementpercentages.achievements.first.percent).to eq(49.6)
+    end
+  end
 end

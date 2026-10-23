@@ -7,7 +7,7 @@ RSpec.describe SteamApiClient::Structs::Requests::GetPlayerFriends do
     let(:params) { {steamid: "123456789", relationship: "friend"} }
 
     it "initializes with the given steamid and relationship" do
-      expect(subject).to have_attributes(steamid: "123456789", relationship: "friend")
+      expect(subject).to have_attributes(steamid: 123456789, relationship: "friend")
     end
 
     context "when relationship is missing" do
