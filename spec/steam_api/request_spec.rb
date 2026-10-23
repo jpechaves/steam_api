@@ -17,6 +17,12 @@ RSpec.describe SteamApi::Request do
     it "builds the request without errors" do
       expect { request }.not_to raise_error
     end
+
+    it "passes the URL to Typhoeus as a String" do
+      expect(request.send(:raw_request).base_url).to eq(
+        "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=test_api_key&steamids=123"
+      )
+    end
   end
 
   describe "#run" do

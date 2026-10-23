@@ -32,7 +32,7 @@ module SteamApi
       else raise SteamApi::Errors::EndpointKindNotSupported
       end
 
-      @raw_request = ::Typhoeus::Request.new(url, build_options)
+      @raw_request = ::Typhoeus::Request.new(url.to_s, build_options)
     end
 
     def build_base_url
