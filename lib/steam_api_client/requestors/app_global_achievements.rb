@@ -4,14 +4,14 @@ module SteamApiClient
     # of an app in the Steam Web Api.
     class AppGlobalAchievements < Base
       # Get on the Api all global achievements info of an App in the Steam.
-      # @param [Integer] gameid The Steam app id
+      # @param [Integer] appid The Steam app id (sent to Steam as `gameid`)
       # @return [SteamApiClient::Structs::AppGlobalAchievements] instance with the
       #   player summary details.
-      def retrieve(gameid)
+      def retrieve(appid:)
         build_request_and_run(
           SteamApiClient::Structs::Requests::GetAppGlobalAchievements,
           SteamApiClient::Structs::AppGlobalAchievements,
-          gameid: gameid
+          gameid: appid
         )
       end
     end

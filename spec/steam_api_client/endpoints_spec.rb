@@ -28,7 +28,7 @@ RSpec.describe "Steam API endpoints" do
         }]}
       })
 
-      result = client.player_summaries.retrieve([76561197960435530, 76561197960265731])
+      result = client.player_summaries.retrieve(steamids: [76561197960435530, 76561197960265731])
 
       expect(result.response.players.first).to have_attributes(steamid: 76561197960435530, personaname: "Robin")
     end
@@ -39,7 +39,7 @@ RSpec.describe "Steam API endpoints" do
       stub_steam("#{web_api}/ISteamUser/ResolveVanityURL/v0001/?key=test-key&vanityurl=gabelogannewell",
         {response: {steamid: "76561197960287930", success: 1}})
 
-      expect(client.player_steamid.retrieve("gabelogannewell").response).to have_attributes(steamid: 76561197960287930, success: 1)
+      expect(client.player_steamid.retrieve(vanityurl: "gabelogannewell").response).to have_attributes(steamid: 76561197960287930, success: 1)
     end
   end
 
@@ -48,7 +48,7 @@ RSpec.describe "Steam API endpoints" do
       stub_steam("#{web_api}/ISteamUser/GetFriendList/v0001/?key=test-key&steamid=76561197960435530&relationship=all",
         {friendslist: {friends: [{steamid: "76561197960265731", relationship: "friend", friend_since: 0}]}})
 
-      expect(client.player_friends.retrieve(76561197960435530).friendslist.friends.first).to have_attributes(relationship: "friend")
+      expect(client.player_friends.retrieve(steamid: 76561197960435530).friendslist.friends.first).to have_attributes(relationship: "friend")
     end
   end
 
@@ -57,7 +57,7 @@ RSpec.describe "Steam API endpoints" do
       stub_steam("#{web_api}/IPlayerService/GetSteamLevel/v0001/?key=test-key&steamid=76561197960435530",
         {response: {player_level: 42}})
 
-      expect(client.player_level.retrieve(76561197960435530).response.player_level).to eq(42)
+      expect(client.player_level.retrieve(steamid: 76561197960435530).response.player_level).to eq(42)
     end
   end
 
@@ -70,7 +70,7 @@ RSpec.describe "Steam API endpoints" do
         }]}
       })
 
-      result = client.player_owned_games.retrieve(76561197960435530, include_appinfo: true)
+      result = client.player_owned_games.retrieve(steamid: 76561197960435530, include_appinfo: true)
 
       expect(result.response).to have_attributes(game_count: 1, games: [have_attributes(appid: 440, name: "Team Fortress 2")])
     end
@@ -82,7 +82,7 @@ RSpec.describe "Steam API endpoints" do
         response: {total_count: 1, games: [{appid: 570, name: "Dota 2", playtime_2weeks: 60, playtime_forever: 600, img_icon_url: "icon"}]}
       })
 
-      expect(client.player_recent_games.retrieve(76561197960435530).response.games.first).to have_attributes(appid: 570, playtime_2weeks: 60)
+      expect(client.player_recent_games.retrieve(steamid: 76561197960435530).response.games.first).to have_attributes(appid: 570, playtime_2weeks: 60)
     end
   end
 
@@ -93,7 +93,7 @@ RSpec.describe "Steam API endpoints" do
                       achievements: [{apiname: "TF_PLAY_GAME_EVERYCLASS", achieved: 1, unlocktime: 1700000000}]}
       })
 
-      result = client.player_achievements.retrieve(440, 76561197960435530)
+      result = client.player_achievements.retrieve(appid: 440, steamid: 76561197960435530)
 
       expect(result.playerstats).to have_attributes(success: true, achievements: [have_attributes(apiname: "TF_PLAY_GAME_EVERYCLASS")])
     end
@@ -105,7 +105,7 @@ RSpec.describe "Steam API endpoints" do
         playerstats: {steamID: "76561197960435530", gameName: "Team Fortress 2", achievements: [{name: "TF_PLAY_GAME_EVERYCLASS", achieved: 1}]}
       })
 
-      expect(client.player_game_stats.retrieve(440, 76561197960435530).playerstats).to have_attributes(gameName: "Team Fortress 2")
+      expect(client.player_game_stats.retrieve(appid: 440, steamid: 76561197960435530).playerstats).to have_attributes(gameName: "Team Fortress 2")
     end
   end
 
@@ -118,7 +118,7 @@ RSpec.describe "Steam API endpoints" do
         }]}
       })
 
-      expect(client.app_news.retrieve(440, 2).appnews.newsitems.first).to have_attributes(title: "Update")
+      expect(client.app_news.retrieve(appid: 440, count: 2).appnews.newsitems.first).to have_attributes(title: "Update")
     end
   end
 
@@ -127,7 +127,7 @@ RSpec.describe "Steam API endpoints" do
       stub_steam("#{web_api}/ISteamUserStats/GetGlobalAchievementPercentagesForApp/v0002/?gameid=440",
         {achievementpercentages: {achievements: [{name: "TF_SCOUT_LONG_DISTANCE_RUNNER", percent: "49.6"}]}})
 
-      expect(client.app_global_achievements.retrieve(440).achievementpercentages.achievements.first).to have_attributes(name: "TF_SCOUT_LONG_DISTANCE_RUNNER")
+      expect(client.app_global_achievements.retrieve(appid: 440).achievementpercentages.achievements.first).to have_attributes(name: "TF_SCOUT_LONG_DISTANCE_RUNNER")
     end
   end
 
@@ -135,7 +135,7 @@ RSpec.describe "Steam API endpoints" do
     it "calls ISteamUserStats/GetNumberOfCurrentPlayers/v0001 without the API key" do
       stub_steam("#{web_api}/ISteamUserStats/GetNumberOfCurrentPlayers/v0001/?appid=440", {response: {player_count: 83494, result: 1}})
 
-      expect(client.game_current_players.retrieve(440).response).to have_attributes(player_count: 83494, result: 1)
+      expect(client.game_current_players.retrieve(appid: 440).response).to have_attributes(player_count: 83494, result: 1)
     end
   end
 
@@ -155,7 +155,14 @@ RSpec.describe "Steam API endpoints" do
       stub_steam("#{web_api}/IPlayerService/GetSteamLevel/v0001/?key=test-key&steamid=76561197960435530",
         {response: {player_level: "not a number"}})
 
-      expect { client.player_level.retrieve(76561197960435530) }.to raise_error(SteamApiClient::Errors::ResponseParseError)
+      expect { client.player_level.retrieve(steamid: 76561197960435530) }.to raise_error(SteamApiClient::Errors::ResponseParseError)
+    end
+  end
+
+  describe "arguments" do
+    it "requires keyword arguments, so IDs can't be swapped by position" do
+      expect { client.player_achievements.retrieve(440, 76561197960435530) }.to raise_error(ArgumentError)
+      expect { client.player_achievements.retrieve(appid: 440) }.to raise_error(ArgumentError, /missing keyword: :steamid/)
     end
   end
 end

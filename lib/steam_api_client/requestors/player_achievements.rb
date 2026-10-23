@@ -8,7 +8,7 @@ module SteamApiClient
       # @param [Integer] steamid The Steam user id
       # @return [SteamApiClient::Structs::PlayerAchievements] instance with the
       #   player summary details.
-      def retrieve(appid, steamid)
+      def retrieve(appid:, steamid:)
         build_request_and_run(
           SteamApiClient::Structs::Requests::GetPlayerAchievements,
           SteamApiClient::Structs::PlayerAchievements,

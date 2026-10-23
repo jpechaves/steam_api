@@ -96,7 +96,7 @@ client = SteamApiClient::Client.new(api_token: "your-API-token-value", timeout: 
 
 ```ruby
 client = SteamApiClient::Client.new(api_token: "your-API-token-value")
-client.player_summaries.retrieve([76561198160009756])
+client.player_summaries.retrieve(steamids: [76561198160009756])
 ```
 
 #### Get App Details

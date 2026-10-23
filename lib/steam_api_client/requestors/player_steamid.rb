@@ -7,7 +7,7 @@ module SteamApiClient
       # @param [String] vanityurl - The Steam user short url
       # @return [SteamApiClient::Structs::PlayerSteamId] instance with the
       #   player SteamId.
-      def retrieve(vanityurl)
+      def retrieve(vanityurl:)
         build_request_and_run(
           SteamApiClient::Structs::Requests::GetPlayerSteamId,
           SteamApiClient::Structs::PlayerSteamId,

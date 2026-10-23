@@ -9,7 +9,7 @@ module SteamApiClient
       # @param [Integer] maxlength The max length of the news content
       # @return [SteamApiClient::Structs::AppNews] instance with the
       #   player summary details.
-      def retrieve(appid, count, maxlength = 300)
+      def retrieve(appid:, count:, maxlength: 300)
         build_request_and_run(
           SteamApiClient::Structs::Requests::GetAppNews,
           SteamApiClient::Structs::AppNews,

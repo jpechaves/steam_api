@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Changed
+
+- **Breaking:** every `retrieve` method takes keyword arguments (#24), so IDs can't be swapped by position. Defaults are unchanged.
+
+  | Before | After |
+  |---|---|
+  | `player_summaries.retrieve([id])` | `player_summaries.retrieve(steamids: [id])` |
+  | `player_steamid.retrieve("name")` | `player_steamid.retrieve(vanityurl: "name")` |
+  | `player_friends.retrieve(id, "friend")` | `player_friends.retrieve(steamid: id, relationship: "friend")` |
+  | `player_level.retrieve(id)` | `player_level.retrieve(steamid: id)` |
+  | `player_owned_games.retrieve(id, include_appinfo: true)` | `player_owned_games.retrieve(steamid: id, include_appinfo: true)` |
+  | `player_recent_games.retrieve(id, 10)` | `player_recent_games.retrieve(steamid: id, count: 10)` |
+  | `player_achievements.retrieve(appid, id)` | `player_achievements.retrieve(appid: appid, steamid: id)` |
+  | `player_game_stats.retrieve(appid, id)` | `player_game_stats.retrieve(appid: appid, steamid: id)` |
+  | `app_news.retrieve(appid, 5, 500)` | `app_news.retrieve(appid: appid, count: 5, maxlength: 500)` |
+  | `app_global_achievements.retrieve(appid)` | `app_global_achievements.retrieve(appid: appid)` |
+  | `game_current_players.retrieve(appid)` | `game_current_players.retrieve(appid: appid)` |
+
 ### Fixed
 
 - Responses with duplicate JSON keys parse the same on every `json` gem version, with the last value winning. json 3 rejects duplicate keys by default, which would have raised `ResponseParseError` (#19).
