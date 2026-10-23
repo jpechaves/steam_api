@@ -37,6 +37,36 @@ RSpec.describe SteamApi::Client do
     end
   end
 
+  describe "timeouts" do
+    after do
+      described_class.config.timeout = described_class::DEFAULT_TIMEOUT
+      described_class.config.connect_timeout = described_class::DEFAULT_CONNECT_TIMEOUT
+    end
+
+    it "defaults to 10s total and 5s to connect" do
+      client = described_class.new
+
+      expect(client).to have_attributes(timeout: 10, connect_timeout: 5)
+    end
+
+    it "falls back to the configured timeouts" do
+      described_class.configure do |config|
+        config.timeout = 30
+        config.connect_timeout = 2
+      end
+
+      expect(described_class.new).to have_attributes(timeout: 30, connect_timeout: 2)
+    end
+
+    it "prefers the timeouts given to the instance" do
+      described_class.configure { |config| config.timeout = 30 }
+
+      client = described_class.new(timeout: 1.5, connect_timeout: 0.5)
+
+      expect(client).to have_attributes(timeout: 1.5, connect_timeout: 0.5)
+    end
+  end
+
   describe "#base_endpoint" do
     subject { described_class.new.base_endpoint }
 

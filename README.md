@@ -67,6 +67,17 @@ Alternatively, you can initialize the client directly:
 client = SteamApi::Client.new(api_token: "your-API-token-value")
 ```
 
+Requests time out after 10 seconds (5 seconds to connect) and raise `SteamApi::Errors::HttpTimeout`. You can change this globally or per client, in seconds:
+
+```ruby
+SteamApi::Client.configure do |config|
+  config.timeout = 30
+  config.connect_timeout = 2
+end
+
+client = SteamApi::Client.new(api_token: "your-API-token-value", timeout: 5)
+```
+
 ### Example Requests
 
 #### Get Player Summaries

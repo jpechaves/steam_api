@@ -35,6 +35,27 @@ RSpec.describe SteamApi::Request do
     end
   end
 
+  describe "timeouts" do
+    let(:client) { SteamApi::Client.new(api_token: "test_api_key", timeout: 1.5, connect_timeout: 0.25) }
+
+    it "passes the client's timeouts to Typhoeus in milliseconds" do
+      expect(request.send(:raw_request).options).to include(timeout_ms: 1500, connecttimeout_ms: 250, nosignal: true)
+    end
+
+    context "when the request times out" do
+      before do
+        timed_out = Typhoeus::Response.new(return_code: :operation_timedout, response_code: 0)
+        Typhoeus.stub(/api.steampowered.com/).and_return(timed_out)
+      end
+
+      after { Typhoeus::Expectation.clear }
+
+      it "raises an HttpTimeout error" do
+        expect { request.run }.to raise_error(SteamApi::Errors::HttpTimeout)
+      end
+    end
+  end
+
   describe "private methods" do
     describe "#build_base_url" do
       it "constructs the correct base URL" do
