@@ -35,11 +35,12 @@ class Release
     shell.run("git pull --ff-only origin main")
 
     @tag = "v#{version.call}"
+    published = rubygems.published?(GEM_NAME, tag.delete_prefix("v"))
+    # main usually moves on after a release, so check this before comparing the tag with HEAD
+    return already_released if published && remote_tag
+
     ensure_changelog_entry!
     ensure_remote_tag_matches_head!
-
-    published = rubygems.published?(GEM_NAME, tag.delete_prefix("v"))
-    return already_released if published && remote_tag
     return tag_published_version if published
 
     publish_gem

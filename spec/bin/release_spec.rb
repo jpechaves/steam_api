@@ -90,6 +90,16 @@ RSpec.describe Release do
     end
   end
 
+  context "when the version is released and main has moved on since" do
+    let(:published) { true }
+    let(:remote_tag) { "tagobj\trefs/tags/v1.2.3\nolder789\trefs/tags/v1.2.3^{}\n" }
+
+    it "does nothing" do
+      expect(release.call).to eq(:already_released)
+      expect(shell.commands).not_to include(build, push, tag, push_tag)
+    end
+  end
+
   context "when the version is published but not tagged" do
     let(:published) { true }
 
