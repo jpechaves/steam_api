@@ -1,0 +1,36 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "json"
+require "open3"
+require_relative "_script_helpers"
+require_relative "_changelog_check"
+
+include ScriptHelpers
+
+USAGE = <<~TEXT
+  Usage: bin/check_changelog BASE [HEAD]
+
+  Fails when the changes in BASE...HEAD (HEAD defaults to HEAD) touch lib/ or the gemspec
+  without updating CHANGELOG.md. PR labels are read from PR_LABELS (a JSON array); the
+  "#{ChangelogCheck::SKIP_LABEL}" label skips the check.
+
+  Example: bin/check_changelog origin/main
+TEXT
+
+if __FILE__ == $0
+  if no_arguments? || is_first_argument?("-h", "--help") || ARGV.size > 2
+    puts USAGE
+    exit(is_first_argument?("-h", "--help") ? 0 : 1)
+  end
+
+  base, head = ARGV[0], ARGV[1] || "HEAD"
+  output, status = Open3.capture2("git", "diff", "--name-only", "#{base}...#{head}")
+  abort_with_message("❌ git diff #{base}...#{head} failed") unless status.success?
+
+  labels = JSON.parse(ENV.fetch("PR_LABELS", "[]"))
+  result = ChangelogCheck.call(changed_files: output.lines.map(&:strip), labels: labels)
+
+  print_message(result.ok? ? "✅ #{result.message}" : "❌ #{result.message}")
+  exit(result.ok? ? 0 : 1)
+end
