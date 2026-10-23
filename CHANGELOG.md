@@ -34,6 +34,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
+- `player_owned_games` failed on real public libraries: it required `playtime_windows_forever`, `playtime_mac_forever`, `playtime_linux_forever` and `rtime_last_played`, which Steam doesn't send. They're optional now, and `playtime_2weeks`, `has_community_visible_stats`, `has_leaderboards` and `content_descriptorids` are exposed (#70).
 - Responses with duplicate JSON keys parse the same on every `json` gem version, with the last value winning. json 3 rejects duplicate keys by default, which would have raised `ResponseParseError` (#19).
 
 ### Changed

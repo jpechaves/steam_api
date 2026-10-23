@@ -19,7 +19,10 @@ require "debug"
 # Specs must never reach the network: unstubbed requests raise Typhoeus::Errors::NoStub
 Typhoeus::Config.block_connection = true
 
+Dir[File.expand_path("support/**/*.rb", __dir__)].sort.each { |file| require file }
+
 RSpec.configure do |config|
+  config.include SteamFixtures
   # Enable flags like --only-failures and --next-failure
   config.example_status_persistence_file_path = ".rspec_status"
 

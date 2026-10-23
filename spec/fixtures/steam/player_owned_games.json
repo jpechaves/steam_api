@@ -1,0 +1,52 @@
+{
+  "response": {
+    "game_count": 375,
+    "games": [
+      {
+        "appid": 440,
+        "name": "Team Fortress 2",
+        "playtime_forever": 2090,
+        "img_icon_url": "f568912870a4684f9ec76277a1a404dda6bab213",
+        "has_community_visible_stats": true,
+        "has_leaderboards": true
+      },
+      {
+        "appid": 10,
+        "name": "Counter-Strike",
+        "playtime_forever": 0,
+        "img_icon_url": "6b0312cda02f5f777efa2f3318c307ff9acafbb5",
+        "content_descriptorids": [
+          2,
+          5
+        ]
+      },
+      {
+        "appid": 2868840,
+        "name": "Slay the Spire 2",
+        "playtime_2weeks": 922,
+        "playtime_forever": 8357,
+        "img_icon_url": "f92b09dab91f1d1738f72fe0dd9be18dcc2901f9"
+      },
+      {
+        "appid": 20,
+        "name": "Team Fortress Classic",
+        "playtime_forever": 0,
+        "img_icon_url": "38ea7ebe3c1abbbbf4eabdbef174c41a972102b9",
+        "content_descriptorids": [
+          2,
+          5
+        ]
+      },
+      {
+        "appid": 30,
+        "name": "Day of Defeat",
+        "playtime_forever": 0,
+        "img_icon_url": "aadc0ce51ff6ba2042d633f8ec033b0de62091d0",
+        "content_descriptorids": [
+          2,
+          5
+        ]
+      }
+    ]
+  }
+}
