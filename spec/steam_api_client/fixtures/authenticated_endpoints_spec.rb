@@ -12,6 +12,15 @@ RSpec.describe "Authenticated endpoints, real responses" do
         steamid: 76561198000000001, personaname: "Example Player", communityvisibilitystate: 3, profilestate: 1, personastate: 0
       )
     end
+
+    it "exposes the extra fields Steam sends for public profiles" do
+      player = parse_steam_fixture("player_summaries", structs::PlayerSummaries).response.players.first
+
+      expect(player).to have_attributes(
+        realname: "Example Name", timecreated: 1262304000, loccountrycode: "US",
+        avatarhash: "0" * 40, primaryclanid: 103582791400000000, personastateflags: 0
+      )
+    end
   end
 
   describe "ResolveVanityURL" do
@@ -72,6 +81,13 @@ RSpec.describe "Authenticated endpoints, real responses" do
 
       expect(stats).to have_attributes(steamID: 76561198000000001, gameName: "Team Fortress 2")
       expect(stats.achievements.map(&:name)).to include("TF_PLAY_GAME_EVERYCLASS")
+    end
+
+    it "exposes the game's stats as name/value pairs" do
+      stats = parse_steam_fixture("player_game_stats", structs::PlayerGameStats).playerstats.stats
+
+      expect(stats.first).to have_attributes(name: "Scout.accum.iBuildingsDestroyed", value: 1)
+      expect(stats.map(&:value)).to all(be_a(Integer))
     end
 
     it "raises HttpBadRequest for a private profile (Steam answers 400 with an empty object)" do

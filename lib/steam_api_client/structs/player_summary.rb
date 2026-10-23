@@ -29,6 +29,18 @@ module SteamApiClient
       attribute :lastlogoff, Types::Optional::Integer
       # If set, indicates the profile allows public comments.
       attribute :commentpermission, Types::Optional::Integer
+      # Optional fields: only sent when the profile (or that part of it) is public
+      # The player's "real" name, if they set one
+      attribute? :realname, Types::String
+      # When the account was created, in unix time
+      attribute? :timecreated, Types::Integer
+      # ISO 3166 country code of the player's location
+      attribute? :loccountrycode, Types::String
+      # Hash used in the avatar URLs
+      attribute? :avatarhash, Types::String
+      # The player's primary group (a group SteamID)
+      attribute? :primaryclanid, Types::Integer
+      attribute? :personastateflags, Types::Integer
     end
   end
 end

@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- `player_game_stats` exposes the game's stats: `playerstats.stats`, a list of `name`/`value` pairs. Values keep the Integer or Float Steam sends (#71).
+- `PlayerSummary` exposes `realname`, `timecreated`, `loccountrycode`, `avatarhash`, `primaryclanid` (an Integer, like other SteamIDs) and `personastateflags`. They're `nil` when the profile doesn't make them public (#71).
 - `SteamApiClient::Errors::HttpTooManyRequests` (429), `HttpBadGateway` (502) and `HttpServiceUnavailable` (503), so rate limits and outages can be retried selectively. 429 and 503 errors expose `#retry_after`, the seconds from the `Retry-After` header (`nil` when absent). All three are `ApiError`s, like before (#27).
 - `SteamApiClient::Errors::MissingApiToken`, raised before any request when an endpoint needs an API token and the client has none (nil or empty). Previously the request was sent and Steam's HTML "key is missing" page came back as `HttpBadRequest` (#25).
 
