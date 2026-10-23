@@ -35,19 +35,30 @@ module SteamApi
     # returns an empty hash
     # @return [Hash]
     def to_h
-      ::JSON.parse(raw_response.body.to_s, symbolize_names: true)
+      parse_body
     rescue JSON::ParserError
       {}
     end
 
     # Parses the response's json body and build the expected struct
     # @return [SteamApi::Structs::Base]
+    # @raise [SteamApi::Errors::ResponseParseError] if the body isn't a JSON object
+    #   or doesn't match the response struct
     def result
-      response_struct.build_from_response(to_h)
+      json_response = parse_body
+      raise TypeError, "expected a JSON object, got #{json_response.class}" unless json_response.is_a?(Hash)
+
+      response_struct.build_from_response(json_response)
+    rescue JSON::ParserError, TypeError, Dry::Struct::Error
+      raise Errors::ResponseParseError.new(self, response_struct)
     end
 
     private
 
     attr_accessor :raw_response, :response_struct
+
+    def parse_body
+      ::JSON.parse(raw_response.body.to_s, symbolize_names: true)
+    end
   end
 end

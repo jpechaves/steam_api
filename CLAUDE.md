@@ -32,7 +32,7 @@ Every endpoint is implemented as three pieces wired together through a shared pi
    Each also defines `self.build_from_params(params)` (validates required keys, raises `StandardError` if missing), `query_params`, and usually overrides `body` to `{}` and `needs_authorization?` (adds `key=<api_token>` to the query when true). `endpoint_kind` (`:base_endpoint` / `:storefront_endpoint`) selects the URL builder in `Request`.
 3. **Response struct** (`lib/steam_api/structs/*.rb`, subclass of `Structs::Base`) — a Dry::Struct mirroring the JSON payload; `build_from_response(hash)` defaults to `new(**hash)` but can be overridden to reshape the payload (e.g. `AppDetails::Details` unwraps the app-id-keyed top level). Use `attribute?` for fields Steam may omit; shared types live in `Structs::Types` (incl. `Types::Optional::String/Integer`).
 
-Pipeline: `Requestor` → `RequestStruct.build_from_params` → `SteamApi::Request` (builds URL with `URI.join` and a `Typhoeus::Request`) → `#run` → `SteamApi::Response` (wraps Typhoeus response; `#result` parses JSON with symbolized keys into the response struct) → `FailureHandler.instance.call` raises `SteamApi::Errors::*` subclasses of `ApiError` by status code / timeout.
+Pipeline: `Requestor` → `RequestStruct.build_from_params` → `SteamApi::Request` (builds URL with `URI.join` and a `Typhoeus::Request`) → `#run` → `SteamApi::Response` (wraps Typhoeus response; `#result` parses JSON with symbolized keys into the response struct, raising `Errors::ResponseParseError` with the JSON/Dry::Struct error as `cause` when that fails) → `FailureHandler.instance.call` raises `SteamApi::Errors::*` subclasses of `ApiError` by status code / timeout.
 
 ### Adding a new endpoint
 

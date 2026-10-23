@@ -49,5 +49,37 @@ RSpec.describe SteamApi::Response do
       expect(response_struct).to receive(:build_from_response).with({key: "value"})
       response.result
     end
+
+    context "when the body is not JSON" do
+      let(:raw_response) { double("raw_response", code: 200, body: "<html>Oops</html>") }
+
+      it "raises a ResponseParseError caused by the JSON error" do
+        expect { response.result }.to raise_error(SteamApi::Errors::ResponseParseError) { |error|
+          expect(error.cause).to be_a(JSON::ParserError)
+          expect(error.response).to eq(response)
+        }
+      end
+    end
+
+    context "when the body is JSON but not an object" do
+      let(:raw_response) { double("raw_response", code: 200, body: "[]") }
+
+      it "raises a ResponseParseError" do
+        expect { response.result }.to raise_error(SteamApi::Errors::ResponseParseError)
+      end
+    end
+
+    context "when the body does not match the response struct" do
+      let(:raw_response) { double("raw_response", code: 200, body: '{"unexpected":{"secret_payload":1}}') }
+      let(:response_struct) { SteamApi::Structs::PlayerLevel }
+
+      it "raises a ResponseParseError caused by the struct error, without the payload in the message" do
+        expect { response.result }.to raise_error(SteamApi::Errors::ResponseParseError) { |error|
+          expect(error.cause).to be_a(Dry::Struct::Error)
+          expect(error.message).to include("SteamApi::Structs::PlayerLevel", "200")
+          expect(error.message).not_to include("secret_payload")
+        }
+      end
+    end
   end
 end
