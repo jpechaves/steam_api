@@ -1,0 +1,25 @@
+name: Changelog
+
+on:
+  pull_request:
+    # labeled/unlabeled re-run the check when skip-changelog is added or removed
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+permissions:
+  contents: read
+
+jobs:
+  changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # the check diffs the PR against its base branch
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+      - name: Require a CHANGELOG entry for user-visible changes
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          PR_LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+        run: bin/check_changelog "origin/$BASE_REF"
