@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.9.1] - 2026-10-23
+
+### Fixed
+
+- The gem no longer packages development files (`CLAUDE.md`, `CODE_OF_CONDUCT.md`, `Gemfile`, `Gemfile.lock` and tooling dotfiles). It ships only `lib/`, `LICENSE`, `README.md` and `CHANGELOG.md` (#37).
+
 ## [0.9.0] - 2026-10-23
 
 First release published to RubyGems, as [`steam_api_client`](https://rubygems.org/gems/steam_api_client).
@@ -91,5 +97,6 @@ The versions below were bumped in `version.rb` during development but **never pu
 
 - Initial gem skeleton.
 
-[Unreleased]: https://github.com/jpechaves/steam_api/compare/v0.9.0...HEAD
+[Unreleased]: https://github.com/jpechaves/steam_api/compare/v0.9.1...HEAD
+[0.9.1]: https://github.com/jpechaves/steam_api/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/jpechaves/steam_api/releases/tag/v0.9.0

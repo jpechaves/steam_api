@@ -17,15 +17,11 @@ Gem::Specification.new do |spec|
   # Require MFA for every `gem push` of this gem
   spec.metadata["rubygems_mfa_required"] = "true"
 
-  # Specify which files should be added to the gem when it is released.
-  # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
+  # Ship only the library code and its docs. Development files (bin/, specs,
+  # Gemfile, tooling config) stay out of the packaged gem.
   spec.files = Dir.chdir(__dir__) do
-    `git ls-files -z`.split("\x0").reject do |f|
-      (f == __FILE__) || f.match(%r{\A(?:(?:bin|test|spec|features)/|\.(?:git|travis|circleci)|appveyor)})
-    end
+    Dir["lib/**/*.rb", "LICENSE", "README.md", "CHANGELOG.md"]
   end
-  spec.bindir = "bin"
-  spec.executables = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
   # A mixin to add configuration functionality to your classes.
