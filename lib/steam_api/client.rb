@@ -31,10 +31,16 @@ module SteamApi
 
     BASE_ENDPOINT = "https://api.steampowered.com"
     STOREFRONT_API_ENDPOINT = "https://store.steampowered.com/api/"
+    DEFAULT_TIMEOUT = 10
+    DEFAULT_CONNECT_TIMEOUT = 5
 
     setting :api_token
+    # Maximum time, in seconds, for the whole request
+    setting :timeout, default: DEFAULT_TIMEOUT
+    # Maximum time, in seconds, to establish the connection
+    setting :connect_timeout, default: DEFAULT_CONNECT_TIMEOUT
 
-    attr_writer :api_token
+    attr_writer :api_token, :timeout, :connect_timeout
 
     attr_reader \
       :app_details,
@@ -52,9 +58,13 @@ module SteamApi
 
     # Initialize the client
     # @param [String] api_token - An existing api token.
+    # @param [Numeric] timeout - Request timeout in seconds. Defaults to the configured value.
+    # @param [Numeric] connect_timeout - Connection timeout in seconds. Defaults to the configured value.
     # @return [SteamApi::Client] - A new class instance.
-    def initialize(api_token: nil)
+    def initialize(api_token: nil, timeout: nil, connect_timeout: nil)
       @api_token = api_token
+      @timeout = timeout
+      @connect_timeout = connect_timeout
 
       @app_details ||= SteamApi::Requestors::AppDetails.new(self)
       @app_global_achievements ||= SteamApi::Requestors::AppGlobalAchievements.new(self)
@@ -75,6 +85,16 @@ module SteamApi
     # @return [String, nil]
     def api_token
       @api_token || config.api_token
+    end
+
+    # @return [Numeric] the request timeout in seconds
+    def timeout
+      @timeout || config.timeout
+    end
+
+    # @return [Numeric] the connection timeout in seconds
+    def connect_timeout
+      @connect_timeout || config.connect_timeout
     end
 
     def config

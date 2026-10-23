@@ -17,6 +17,12 @@ RSpec.describe SteamApi::Request do
     it "builds the request without errors" do
       expect { request }.not_to raise_error
     end
+
+    it "passes the URL to Typhoeus as a String" do
+      expect(request.send(:raw_request).base_url).to eq(
+        "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=test_api_key&steamids=123"
+      )
+    end
   end
 
   describe "#run" do
@@ -32,6 +38,27 @@ RSpec.describe SteamApi::Request do
 
       expect(response).to be_a(SteamApi::Response)
       expect(SteamApi::FailureHandler.instance).to have_received(:call).with(response)
+    end
+  end
+
+  describe "timeouts" do
+    let(:client) { SteamApi::Client.new(api_token: "test_api_key", timeout: 1.5, connect_timeout: 0.25) }
+
+    it "passes the client's timeouts to Typhoeus in milliseconds" do
+      expect(request.send(:raw_request).options).to include(timeout_ms: 1500, connecttimeout_ms: 250, nosignal: true)
+    end
+
+    context "when the request times out" do
+      before do
+        timed_out = Typhoeus::Response.new(return_code: :operation_timedout, response_code: 0)
+        Typhoeus.stub(/api.steampowered.com/).and_return(timed_out)
+      end
+
+      after { Typhoeus::Expectation.clear }
+
+      it "raises an HttpTimeout error" do
+        expect { request.run }.to raise_error(SteamApi::Errors::HttpTimeout)
+      end
     end
   end
 

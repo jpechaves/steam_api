@@ -32,7 +32,7 @@ module SteamApi
       else raise SteamApi::Errors::EndpointKindNotSupported
       end
 
-      @raw_request = ::Typhoeus::Request.new(url, build_options)
+      @raw_request = ::Typhoeus::Request.new(url.to_s, build_options)
     end
 
     def build_base_url
@@ -71,7 +71,11 @@ module SteamApi
         method: request_struct.method,
         headers: default_headers,
         body: request_struct.body.to_json,
-        followlocation: true
+        followlocation: true,
+        timeout_ms: (client.timeout * 1000).to_i,
+        connecttimeout_ms: (client.connect_timeout * 1000).to_i,
+        # Required for sub-second timeouts and safe use of timeouts across threads
+        nosignal: true
       }
     end
 
