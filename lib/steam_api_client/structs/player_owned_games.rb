@@ -3,7 +3,7 @@ module SteamApiClient
     # Struct that holds all user owned games
     # @see https://developer.valvesoftware.com/wiki/Steam_Web_API#GetOwnedGames_.28v0001.29
     class PlayerOwnedGames < Base
-      class InternalPlayerOwnedGames < Dry::Struct
+      class InternalPlayerOwnedGames < Base
         attribute :appid, Types::Integer
         attribute :name?, Types::String
         attribute :playtime_forever, Types::Integer

@@ -3,7 +3,7 @@ module SteamApiClient
     # Struct that holds all Player Achievements of an app information
     # @see https://developer.valvesoftware.com/wiki/Steam_Web_API#GetPlayerAchievements_.28v0001.29
     class PlayerAchievements < Base
-      class InternalPlayerAchievementsAttributes < Dry::Struct
+      class InternalPlayerAchievementsAttributes < Base
         attribute :apiname?, Types::String
         attribute :achieved?, Types::Integer
         attribute :unlocktime?, Types::Integer

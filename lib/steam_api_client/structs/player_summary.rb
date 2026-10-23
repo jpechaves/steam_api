@@ -2,7 +2,7 @@ module SteamApiClient
   module Structs
     # Struct that holds the Player Summary information
     # @see https://developer.valvesoftware.com/wiki/Steam_Web_API#GetPlayerSummaries_.28v0002.29
-    class PlayerSummary < Dry::Struct
+    class PlayerSummary < Base
       # 64bit SteamID of the user
       attribute :steamid, Types::Integer
       # The player's persona name (display name)
