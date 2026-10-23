@@ -64,7 +64,7 @@ end
 Alternatively, you can initialize the client directly:
 
 ```ruby
-client = SteamApi::Client.new("your-API-token-value")
+client = SteamApi::Client.new(api_token: "your-API-token-value")
 ```
 
 ### Example Requests
@@ -72,7 +72,7 @@ client = SteamApi::Client.new("your-API-token-value")
 #### Get Player Summaries
 
 ```ruby
-client = SteamApi::Client.new("your-API-token-value")
+client = SteamApi::Client.new(api_token: "your-API-token-value")
 client.player_summaries.retrieve([76561198160009756])
 ```
 

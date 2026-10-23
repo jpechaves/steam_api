@@ -2,6 +2,7 @@
 
 require "dry-configurable"
 require "dry-struct"
+require "json"
 require "singleton"
 require "typhoeus"
 

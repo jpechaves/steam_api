@@ -10,8 +10,30 @@ RSpec.describe SteamApi::Client do
       end
     end
 
+    after { described_class.config.api_token = nil }
+
     it "allows configuring the client through a block" do
       expect(subject.config.api_token).to eql(api_key)
+    end
+  end
+
+  describe "#api_token" do
+    after { described_class.config.api_token = nil }
+
+    it "returns the token given to the instance" do
+      expect(described_class.new(api_token: api_key).api_token).to eql(api_key)
+    end
+
+    it "falls back to the configured token" do
+      described_class.configure { |config| config.api_token = api_key }
+
+      expect(described_class.new.api_token).to eql(api_key)
+    end
+
+    it "prefers the instance token over the configured one" do
+      described_class.configure { |config| config.api_token = "configured" }
+
+      expect(described_class.new(api_token: api_key).api_token).to eql(api_key)
     end
   end
 

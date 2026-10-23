@@ -34,7 +34,7 @@ module SteamApi
 
     setting :api_token
 
-    attr_accessor :api_token
+    attr_writer :api_token
 
     attr_reader \
       :app_details,
@@ -68,6 +68,13 @@ module SteamApi
       @player_recent_games ||= SteamApi::Requestors::PlayerRecentGames.new(self)
       @player_steamid ||= SteamApi::Requestors::PlayerSteamId.new(self)
       @player_summaries ||= SteamApi::Requestors::PlayerSummaries.new(self)
+    end
+
+    # The token sent on authorized requests. Falls back to the value set
+    # through 'SteamApi::Client.configure' when none was given to the instance.
+    # @return [String, nil]
+    def api_token
+      @api_token || config.api_token
     end
 
     def config

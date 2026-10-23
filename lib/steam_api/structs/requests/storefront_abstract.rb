@@ -38,7 +38,7 @@ module SteamApi
         # Return the class attributes as a Hash
         # @return [Hash]
         def body
-          as_json.deep_symbolize_keys
+          to_h
         end
 
         # Tells if the request require the api_token in the query params
