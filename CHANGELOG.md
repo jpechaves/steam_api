@@ -36,13 +36,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   | `app_global_achievements.retrieve(appid)` | `app_global_achievements.retrieve(appid: appid)` |
   | `game_current_players.retrieve(appid)` | `game_current_players.retrieve(appid: appid)` |
 
-### Fixed
-
-- `player_owned_games` failed on real public libraries: it required `playtime_windows_forever`, `playtime_mac_forever`, `playtime_linux_forever` and `rtime_last_played`, which Steam doesn't send. They're optional now, and `playtime_2weeks`, `has_community_visible_stats`, `has_leaderboards` and `content_descriptorids` are exposed (#70).
-- Responses with duplicate JSON keys parse the same on every `json` gem version, with the last value winning. json 3 rejects duplicate keys by default, which would have raised `ResponseParseError` (#19).
-
-### Changed
-
 - Allows `dry-configurable` 1.2 and newer (`~> 1.1` instead of `~> 1.1.0`, which only allowed 1.1.x) (#19).
 - **Breaking:** requires Ruby 3.3 or newer (#17). Ruby 3.0, 3.1 and 3.2 have reached end of life. CI now tests 3.3, 3.4 and 4.0.
 - **Breaking:** response structs now validate their declared types (#15). Integer, Float and String fields convert Steam's values (Steam often sends numbers as strings), and a value that can't be converted raises `SteamApiClient::Errors::ResponseParseError` instead of passing through unchanged. `null` values still come through as `nil`.
@@ -50,6 +43,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   - `PlayerSummary#profilestate` is now an Integer (it was declared String; Steam sends `1`).
   - Global achievement `percent` is now a Float (it held Steam's raw value, e.g. `"49.6"`).
 - The gem homepage and README links point to `github.com/jpechaves/steam_api` instead of the old `sosolidkk` account (#22).
+
+### Fixed
+
+- `player_owned_games` failed on real public libraries: it required `playtime_windows_forever`, `playtime_mac_forever`, `playtime_linux_forever` and `rtime_last_played`, which Steam doesn't send. They're optional now, and `playtime_2weeks`, `has_community_visible_stats`, `has_leaderboards` and `content_descriptorids` are exposed (#70).
+- Responses with duplicate JSON keys parse the same on every `json` gem version, with the last value winning. json 3 rejects duplicate keys by default, which would have raised `ResponseParseError` (#19).
 
 ## [0.9.1] - 2026-10-23
 
