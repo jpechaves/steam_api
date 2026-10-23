@@ -3,7 +3,13 @@
 require "bundler/setup"
 
 require "simplecov"
-SimpleCov.start
+SimpleCov.start do
+  # Measure the gem only: specs and bin/ tooling would inflate the numbers
+  add_filter %r{\A/(?:spec|bin)/}
+  # Report lib files even when no spec loads them
+  track_files "lib/**/*.rb"
+  enable_coverage :branch
+end
 
 require "steam_api_client"
 require "debug"
