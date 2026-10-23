@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- `Client` `adapter` setting (`Client.configure { |c| c.adapter = ... }` or `Client.new(adapter:)`) to choose the Faraday adapter, `:net_http` by default (#35).
+
+### Changed
+
+- **Breaking:** the HTTP client is now [Faraday](https://github.com/lostisland/faraday) with its `Net::HTTP` adapter, replacing Typhoeus (#35). The gem no longer installs `typhoeus`, `ethon` or `ffi` (a compiled gem that needs libcurl). The public API (`Client`, every `retrieve`, the `Errors::*` classes) is unchanged, except:
+  - Connection failures (DNS, refused connection, TLS) raise the new `SteamApiClient::Errors::ConnectionError`. It is **not** an `ApiError`: before, they surfaced as a generic `ApiError` with status code `0`.
+  - `HttpTimeout` for a timed-out request has no HTTP response (`#response` is `nil`), and its message gives the timeouts. A real `408` response also raises `HttpTimeout`.
+  - Redirects aren't followed anymore. No Steam endpoint redirects (all were checked).
+
 ## [0.10.0] - 2026-10-23
 
 ### Added

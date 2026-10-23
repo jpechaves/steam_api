@@ -33,12 +33,16 @@ module SteamApiClient
     STOREFRONT_API_ENDPOINT = "https://store.steampowered.com/api/"
     DEFAULT_TIMEOUT = 10
     DEFAULT_CONNECT_TIMEOUT = 5
+    DEFAULT_ADAPTER = :net_http
 
     setting :api_token
     # Maximum time, in seconds, for the whole request
     setting :timeout, default: DEFAULT_TIMEOUT
     # Maximum time, in seconds, to establish the connection
     setting :connect_timeout, default: DEFAULT_CONNECT_TIMEOUT
+    # Faraday adapter used for the requests, e.g. :net_http (default) or any
+    # adapter gem the app installs
+    setting :adapter, default: DEFAULT_ADAPTER
 
     attr_writer :api_token, :timeout, :connect_timeout
 
@@ -60,11 +64,13 @@ module SteamApiClient
     # @param [String] api_token - An existing api token.
     # @param [Numeric] timeout - Request timeout in seconds. Defaults to the configured value.
     # @param [Numeric] connect_timeout - Connection timeout in seconds. Defaults to the configured value.
+    # @param [Symbol] adapter - Faraday adapter. Defaults to the configured value (:net_http).
     # @return [SteamApiClient::Client] - A new class instance.
-    def initialize(api_token: nil, timeout: nil, connect_timeout: nil)
+    def initialize(api_token: nil, timeout: nil, connect_timeout: nil, adapter: nil)
       @api_token = api_token
       @timeout = timeout
       @connect_timeout = connect_timeout
+      @adapter = adapter
 
       @app_details ||= SteamApiClient::Requestors::AppDetails.new(self)
       @app_global_achievements ||= SteamApiClient::Requestors::AppGlobalAchievements.new(self)
@@ -95,6 +101,17 @@ module SteamApiClient
     # @return [Numeric] the connection timeout in seconds
     def connect_timeout
       @connect_timeout || config.connect_timeout
+    end
+
+    # @return [Symbol] the Faraday adapter used for the requests
+    def adapter
+      @adapter || config.adapter
+    end
+
+    # The Faraday connection shared by this client's requests
+    # @return [Faraday::Connection]
+    def connection
+      @connection ||= ::Faraday.new { |faraday| faraday.adapter(adapter) }
     end
 
     def config

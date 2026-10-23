@@ -25,6 +25,10 @@ group :development, :test do
   # A Ruby gem to test Ruby code.
   # See: [https://github.com/rspec]
   gem "rspec", "~> 3.4"
+
+  # Stubs HTTP requests and blocks real connections in specs.
+  # See: [https://rubygems.org/gems/webmock]
+  gem "webmock", "~> 3.34"
 end
 
 group :test do

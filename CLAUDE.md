@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-`steam_api_client` is a Ruby gem wrapping the Steam Web API (`https://api.steampowered.com`) and the Storefront API (`https://store.steampowered.com/api/`). Runtime dependencies are only `dry-configurable`, `dry-struct`, and `typhoeus`. Ruby 3.3.4 is used locally (`.ruby-version`); the gemspec requires `>= 3.3` (3.0–3.2 are end-of-life), CI tests 3.3, 3.4 and 4.0.
+`steam_api_client` is a Ruby gem wrapping the Steam Web API (`https://api.steampowered.com`) and the Storefront API (`https://store.steampowered.com/api/`). Runtime dependencies are only `dry-configurable`, `dry-struct`, and `faraday` (Net::HTTP adapter by default, configurable with `Client.configure { |c| c.adapter = ... }`). Ruby 3.3.4 is used locally (`.ruby-version`); the gemspec requires `>= 3.3` (3.0–3.2 are end-of-life), CI tests 3.3, 3.4 and 4.0.
 
 ## Commands
 
@@ -25,11 +25,7 @@ bin/release [--dry-run]                      # publish the gemspec version to Ru
 
 CI (`.github/workflows/ci.yml`) runs three jobs: `lint` (standardrb), `analysis` (RubyCritic with a `--minimum-score` gate; raise it when the score improves) and `test` (rspec matrix). `.github/workflows/audit.yml` runs bundler-audit on push, PRs and weekly. `.github/workflows/changelog.yml` runs `bin/check_changelog`: PRs that touch `lib/` or the gemspec must update `CHANGELOG.md` unless labelled `skip-changelog` (check locally with `bin/check_changelog origin/main`).
 
-SimpleCov runs automatically with the specs and measures `lib/` only (line + branch coverage; CI fails below 98% line / 95% branch, local runs don't). Specs never hit the network: they stub `Typhoeus::Request`/responses with `instance_double`.
-
-## Changelog & releases
-
-- Every PR with a user-visible change (`lib/` or the gemspec) adds a line under `## [Unreleased]` in `CHANGELOG.md`, grouped as Added / Changed / Fixed / Security, with the issue number. CI-, `bin/`- and spec-only changes get no entry.
+SimpleCov runs automatically with the specs and measures `lib/` only (line + branch coverage; CI fails below 98% line / 95% branch, local runs don't). Specs never hit the network: `spec_helper` calls `WebMock.disable_net_connect!`, and requests are stubbed with `stub_request` (exact URL). Real, anonymized Steam responses live in `spec/fixtures/steam/` and run through the pipeline with `parse_steam_fixture` (`spec/support/steam_fixtures.rb`).md`, grouped as Added / Changed / Fixed / Security, with the issue number. CI-, `bin/`- and spec-only changes get no entry.
 - PRs never bump the version. A release is its own issue and PR: run `bin/bump patch|minor|major` on a release branch, commit, merge, then run `bin/release` from an up-to-date `main`.
 - `bin/` scripts keep their logic in `bin/_*.rb` (`Release`, `Bump`) so it can be tested from `spec/bin/` without running git or touching RubyGems.
 
@@ -44,7 +40,7 @@ Every endpoint is implemented as three pieces wired together through a shared pi
    Each also defines `self.build_from_params(params)` (validates required keys, raises `ArgumentError` if missing), `query_params`, and usually overrides `needs_authorization?` (adds `key=<api_token>` to the query when true; `Request` raises `Errors::MissingApiToken` up front if the client has no token). `endpoint_kind` (`:base_endpoint` / `:storefront_endpoint`) selects the URL builder in `Request`.
 3. **Response struct** (`lib/steam_api_client/structs/*.rb`, subclass of `Structs::Base`) — a Dry::Struct mirroring the JSON payload; `build_from_response(hash)` defaults to `new(**hash)` but can be overridden to reshape the payload (e.g. `AppDetails::Details` unwraps the app-id-keyed top level). Use `attribute?` for fields Steam may omit; shared types live in `Structs::Types` (incl. `Types::Optional::String/Integer`). `Types::Integer`/`Float`/`String`/`Bool` convert and validate values (Steam sends numbers as strings) but let `nil` through, because Steam sends `null` for missing values. Live-check `app_details` against a range of apps after changing types: required non-nil fields broke 31 of 48 real apps.
 
-Pipeline: `Requestor` → `RequestStruct.build_from_params` → `SteamApiClient::Request` (builds URL with `URI.join` and a `Typhoeus::Request`) → `#run` → `SteamApiClient::Response` (wraps Typhoeus response; `#result` parses JSON with symbolized keys into the response struct, raising `Errors::ResponseParseError` with the JSON/Dry::Struct error as `cause` when that fails) → `FailureHandler.instance.call` raises `SteamApiClient::Errors::*` subclasses of `ApiError` by status code / timeout.
+Pipeline: `Requestor` → `RequestStruct.build_from_params` → `SteamApiClient::Request` (builds the URL with `URI.join` and runs it through `Client#connection`, a Faraday connection; Faraday timeouts become `Errors::HttpTimeout` and connection/TLS failures `Errors::ConnectionError`) → `#run` → `SteamApiClient::Response` (wraps the `Faraday::Response`; `#result` parses JSON with symbolized keys into the response struct, raising `Errors::ResponseParseError` with the JSON/Dry::Struct error as `cause` when that fails) → `FailureHandler.instance.call` raises `SteamApiClient::Errors::*` subclasses of `ApiError` by status code / timeout.
 
 ### Adding a new endpoint
 

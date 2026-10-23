@@ -1,9 +1,9 @@
 require "spec_helper"
 
-# Calls every endpoint through the client against a Typhoeus stub registered
+# Calls every endpoint through the client against a WebMock stub registered
 # for the exact URL Steam documents. Real connections are blocked in
 # spec_helper, so a wrong interface, method, version, query param or API key
-# fails with Typhoeus::Errors::NoStub.
+# fails with WebMock::NetConnectNotAllowedError.
 #
 # List params are comma-joined and sent percent-encoded (%2C), which Steam
 # decodes the same as a literal comma.
@@ -12,10 +12,8 @@ RSpec.describe "Steam API endpoints" do
   let(:web_api) { "https://api.steampowered.com" }
   let(:store_api) { "https://store.steampowered.com/api" }
 
-  after { Typhoeus::Expectation.clear }
-
   def stub_steam(url, body)
-    Typhoeus.stub(url).and_return(Typhoeus::Response.new(code: 200, body: body.to_json))
+    stub_request(:get, url).to_return(status: 200, body: body.to_json)
   end
 
   describe "#player_summaries" do
@@ -152,13 +150,44 @@ RSpec.describe "Steam API endpoints" do
 
   describe "rate limiting" do
     it "raises HttpTooManyRequests with the Retry-After delay" do
-      Typhoeus.stub("#{web_api}/ISteamUserStats/GetNumberOfCurrentPlayers/v0001/?appid=440").and_return(
-        Typhoeus::Response.new(code: 429, body: "Too Many Requests", response_headers: "HTTP/1.1 429 Too Many Requests\r\nRetry-After: 30\r\n\r\n")
-      )
+      stub_request(:get, "#{web_api}/ISteamUserStats/GetNumberOfCurrentPlayers/v0001/?appid=440")
+        .to_return(status: 429, body: "Too Many Requests", headers: {"Retry-After" => "30"})
 
       expect { client.game_current_players.retrieve(appid: 440) }.to raise_error(SteamApiClient::Errors::HttpTooManyRequests) { |error|
         expect(error.retry_after).to eq(30)
       }
+    end
+  end
+
+  describe "network failures" do
+    let(:url) { "#{web_api}/ISteamUserStats/GetNumberOfCurrentPlayers/v0001/?appid=440" }
+
+    it "raises HttpTimeout when Steam doesn't answer in time" do
+      stub_request(:get, url).to_raise(Net::ReadTimeout)
+
+      expect { client.game_current_players.retrieve(appid: 440) }.to raise_error(SteamApiClient::Errors::HttpTimeout, /timed out/) { |error|
+        expect(error.cause).to be_a(Faraday::TimeoutError)
+      }
+    end
+
+    it "raises HttpTimeout when the connection can't be opened in time" do
+      stub_request(:get, url).to_timeout
+
+      expect { client.game_current_players.retrieve(appid: 440) }.to raise_error(SteamApiClient::Errors::HttpTimeout)
+    end
+
+    it "raises ConnectionError when Steam can't be reached" do
+      stub_request(:get, url).to_raise(Errno::ECONNREFUSED)
+
+      expect { client.game_current_players.retrieve(appid: 440) }.to raise_error(SteamApiClient::Errors::ConnectionError, /Could not connect to Steam/) { |error|
+        expect(error.cause).to be_a(Faraday::ConnectionFailed)
+      }
+    end
+
+    it "raises ConnectionError on TLS errors" do
+      stub_request(:get, url).to_raise(OpenSSL::SSL::SSLError)
+
+      expect { client.game_current_players.retrieve(appid: 440) }.to raise_error(SteamApiClient::Errors::ConnectionError)
     end
   end
 

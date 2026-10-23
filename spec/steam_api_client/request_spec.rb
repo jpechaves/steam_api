@@ -1,5 +1,4 @@
 require "spec_helper"
-require "typhoeus"
 
 RSpec.describe SteamApiClient::Request do
   let(:request_struct) do
@@ -18,35 +17,36 @@ RSpec.describe SteamApiClient::Request do
       expect { request }.not_to raise_error
     end
 
-    it "passes the URL to Typhoeus as a String" do
-      expect(request.send(:raw_request).base_url).to eq(
+    it "builds the full URL as a String" do
+      expect(request.send(:url)).to eq(
         "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=test_api_key&steamids=123"
       )
     end
   end
 
+  let(:url) { "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=test_api_key&steamids=123" }
+
   describe "#run" do
-    let(:raw_response) { instance_double("Typhoeus::Response", body: "{}", code: 200) }
+    before { stub_request(:get, url).to_return(status: 200, body: "{}") }
 
-    before do
-      allow(Typhoeus::Request).to receive(:new).and_return(instance_double("Typhoeus::Request", run: raw_response))
-      allow(SteamApiClient::FailureHandler.instance).to receive(:call)
-    end
+    it "executes the request and returns a checked response" do
+      allow(SteamApiClient::FailureHandler.instance).to receive(:call).and_call_original
 
-    it "executes the request and returns a response" do
       response = request.run
 
       expect(response).to be_a(SteamApiClient::Response)
+      expect(response.status_code).to eq(200)
       expect(SteamApiClient::FailureHandler.instance).to have_received(:call).with(response)
     end
   end
 
   describe "body" do
     it "sends GET requests without a body or a JSON content type" do
-      options = request.send(:raw_request).options
+      stub = stub_request(:get, url).with { |req| req.body.to_s.empty? && !req.headers.key?("Content-Type") }
 
-      expect(options).not_to include(:body)
-      expect(options[:headers]).not_to include("Content-Type")
+      request.run
+
+      expect(stub).to have_been_requested
     end
 
     context "when the request isn't a GET" do
@@ -59,10 +59,11 @@ RSpec.describe SteamApiClient::Request do
       end
 
       it "sends the struct's body as JSON" do
-        options = request.send(:raw_request).options
+        stub = stub_request(:post, url).with(body: '{"steamids":[123]}', headers: {"Content-Type" => "application/json"})
 
-        expect(options).to include(method: :post, body: '{"steamids":[123]}')
-        expect(options[:headers]).to include("Content-Type" => "application/json")
+        request.run
+
+        expect(stub).to have_been_requested
       end
     end
   end
@@ -70,21 +71,23 @@ RSpec.describe SteamApiClient::Request do
   describe "timeouts" do
     let(:client) { SteamApiClient::Client.new(api_token: "test_api_key", timeout: 1.5, connect_timeout: 0.25) }
 
-    it "passes the client's timeouts to Typhoeus in milliseconds" do
-      expect(request.send(:raw_request).options).to include(timeout_ms: 1500, connecttimeout_ms: 250, nosignal: true)
+    it "passes the client's timeouts to Faraday in seconds" do
+      expect(request.send(:request_options)).to eq(timeout: 1.5, open_timeout: 0.25)
     end
 
-    context "when the request times out" do
-      before do
-        timed_out = Typhoeus::Response.new(return_code: :operation_timedout, response_code: 0)
-        Typhoeus.stub(/api.steampowered.com/).and_return(timed_out)
+    it "applies them to the Faraday request" do
+      stub_request(:get, url).to_return(status: 200, body: "{}")
+      options = nil
+      allow(client.connection).to receive(:run_request).and_wrap_original do |original, *args, &block|
+        original.call(*args) do |req|
+          block.call(req)
+          options = req.options
+        end
       end
 
-      after { Typhoeus::Expectation.clear }
+      request.run
 
-      it "raises an HttpTimeout error" do
-        expect { request.run }.to raise_error(SteamApiClient::Errors::HttpTimeout)
-      end
+      expect(options).to have_attributes(timeout: 1.5, open_timeout: 0.25)
     end
   end
 
