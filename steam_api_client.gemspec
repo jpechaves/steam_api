@@ -26,7 +26,7 @@ Gem::Specification.new do |spec|
 
   # A mixin to add configuration functionality to your classes.
   # See: [https://rubygems.org/gems/dry-configurable]
-  spec.add_dependency "dry-configurable", "~> 1.1.0"
+  spec.add_dependency "dry-configurable", "~> 1.1"
   # Typed struct and value objects for Ruby.
   # See: [https://rubygems.org/gems/dry-struct]
   spec.add_dependency "dry-struct", "~> 1.6"
