@@ -44,12 +44,6 @@ module SteamApiClient
             include_played_free_games: include_played_free_games
           }
         end
-
-        # Return the class attributes as a Hash
-        # @return [Hash]
-        def body
-          {}
-        end
       end
     end
   end

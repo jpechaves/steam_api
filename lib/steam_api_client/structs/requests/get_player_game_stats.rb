@@ -42,12 +42,6 @@ module SteamApiClient
             steamid: steamid
           }
         end
-
-        # Return the class attributes as a Hash
-        # @return [Hash]
-        def body
-          {}
-        end
       end
     end
   end

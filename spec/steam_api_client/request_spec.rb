@@ -41,6 +41,32 @@ RSpec.describe SteamApiClient::Request do
     end
   end
 
+  describe "body" do
+    it "sends GET requests without a body or a JSON content type" do
+      options = request.send(:raw_request).options
+
+      expect(options).not_to include(:body)
+      expect(options[:headers]).not_to include("Content-Type")
+    end
+
+    context "when the request isn't a GET" do
+      let(:request_struct) do
+        Class.new(SteamApiClient::Structs::Requests::GetPlayerSummaries) do
+          def method = :post
+
+          def body = {steamids: steamids}
+        end.new(steamids: [123])
+      end
+
+      it "sends the struct's body as JSON" do
+        options = request.send(:raw_request).options
+
+        expect(options).to include(method: :post, body: '{"steamids":[123]}')
+        expect(options[:headers]).to include("Content-Type" => "application/json")
+      end
+    end
+  end
+
   describe "timeouts" do
     let(:client) { SteamApiClient::Client.new(api_token: "test_api_key", timeout: 1.5, connect_timeout: 0.25) }
 

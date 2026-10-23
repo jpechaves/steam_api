@@ -75,20 +75,19 @@ module SteamApiClient
     end
 
     def build_options
-      {
+      options = {
         method: request_struct.method,
-        headers: default_headers,
-        body: request_struct.body.to_json,
+        headers: {},
         followlocation: true,
         timeout_ms: (client.timeout * 1000).to_i,
         connecttimeout_ms: (client.connect_timeout * 1000).to_i,
         # Required for sub-second timeouts and safe use of timeouts across threads
         nosignal: true
       }
-    end
+      # GET requests (every Steam endpoint so far) carry their params in the query string
+      return options if request_struct.method == :get
 
-    def default_headers
-      {"Content-Type" => "application/json"}
+      options.merge(headers: {"Content-Type" => "application/json"}, body: request_struct.body.to_json)
     end
   end
 end
