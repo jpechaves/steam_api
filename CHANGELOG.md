@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- Every response struct, including the nested element structs (`PlayerSummary`, `AppNew`, friends, games and achievements), inherits from `SteamApiClient::Structs::Base`, so they all accept string keys and respond to `build_from_response` (#28).
 - GET requests (every endpoint) no longer send an empty JSON body (`"{}"`) and `Content-Type: application/json` (#26).
 - Missing or invalid request parameters raise `ArgumentError` instead of a bare `StandardError` (#25). `ArgumentError` is a `StandardError`, so existing `rescue StandardError` code keeps working.
 - **Breaking:** every `retrieve` method takes keyword arguments (#24), so IDs can't be swapped by position. Defaults are unchanged.
