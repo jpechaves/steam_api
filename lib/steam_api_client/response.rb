@@ -57,8 +57,10 @@ module SteamApiClient
 
     attr_accessor :raw_response, :response_struct
 
+    # json 3 rejects duplicate keys by default; keep json 2's behavior (last one wins)
+    # so a response parses the same whichever json version the app uses
     def parse_body
-      ::JSON.parse(raw_response.body.to_s, symbolize_names: true)
+      ::JSON.parse(raw_response.body.to_s, symbolize_names: true, allow_duplicate_key: true)
     end
   end
 end
