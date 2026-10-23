@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Fixed
+
+- Responses with duplicate JSON keys parse the same on every `json` gem version, with the last value winning. json 3 rejects duplicate keys by default, which would have raised `ResponseParseError` (#19).
+
 ### Changed
 
 - Allows `dry-configurable` 1.2 and newer (`~> 1.1` instead of `~> 1.1.0`, which only allowed 1.1.x) (#19).

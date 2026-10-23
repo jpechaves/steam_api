@@ -50,6 +50,15 @@ RSpec.describe SteamApiClient::Response do
       response.result
     end
 
+    context "when the body has duplicate keys" do
+      let(:raw_response) { double("raw_response", code: 200, body: '{"key":"first","key":"value"}') }
+
+      it "keeps the last value, as Steam's JSON is parsed regardless of the json gem version" do
+        expect(response_struct).to receive(:build_from_response).with({key: "value"})
+        response.result
+      end
+    end
+
     context "when the body is not JSON" do
       let(:raw_response) { double("raw_response", code: 200, body: "<html>Oops</html>") }
 
