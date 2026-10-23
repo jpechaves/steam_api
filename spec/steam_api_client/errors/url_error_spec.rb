@@ -14,6 +14,7 @@ RSpec.describe SteamApiClient::Errors::EndpointKindNotSupported do
   describe "when the endpoint kind for the request is invalid" do
     before do
       allow(request_struct).to receive(:endpoint_kind).and_return(:unsupported_endpoint)
+      allow(request_struct).to receive(:needs_authorization?).and_return(false)
     end
 
     it "raises an error for unsupported endpoint kind" do

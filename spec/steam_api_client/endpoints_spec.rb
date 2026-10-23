@@ -165,4 +165,23 @@ RSpec.describe "Steam API endpoints" do
       expect { client.player_achievements.retrieve(appid: 440) }.to raise_error(ArgumentError, /missing keyword: :steamid/)
     end
   end
+
+  describe "API token" do
+    [nil, ""].each do |token|
+      context "when the client has no token (#{token.inspect})" do
+        let(:client) { SteamApiClient::Client.new(api_token: token) }
+
+        it "raises MissingApiToken for endpoints that need one, before any request" do
+          expect { client.player_level.retrieve(steamid: 76561197960435530) }
+            .to raise_error(SteamApiClient::Errors::MissingApiToken, /Client\.configure/)
+        end
+
+        it "still calls endpoints that don't need one" do
+          stub_steam("#{web_api}/ISteamUserStats/GetNumberOfCurrentPlayers/v0001/?appid=440", {response: {player_count: 1, result: 1}})
+
+          expect(client.game_current_players.retrieve(appid: 440).response.player_count).to eq(1)
+        end
+      end
+    end
+  end
 end

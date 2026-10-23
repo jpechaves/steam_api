@@ -6,6 +6,7 @@ module SteamApiClient
       @response_struct = response_struct
       @client = client
 
+      ensure_api_token!
       build_request
     end
 
@@ -22,6 +23,13 @@ module SteamApiClient
     private
 
     attr_accessor :request_struct, :response_struct, :client, :raw_request, :failure_handler
+
+    def ensure_api_token!
+      return unless request_struct.needs_authorization?
+      return unless client.api_token.to_s.empty?
+
+      raise SteamApiClient::Errors::MissingApiToken
+    end
 
     def build_request
       url = nil

@@ -10,7 +10,7 @@ module SteamApiClient
         # @return an instance of the Struct
         def self.build_from_params(params)
           %i[appid steamid].each do |attrib|
-            raise StandardError, "#{attrib} is missing" unless params.key?(attrib)
+            raise ArgumentError, "#{attrib} is missing" unless params.key?(attrib)
           end
 
           new(params)

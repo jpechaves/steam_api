@@ -10,11 +10,11 @@ module SteamApiClient
         # @return an instance of the Struct
         def self.build_from_params(params)
           %i[steamid relationship].each do |attrib|
-            raise StandardError, "#{attrib} is missing" unless params.key?(attrib)
+            raise ArgumentError, "#{attrib} is missing" unless params.key?(attrib)
           end
 
           # The only possible values are: all, friend.
-          raise StandardError, ":relationship value not allowed" unless %w[all friend].include? params[:relationship]
+          raise ArgumentError, ":relationship value not allowed" unless %w[all friend].include? params[:relationship]
 
           new(params)
         end
