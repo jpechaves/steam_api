@@ -32,4 +32,10 @@ RSpec.describe SteamApiClient::Structs::Requests::StorefrontAbstract do
       expect(subclass.new("appid" => 10).body).to eq({appid: 10})
     end
   end
+
+  describe "#needs_authorization?" do
+    it "defaults to true" do
+      expect(subject.needs_authorization?).to be(true)
+    end
+  end
 end

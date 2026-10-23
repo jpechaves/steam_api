@@ -52,6 +52,22 @@ RSpec.describe SteamApiClient::FailureHandler do
       it_behaves_like "validate exception class and error message"
     end
 
+    context "when the request status code is an unmapped 4xx error" do
+      let(:exception) { SteamApiClient::Errors::ApiError }
+      let(:status_code) { 418 }
+      let(:body) { '{response: "I am a teapot"}' }
+
+      it_behaves_like "validate exception class and error message"
+    end
+
+    context "when the request fails with a status code outside 4xx/5xx" do
+      let(:exception) { SteamApiClient::Errors::ApiError }
+      let(:status_code) { 302 }
+      let(:body) { "Moved" }
+
+      it_behaves_like "validate exception class and error message"
+    end
+
     context "when the request status code is a mapped 4xx error" do
       context "when the status code is 400" do
         let(:exception) { SteamApiClient::Errors::HttpBadRequest }

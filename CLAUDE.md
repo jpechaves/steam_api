@@ -25,7 +25,7 @@ bin/release [--dry-run]                      # publish the gemspec version to Ru
 
 CI (`.github/workflows/ci.yml`) runs three jobs: `lint` (standardrb), `analysis` (RubyCritic with a `--minimum-score` gate; raise it when the score improves) and `test` (rspec matrix). `.github/workflows/audit.yml` runs bundler-audit on push, PRs and weekly. `.github/workflows/changelog.yml` runs `bin/check_changelog`: PRs that touch `lib/` or the gemspec must update `CHANGELOG.md` unless labelled `skip-changelog` (check locally with `bin/check_changelog origin/main`).
 
-SimpleCov runs automatically with the specs and measures `lib/` only (line + branch coverage). Specs never hit the network: they stub `Typhoeus::Request`/responses with `instance_double`.
+SimpleCov runs automatically with the specs and measures `lib/` only (line + branch coverage; CI fails below 98% line / 95% branch, local runs don't). Specs never hit the network: they stub `Typhoeus::Request`/responses with `instance_double`.
 
 ## Changelog & releases
 
