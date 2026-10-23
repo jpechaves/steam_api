@@ -26,6 +26,12 @@ RSpec.describe "steam_api_client.gemspec" do
     expect(gemspec.required_ruby_version).to eq(Gem::Requirement.new(">= 3.3"))
   end
 
+  it "allows compatible updates of its runtime dependencies" do
+    requirements = gemspec.runtime_dependencies.to_h { |dependency| [dependency.name, dependency.requirement.to_s] }
+
+    expect(requirements).to eq("dry-configurable" => "~> 1.1", "dry-struct" => "~> 1.6", "typhoeus" => "~> 1.4")
+  end
+
   it "ships no executables" do
     expect(gemspec.executables).to be_empty
   end
