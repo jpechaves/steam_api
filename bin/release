@@ -1,0 +1,71 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "net/http"
+require "open3"
+require_relative "_script_helpers"
+require_relative "_release"
+
+include ScriptHelpers
+
+USAGE = <<~TEXT
+  Usage: bin/release [--dry-run]
+
+  Updates main, then publishes the version in lib/steam_api_client/version.rb:
+    1. gem build + gem push (asks for your RubyGems MFA code)
+    2. git tag v<version> + git push origin v<version>
+  Steps that are already done are skipped, so releasing the same version twice does nothing.
+
+  --dry-run  print the build/push/tag steps instead of running them
+TEXT
+
+# Runs commands for Release, printing them and aborting when one fails
+class Shell
+  include ScriptHelpers
+
+  def run(command) = execute(command)
+
+  def capture(command) = Open3.capture2(command).first
+end
+
+# Asks RubyGems whether a version exists. The per-version endpoint is used
+# because the /api/v1/versions listing is cached and lags behind new pushes.
+class RubyGemsClient
+  def published?(name, version)
+    response = Net::HTTP.get_response(URI("https://rubygems.org/api/v2/rubygems/#{name}/versions/#{version}.json"))
+    case response
+    when Net::HTTPSuccess then true
+    when Net::HTTPNotFound then false
+    else raise Release::Error, "Unexpected RubyGems response for #{name} #{version}: #{response.code}"
+    end
+  end
+end
+
+if __FILE__ == $0
+  if is_first_argument?("-h", "--help")
+    puts USAGE
+    exit 0
+  end
+  abort_with_message("Unknown arguments: #{ARGV.join(" ")}\n\n#{USAGE}") unless no_arguments? || ARGV == ["--dry-run"]
+
+  root = File.expand_path("..", __dir__)
+  Dir.chdir(root)
+
+  release = Release.new(
+    shell: Shell.new,
+    rubygems: RubyGemsClient.new,
+    version: -> { Gem::Specification.load(File.join(root, "#{Release::GEM_NAME}.gemspec")).version.to_s },
+    changelog: -> { File.read(File.join(root, "CHANGELOG.md")) },
+    confirm: ->(question) {
+      print prefix_message("#{question} [y/N] ")
+      $stdin.gets.to_s.strip.casecmp?("y")
+    },
+    dry_run: is_first_argument?("--dry-run")
+  )
+
+  begin
+    exit(release.call == :aborted ? 1 : 0)
+  rescue Release::Error => error
+    abort_with_message("❌ #{error.message}")
+  end
+end
