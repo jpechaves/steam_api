@@ -8,7 +8,11 @@ SimpleCov.start do
   add_filter %r{\A/(?:spec|bin)/}
   # Report lib files even when no spec loads them
   track_files "lib/**/*.rb"
+  # Loaded by Bundler (through the gemspec) before SimpleCov starts, so it always reads 0%
+  add_filter "lib/steam_api_client/version.rb"
   enable_coverage :branch
+  # Only in CI: running a single spec file locally would fail the gate
+  minimum_coverage line: 98, branch: 95 if ENV["CI"]
 end
 
 require "steam_api_client"

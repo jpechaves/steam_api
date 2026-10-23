@@ -40,4 +40,15 @@ RSpec.describe SteamApiClient::Structs::Requests::Abstract do
       expect(subclass.new("appid" => 10).body).to eq({appid: 10})
     end
   end
+
+  describe "defaults" do
+    it "requires subclasses to define interface and path" do
+      expect { described_class.new.interface }.to raise_error(NoMethodError, /Override this method/)
+      expect { described_class.new.path }.to raise_error(NoMethodError, /Override this method/)
+    end
+
+    it "is a GET without query params" do
+      expect(subject).to have_attributes(method: :get, query_params: {})
+    end
+  end
 end
