@@ -10,16 +10,12 @@ RSpec.describe SteamApiClient::Client do
       end
     end
 
-    after { described_class.config.api_token = nil }
-
     it "allows configuring the client through a block" do
       expect(subject.config.api_token).to eql(api_key)
     end
   end
 
   describe "#api_token" do
-    after { described_class.config.api_token = nil }
-
     it "returns the token given to the instance" do
       expect(described_class.new(api_token: api_key).api_token).to eql(api_key)
     end
@@ -38,11 +34,6 @@ RSpec.describe SteamApiClient::Client do
   end
 
   describe "timeouts" do
-    after do
-      described_class.config.timeout = described_class::DEFAULT_TIMEOUT
-      described_class.config.connect_timeout = described_class::DEFAULT_CONNECT_TIMEOUT
-    end
-
     it "defaults to 10s total and 5s to connect" do
       client = described_class.new
 
@@ -68,8 +59,6 @@ RSpec.describe SteamApiClient::Client do
   end
 
   describe "adapter" do
-    after { described_class.config.adapter = described_class::DEFAULT_ADAPTER }
-
     it "defaults to Faraday's Net::HTTP adapter" do
       expect(described_class.new.adapter).to eq(:net_http)
     end

@@ -25,6 +25,8 @@ Dir[File.expand_path("support/**/*.rb", __dir__)].sort.each { |file| require fil
 
 RSpec.configure do |config|
   config.include SteamFixtures
+  # Client.configure is global: start every example from the defaults
+  config.after { SteamApiClient::Client.reset_config! }
   # Enable flags like --only-failures and --next-failure
   config.example_status_persistence_file_path = ".rspec_status"
 

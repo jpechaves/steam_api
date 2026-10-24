@@ -34,8 +34,7 @@ RSpec.describe "API token redaction" do
       SteamApiClient::Client.configure { |config| config.api_token = token }
 
       expect_redacted(SteamApiClient::Client.new.inspect)
-    ensure
-      SteamApiClient::Client.config.api_token = nil
+      expect_redacted(SteamApiClient::Client.config.inspect)
     end
 
     it "shows a missing token as nil" do

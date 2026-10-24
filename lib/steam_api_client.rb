@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "dry-configurable"
 require "dry-struct"
 require "json"
 require "time"
@@ -8,6 +7,7 @@ require "singleton"
 require "faraday"
 
 require_relative "steam_api_client/version"
+require_relative "steam_api_client/configuration"
 require_relative "steam_api_client/request"
 require_relative "steam_api_client/response"
 require_relative "steam_api_client/failure_handler"

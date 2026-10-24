@@ -42,7 +42,7 @@ RSpec.describe "steam_api_client.gemspec" do
   it "allows compatible updates of its runtime dependencies" do
     requirements = gemspec.runtime_dependencies.to_h { |dependency| [dependency.name, dependency.requirement.to_s] }
 
-    expect(requirements).to eq("dry-configurable" => "~> 1.1", "dry-struct" => "~> 1.6", "faraday" => "~> 2.0")
+    expect(requirements).to eq("dry-struct" => "~> 1.6", "faraday" => "~> 2.0")
   end
 
   it "ships no executables" do
