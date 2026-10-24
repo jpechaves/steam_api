@@ -21,6 +21,16 @@ module SteamApiClient
       @timeout = DEFAULT_TIMEOUT
       @connect_timeout = DEFAULT_CONNECT_TIMEOUT
       @adapter = DEFAULT_ADAPTER
+      @connection = nil
+    end
+
+    # Customizes the Faraday connection of every client (middleware, adapter
+    # options...). It runs after the adapter is set, so it can replace it.
+    #   config.connection { |faraday| faraday.request :retry }
+    # @yieldparam [Faraday::Connection] faraday
+    # @return [Proc, nil] the block, when called without one
+    def connection(&block)
+      block ? @connection = block : @connection
     end
 
     # @return [Hash]
