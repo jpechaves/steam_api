@@ -16,7 +16,6 @@
     - [Code Quality](#code-quality)
     - [Releasing](#releasing)
   - [Contributing](#contributing)
-    - [How to Contribute](#how-to-contribute)
   - [License](#license)
   - [Code of Conduct](#code-of-conduct)
 
