@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-10-24
+
 ### Added
 
 - Gem metadata: a description, and links to the source code, changelog, bug tracker and documentation on the RubyGems page (#84).
@@ -47,7 +49,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - `Client`, `Request` and `Response` no longer show the API token in `inspect` (and `pp`), so consoles, logs and error trackers don't leak it. The token shows as `[REDACTED]`, the `key=` value in URLs too (#80).
 
-## [0.11.0] - 2026-10-23
+## [0.11.0] - 2026-10-23 [YANKED]
+
+> Yanked: the published gem was built after the 1.0 changes had merged, so it contained everything listed under 1.0.0, not only the change below. Use 1.0.0 (#100).
 
 ### Added
 
@@ -194,7 +198,8 @@ The versions below were bumped in `version.rb` during development but **never pu
 
 - Initial gem skeleton.
 
-[Unreleased]: https://github.com/jpechaves/steam_api/compare/v0.11.0...HEAD
+[Unreleased]: https://github.com/jpechaves/steam_api/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/jpechaves/steam_api/compare/v0.10.0...v1.0.0
 [0.11.0]: https://github.com/jpechaves/steam_api/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/jpechaves/steam_api/compare/v0.9.1...v0.10.0
 [0.9.1]: https://github.com/jpechaves/steam_api/compare/v0.9.0...v0.9.1
