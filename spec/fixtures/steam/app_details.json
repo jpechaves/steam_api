@@ -1,0 +1,171 @@
+{
+  "440": {
+    "success": true,
+    "data": {
+      "type": "game",
+      "name": "Team Fortress 2",
+      "steam_appid": 440,
+      "required_age": 0,
+      "is_free": true,
+      "dlc": [
+        629330
+      ],
+      "detailed_description": "<p>Trimmed.</p>",
+      "about_the_game": "<p>Trimmed.</p>",
+      "short_description": "Nine distinct classes provide a broad range of tactical abilities and personalit",
+      "supported_languages": "English<strong>*</strong>, Danish, Dutch, Finnish, French, German, Italian, Japanese, Norwegian, Polish, Portuguese - Portugal, Russian, Simplified Chinese, Spanish - Spain, Swedish, Traditional Chinese, Korean, Czech, Hungarian, Portuguese - Brazil, Turkish, Greek, Bulgarian, Romanian, Thai, Ukrainian, Spanish - Latin America<br><strong>*</strong>languages with full audio support",
+      "header_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/440/header.jpg?t=1757348372",
+      "capsule_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/440/capsule_231x87.jpg?t=1757348372",
+      "capsule_imagev5": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/440/capsule_184x69.jpg?t=1757348372",
+      "website": "http://www.teamfortress.com/",
+      "pc_requirements": {
+        "minimum": "<strong>Minimum:</strong><br><ul class=\"bb_ul\"><li><strong>O",
+        "recommended": "<strong>Recommended:</strong><br><ul class=\"bb_ul\"><li><stro"
+      },
+      "mac_requirements": {
+        "minimum": "<strong>Minimum:</strong><br><ul class=\"bb_ul\"><li><strong>OS:</strong> OS X version Leopard 10.5.8 and above<br></li><li><strong>Processor:</strong> 1.7 GHz Processor or better<br></li><li><strong>Memory:</strong> 1 GB RAM<br></li><li><strong>Graphics:</strong> NVIDIA GeForce 8 or higher, ATI X1600 or higher, Intel HD 3000 or higher<br></li><li><strong>Network:</strong> Broadband Internet connection<br></li><li><strong>Storage:</strong> 15 GB available space</li></ul>"
+      },
+      "linux_requirements": {
+        "minimum": "<strong>Minimum:</strong><br><ul class=\"bb_ul\"><li><strong>OS:</strong> Ubuntu 12.04<br></li><li><strong>Processor:</strong> Dual core from Intel or AMD at 2.8 GHz<br></li><li><strong>Memory:</strong> 1 GB RAM<br></li><li><strong>Graphics:</strong> nVidia GeForce 8600/9600GT, ATI/AMD Radeon HD2600/3600 (Graphic Drivers: nVidia 310, AMD 12.11), OpenGL 2.1<br></li><li><strong>Network:</strong> Broadband Internet connection<br></li><li><strong>Storage:</strong> 15 GB available space<br></li><li><strong>Sound Card:</strong> OpenAL Compatible Sound Card</li></ul>"
+      },
+      "developers": [
+        "Valve"
+      ],
+      "publishers": [
+        "Valve"
+      ],
+      "packages": [
+        197845,
+        330198,
+        469
+      ],
+      "package_groups": [
+        {
+          "name": "default",
+          "title": "Buy Team Fortress 2",
+          "description": "",
+          "selection_text": "Select a purchase option",
+          "save_text": "",
+          "display_type": 0,
+          "is_recurring_subscription": "false",
+          "subs": [
+            {
+              "packageid": 197845,
+              "percent_savings_text": " ",
+              "percent_savings": 0,
+              "option_text": "Team Fortress 2 - Commercial License - Free",
+              "option_description": "",
+              "can_get_free_license": "0",
+              "is_free_license": true,
+              "price_in_cents_with_discount": 0
+            },
+            {
+              "packageid": 469,
+              "percent_savings_text": " ",
+              "percent_savings": 0,
+              "option_text": "The Orange Box - $19.99",
+              "option_description": "",
+              "can_get_free_license": "0",
+              "is_free_license": false,
+              "price_in_cents_with_discount": 1999
+            }
+          ]
+        }
+      ],
+      "platforms": {
+        "windows": true,
+        "mac": false,
+        "linux": true
+      },
+      "metacritic": {
+        "score": 92,
+        "url": "https://www.metacritic.com/game/pc/team-fortress-2?ftag=MCD-06-10aaa1f"
+      },
+      "categories": [
+        {
+          "id": 1,
+          "description": "Multi-player"
+        },
+        {
+          "id": 27,
+          "description": "Cross-Platform Multiplayer"
+        },
+        {
+          "id": 22,
+          "description": "Steam Achievements"
+        }
+      ],
+      "genres": [
+        {
+          "id": "1",
+          "description": "Action"
+        },
+        {
+          "id": "37",
+          "description": "Free To Play"
+        }
+      ],
+      "screenshots": [
+        {
+          "id": 0,
+          "path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/440/ss_ea21f7bbf4f79bada4554df5108d04b6889d3453.600x338.jpg?t=1757348372",
+          "path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/440/ss_ea21f7bbf4f79bada4554df5108d04b6889d3453.1920x1080.jpg?t=1757348372"
+        },
+        {
+          "id": 1,
+          "path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/440/ss_e3aedb2ab36bba8cfe611b1e0eaa807e4bb2d742.600x338.jpg?t=1757348372",
+          "path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/440/ss_e3aedb2ab36bba8cfe611b1e0eaa807e4bb2d742.1920x1080.jpg?t=1757348372"
+        }
+      ],
+      "movies": [
+        {
+          "id": 256698790,
+          "name": "Jungle Inferno",
+          "thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/256698790/movie.293x165.jpg?t=1682961253",
+          "dash_av1": "https://video.akamai.steamstatic.com/store_trailers/440/129304/a9d97ffaf28cac468369400c12abe442a7b688b2/1749861261/dash_av1.mpd?t=1682961253",
+          "dash_h264": "https://video.akamai.steamstatic.com/store_trailers/440/129304/a9d97ffaf28cac468369400c12abe442a7b688b2/1749861261/dash_h264.mpd?t=1682961253",
+          "hls_h264": "https://video.akamai.steamstatic.com/store_trailers/440/129304/a9d97ffaf28cac468369400c12abe442a7b688b2/1749861261/hls_264_master.m3u8?t=1682961253",
+          "highlight": true
+        }
+      ],
+      "recommendations": {
+        "total": 48123
+      },
+      "achievements": {
+        "total": 520,
+        "highlighted": [
+          {
+            "icon": "tf_play_game_everyclass.jpg",
+            "localized_name": "Head of the Class",
+            "archived": 0,
+            "hidden": 0,
+            "name": "Head of the Class",
+            "path": "https://shared.akamai.steamstatic.com/community_assets/images/apps/440/tf_play_game_everyclass.jpg"
+          },
+          {
+            "icon": "tf_play_game_everymap.jpg",
+            "localized_name": "World Traveler",
+            "archived": 0,
+            "hidden": 0,
+            "name": "World Traveler",
+            "path": "https://shared.akamai.steamstatic.com/community_assets/images/apps/440/tf_play_game_everymap.jpg"
+          }
+        ]
+      },
+      "release_date": {
+        "coming_soon": false,
+        "date": "Oct 10, 2007"
+      },
+      "support_info": {
+        "url": "http://steamcommunity.com/app/440",
+        "email": ""
+      },
+      "background": "https://store.akamai.steamstatic.com/images/storepagebackground/app/440?t=1757348372",
+      "background_raw": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/440/page_bg_raw.jpg?t=1757348372",
+      "content_descriptors": {
+        "ids": [],
+        "notes": null
+      }
+    }
+  }
+}

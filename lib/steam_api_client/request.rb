@@ -25,7 +25,7 @@ module SteamApiClient
 
       raw_response = perform
 
-      Response.new(raw_response: raw_response, response_struct: endpoint.returns, request: self).tap do |response|
+      Response.new(raw_response: raw_response, endpoint: endpoint, request: self).tap do |response|
         failure_handler.call(response)
       end
     end

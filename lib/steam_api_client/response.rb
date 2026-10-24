@@ -11,12 +11,11 @@ module SteamApiClient
 
     # Initialize a new instance
     # @param [Faraday::Response] raw_response
-    # @param [SteamApiClient::Structs::Base] response_struct The struct necessary to
-    #   build the response received from Api
+    # @param [SteamApiClient::Endpoint] endpoint The endpoint called, which builds the result
     # @param [SteamApiClient::Request] request The wrapper Request class
-    def initialize(raw_response:, response_struct:, request:)
+    def initialize(raw_response:, endpoint:, request:)
       @raw_response = raw_response
-      @response_struct = response_struct
+      @endpoint = endpoint
       @request = request
     end
 
@@ -41,17 +40,25 @@ module SteamApiClient
       {}
     end
 
-    # Parses the response's json body and build the expected struct
-    # @return [SteamApiClient::Structs::Base]
+    # Steam's JSON, untouched (keys symbolized)
+    # @return [Hash]
     # @raise [SteamApiClient::Errors::ResponseParseError] if the body isn't a JSON object
-    #   or doesn't match the response struct
-    def result
-      json_response = parse_body
-      raise TypeError, "expected a JSON object, got #{json_response.class}" unless json_response.is_a?(Hash)
+    def json
+      parse_body.tap do |json|
+        raise Model::Error, "expected a JSON object, got #{json.class}" unless json.is_a?(Hash)
+      end
+    rescue JSON::ParserError, Model::Error
+      raise Errors::ResponseParseError.new(self, endpoint)
+    end
 
-      response_struct.build_from_response(json_response)
-    rescue JSON::ParserError, TypeError, Dry::Struct::Error
-      raise Errors::ResponseParseError.new(self, response_struct)
+    # The endpoint's result, built from the JSON body
+    # @return [Data, Array, Integer, nil] see SteamApiClient::Endpoints
+    # @raise [SteamApiClient::Errors::ResponseParseError] if the body isn't a JSON object
+    #   or doesn't match the endpoint's result
+    def result
+      endpoint.result(json)
+    rescue Model::Error
+      raise Errors::ResponseParseError.new(self, endpoint)
     end
 
     # Shows the status and the request, with the API token redacted
@@ -62,7 +69,7 @@ module SteamApiClient
 
     private
 
-    attr_accessor :raw_response, :response_struct
+    attr_accessor :raw_response, :endpoint
 
     # json 3 rejects duplicate keys by default; keep json 2's behavior (last one wins)
     # so a response parses the same whichever json version the app uses

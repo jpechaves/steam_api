@@ -27,7 +27,7 @@
 
 > Previously developed as `steam_api`. It is not related to the [`steam_api`](https://rubygems.org/gems/steam_api) gem on RubyGems.
 
-A Ruby gem for interacting with the [Steam Web API](https://developer.valvesoftware.com/wiki/Steam_Web_API). This gem provides a structured and user-friendly way to fetch various types of data from Steam's API endpoints, such as game details, player information, and achievements.
+A Ruby gem for interacting with the [Steam Web API](https://developer.valvesoftware.com/wiki/Steam_Web_API). It returns plain Ruby objects (`Data`) with snake_case fields, such as game details, player information, and achievements, and its only dependency is Faraday.
 
 ## Features
 
@@ -130,14 +130,25 @@ end
 
 ```ruby
 client = SteamApiClient::Client.new(api_token: "your-API-token-value")
-client.player_summaries.retrieve(steamids: [76561198160009756])
+player = client.player_summaries.retrieve(steamids: [76561197960435530]).first
+player.persona_name # => "Robin"
+player.steam_id     # => 76561197960435530
 ```
 
 #### Get App Details
 
 ```ruby
 client = SteamApiClient::Client.new
-client.app_details.retrieve(appid: 1091500, filters: ["basic"])
+app = client.app_details.retrieve(appid: 1091500, filters: ["basic"]) # nil when the app is unavailable
+app.name     # => "Cyberpunk 2077"
+app.to_h     # => {app_id: 1091500, type: "game", name: "Cyberpunk 2077", ...}
+```
+
+Results are immutable `Data` objects (or Integers, or Arrays of them), so they compare by value and work with pattern matching. To get Steam's JSON untouched, e.g. for a field the gem doesn't expose, use `retrieve_raw`:
+
+```ruby
+client.player_level.retrieve(steamid: 76561197960435530)     # => 32
+client.player_level.retrieve_raw(steamid: 76561197960435530) # => {response: {player_level: 32}}
 ```
 
 For more examples, see the [Usage](#usage) section above.

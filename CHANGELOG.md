@@ -10,9 +10,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Gem metadata: a description, and links to the source code, changelog, bug tracker and documentation on the RubyGems page (#84).
 - Customize the Faraday connection (middleware, adapter options, test stubs) with a block: `Client.new { |faraday| ... }` per client, or `Client.configure { |c| c.connection { |faraday| ... } }` for every client (#85).
+- `retrieve_raw` on every endpoint returns Steam's JSON untouched (keys symbolized), for fields the results don't expose (#81).
 
 ### Changed
 
+- **Breaking:** results are plain Ruby `Data` objects with snake_case fields, unwrapped from Steam's envelopes, and the gem no longer depends on dry-struct: its only dependency is Faraday (8 runtime gems instead of 18) (#81). `SteamApiClient::Structs::*` is removed. What each endpoint returns:
+
+  | Endpoint | Before | Now |
+  |---|---|---|
+  | `player_summaries` | `.response.players` | `[PlayerSummary]` (`steam_id`, `persona_name`, `avatar_full`, `country_code`, …) |
+  | `player_friends` | `.friendslist.friends` | `[Friend]` (`steam_id`, `relationship`, `friend_since`) |
+  | `player_owned_games` | `.response` (`game_count`, `games`) | `OwnedGames` (`game_count`, `games: [Game]`), `nil` for a private library |
+  | `player_recent_games` | `.response` (`total_count`, `games`) | `RecentGames` (`total_count`, `games: [Game]`), `nil` when not public |
+  | `player_achievements` | `.playerstats` (`steamID`, `gameName`, `achievements`, `success`) | `PlayerAchievements` (`steam_id`, `game_name`, `achievements` with `api_name`, `achieved` as true/false, `unlock_time`) |
+  | `player_game_stats` | `.playerstats` | `PlayerGameStats` (`steam_id`, `game_name`, `stats`, `achievements` with `achieved` as true/false) |
+  | `player_level` | `.response.player_level` | Integer, `nil` when not visible |
+  | `player_steamid` | `.response` (`steamid`, `success`, `message`) | Integer, `nil` when nothing matches |
+  | `game_current_players` | `.response.player_count` | Integer |
+  | `app_news` | `.appnews.newsitems` | `[NewsItem]` (`feed_label`, `feed_name`, `app_id`, …) |
+  | `app_global_achievements` | `.achievementpercentages.achievements` | `[GlobalAchievement]` (`name`, `percent`) |
+  | `app_details` | `Structs::AppDetails::Details` (`.response.success`, `.response.data`) | `AppDetails` (`app_id`, `name`, …; parts such as `AppDetails::Price`, `AppDetails::Package`), `nil` when the app is unavailable |
+
+  Other changes:
+  - Field names are snake_case: `steamid` → `steam_id`, `appid` → `app_id`, `personaname` → `persona_name`, `loccountrycode` → `country_code`, `packageid` → `package_id`, and so on. Fields that were already snake_case keep their names.
+  - `app_details`: `recommendations` is the review count (Steam's `recommendations.total`), and `movies` drop the legacy `webm` / `mp4` files, which Steam no longer sends. A `[]` sent instead of requirements reads as `nil`.
+  - Lists Steam leaves out are `[]`, and data a private profile hides is `nil`.
+  - `#to_h` returns nested hashes. Results compare by value and support pattern matching.
+  - `ResponseParseError#cause` is a `SteamApiClient::Model::Error` (instead of a `Dry::Struct::Error`). Its message names the field but never the value.
 - `Client.configure` / `Client.config` use a plain Ruby `SteamApiClient::Configuration` instead of dry-configurable, which the gem no longer depends on. The settings and their defaults are unchanged. New: `Client.reset_config!` restores the defaults (handy in specs), `config.to_h`, and `config.inspect` hides the token (#82).
 - Endpoints are declared as data: each is one `SteamApiClient::Endpoint` in `SteamApiClient::Endpoints::ALL`, and `client.<name>` returns a `SteamApiClient::Requestor` for it (#87). Every `retrieve` keeps its keyword arguments, defaults and results. Differences:
   - Arguments are checked with Ruby's own messages (`missing keyword: :steamid`, `unknown keyword: :steam_id`), and invalid values raise `ArgumentError` naming the argument (e.g. `steamid must be an Integer, got "abc"`), instead of a `Dry::Struct::Error`. `nil` is rejected too (before, an empty value was sent to Steam). Numeric strings are still accepted for IDs.

@@ -1,20 +1,20 @@
 module SteamApiClient
-  # Every endpoint the client exposes, as `client.<name>.retrieve(**params)`.
+  # Every endpoint the client exposes, as `client.<name>.retrieve(**params)`, and
+  # what it returns (see SteamApiClient::Model for the models).
   #
   # Web API paths are "<interface>/<method>/<version>/" under https://api.steampowered.com.
   # Storefront paths (`api: :store`) are relative to https://store.steampowered.com/api/,
   # Steam's unofficial store API.
   #
-  # To add an endpoint, declare it here and write its response struct.
+  # To add an endpoint, declare it here, with its model when it returns one.
   module Endpoints
     param = Endpoint::Param
 
     ALL = [
-      # Details of an app in the store. When the app is unavailable, `response.success`
-      # is false and `response.data` is nil.
+      # Details of an app in the store => AppDetails, or nil when the app is unavailable
       # @see https://wiki.teamfortress.com/wiki/User:RJackson/StorefrontAPI#appdetails
       Endpoint.new(
-        :app_details, "appdetails/", api: :store, key: false, returns: Structs::AppDetails::Details,
+        :app_details, "appdetails/", api: :store, key: false, returns: AppDetails, at: AppDetails.method(:unwrap),
         params: {
           appid: param.integer(as: :appids),
           # e.g. ["basic", "price_overview"]; every field when empty
@@ -26,18 +26,18 @@ module SteamApiClient
         }
       ),
 
-      # Global achievement unlock percentages of an app
+      # Global achievement unlock percentages of an app => [GlobalAchievement]
       # @see https://developer.valvesoftware.com/wiki/Steam_Web_API#GetGlobalAchievementPercentagesForApp_.28v0002.29
       Endpoint.new(
         :app_global_achievements, "ISteamUserStats/GetGlobalAchievementPercentagesForApp/v0002/",
-        key: false, returns: Structs::AppGlobalAchievements,
+        key: false, returns: [GlobalAchievement], at: %i[achievementpercentages achievements],
         params: {appid: param.integer(as: :gameid)}
       ),
 
-      # Latest news of an app
+      # Latest news of an app => [NewsItem]
       # @see https://developer.valvesoftware.com/wiki/Steam_Web_API#GetNewsForApp_.28v0002.29
       Endpoint.new(
-        :app_news, "ISteamNews/GetNewsForApp/v0002/", key: false, returns: Structs::AppNews,
+        :app_news, "ISteamNews/GetNewsForApp/v0002/", key: false, returns: [NewsItem], at: %i[appnews newsitems],
         params: {
           appid: param.integer,
           # Number of news items
@@ -47,46 +47,46 @@ module SteamApiClient
         }
       ),
 
-      # Number of players currently in a game
+      # Number of players currently in a game => Integer
       # @see https://wiki.teamfortress.com/wiki/WebAPI/GetNumberOfCurrentPlayers
       Endpoint.new(
         :game_current_players, "ISteamUserStats/GetNumberOfCurrentPlayers/v0001/",
-        key: false, returns: Structs::GameCurrentPlayers,
+        key: false, returns: :integer, at: %i[response player_count],
         params: {appid: param.integer}
       ),
 
-      # A player's achievements in an app
+      # A player's achievements in an app => PlayerAchievements
       # @see https://developer.valvesoftware.com/wiki/Steam_Web_API#GetPlayerAchievements_.28v0001.29
       Endpoint.new(
-        :player_achievements, "ISteamUserStats/GetPlayerAchievements/v0001/", returns: Structs::PlayerAchievements,
+        :player_achievements, "ISteamUserStats/GetPlayerAchievements/v0001/", returns: PlayerAchievements, at: %i[playerstats],
         params: {appid: param.integer, steamid: param.integer}
       ),
 
-      # A player's friend list, if public
+      # A player's friend list, if public => [Friend]
       # @see https://developer.valvesoftware.com/wiki/Steam_Web_API#GetFriendList_.28v0001.29
       Endpoint.new(
-        :player_friends, "ISteamUser/GetFriendList/v0001/", returns: Structs::PlayerFriends,
+        :player_friends, "ISteamUser/GetFriendList/v0001/", returns: [Friend], at: %i[friendslist friends],
         params: {steamid: param.integer, relationship: param.string(default: "all", in: %w[all friend])}
       ),
 
-      # A player's stats and achievements in a game
+      # A player's stats and achievements in a game => PlayerGameStats
       # @see https://developer.valvesoftware.com/wiki/Steam_Web_API#GetUserStatsForGame_.28v0002.29
       Endpoint.new(
-        :player_game_stats, "ISteamUserStats/GetUserStatsForGame/v0002/", returns: Structs::PlayerGameStats,
+        :player_game_stats, "ISteamUserStats/GetUserStatsForGame/v0002/", returns: PlayerGameStats, at: %i[playerstats],
         params: {appid: param.integer, steamid: param.integer}
       ),
 
-      # A player's Steam level
+      # A player's Steam level => Integer, or nil when the profile isn't visible
       # @see https://wiki.teamfortress.com/wiki/WebAPI/GetSteamLevel
       Endpoint.new(
-        :player_level, "IPlayerService/GetSteamLevel/v0001/", returns: Structs::PlayerLevel,
+        :player_level, "IPlayerService/GetSteamLevel/v0001/", returns: :integer, at: %i[response player_level],
         params: {steamid: param.integer}
       ),
 
-      # The games a player owns, if public
+      # The games a player owns => OwnedGames, or nil when the library isn't public
       # @see https://developer.valvesoftware.com/wiki/Steam_Web_API#GetOwnedGames_.28v0001.29
       Endpoint.new(
-        :player_owned_games, "IPlayerService/GetOwnedGames/v0001/", returns: Structs::PlayerOwnedGames,
+        :player_owned_games, "IPlayerService/GetOwnedGames/v0001/", returns: OwnedGames, at: %i[response],
         params: {
           steamid: param.integer,
           # Include each game's name and icon
@@ -96,24 +96,25 @@ module SteamApiClient
         }
       ),
 
-      # The games a player played in the last two weeks
+      # The games a player played in the last two weeks => RecentGames, or nil when not public
       # @see https://developer.valvesoftware.com/wiki/Steam_Web_API#GetRecentlyPlayedGames_.28v0001.29
       Endpoint.new(
-        :player_recent_games, "IPlayerService/GetRecentlyPlayedGames/v0001/", returns: Structs::PlayerRecentGames,
+        :player_recent_games, "IPlayerService/GetRecentlyPlayedGames/v0001/", returns: RecentGames, at: %i[response],
         params: {steamid: param.integer, count: param.integer(default: 5)}
       ),
 
       # The 64 bit Steam ID a vanity URL (steamcommunity.com/id/<vanityurl>) resolves to
+      # => Integer, or nil when nothing matches
       # @see https://wiki.teamfortress.com/wiki/WebAPI/ResolveVanityURL
       Endpoint.new(
-        :player_steamid, "ISteamUser/ResolveVanityURL/v0001/", returns: Structs::PlayerSteamId,
+        :player_steamid, "ISteamUser/ResolveVanityURL/v0001/", returns: :integer, at: %i[response steamid],
         params: {vanityurl: param.string}
       ),
 
-      # Profile summaries of up to 100 players
+      # Profile summaries of up to 100 players => [PlayerSummary] (unknown IDs are left out)
       # @see https://developer.valvesoftware.com/wiki/Steam_Web_API#GetPlayerSummaries_.28v0002.29
       Endpoint.new(
-        :player_summaries, "ISteamUser/GetPlayerSummaries/v0002/", returns: Structs::PlayerSummaries,
+        :player_summaries, "ISteamUser/GetPlayerSummaries/v0002/", returns: [PlayerSummary], at: %i[response players],
         params: {steamids: param.integer_list}
       )
     ].to_h { |endpoint| [endpoint.name, endpoint] }.freeze
