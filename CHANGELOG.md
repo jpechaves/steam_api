@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Added
 
 - Gem metadata: a description, and links to the source code, changelog, bug tracker and documentation on the RubyGems page (#84).
+- Customize the Faraday connection (middleware, adapter options, test stubs) with a block: `Client.new { |faraday| ... }` per client, or `Client.configure { |c| c.connection { |faraday| ... } }` for every client (#85).
 
 ### Changed
 

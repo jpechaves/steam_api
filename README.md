@@ -101,6 +101,28 @@ end
 client = SteamApiClient::Client.new(api_token: "your-API-token-value", adapter: :net_http)
 ```
 
+To customize the Faraday connection itself (middleware, adapter options, test stubs), pass a block, globally or per client. It runs after the adapter is set, so it can also replace it, with options. The global block runs first:
+
+```ruby
+SteamApiClient::Client.configure do |config|
+  config.connection { |faraday| faraday.adapter :net_http_persistent, pool_size: 5 }
+end
+
+client = SteamApiClient::Client.new(api_token: "your-API-token-value") do |faraday|
+  faraday.request :instrumentation # from your app's middleware
+end
+```
+
+> **Logging:** Steam only accepts the API key in the query string, so a logger that prints request URLs prints your key. Filter it out:
+>
+> ```ruby
+> client = SteamApiClient::Client.new(api_token: "your-API-token-value") do |faraday|
+>   faraday.response :logger, Rails.logger, headers: false do |logger|
+>     logger.filter(/(key=)[^&\s]+/, '\1[REDACTED]')
+>   end
+> end
+> ```
+
 ### Example Requests
 
 #### Get Player Summaries

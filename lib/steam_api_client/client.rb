@@ -77,12 +77,15 @@ module SteamApiClient
     # @param [Numeric] timeout - Request timeout in seconds. Defaults to the configured value.
     # @param [Numeric] connect_timeout - Connection timeout in seconds. Defaults to the configured value.
     # @param [Symbol] adapter - Faraday adapter. Defaults to the configured value (:net_http).
+    # @yieldparam [Faraday::Connection] faraday - Customizes this client's connection (middleware,
+    #   adapter options...), after the global 'config.connection' block.
     # @return [SteamApiClient::Client] - A new class instance.
-    def initialize(api_token: nil, timeout: nil, connect_timeout: nil, adapter: nil)
+    def initialize(api_token: nil, timeout: nil, connect_timeout: nil, adapter: nil, &connection_block)
       @api_token = api_token
       @timeout = timeout
       @connect_timeout = connect_timeout
       @adapter = adapter
+      @connection_block = connection_block
 
       @app_details ||= SteamApiClient::Requestors::AppDetails.new(self)
       @app_global_achievements ||= SteamApiClient::Requestors::AppGlobalAchievements.new(self)
@@ -120,10 +123,14 @@ module SteamApiClient
       @adapter || config.adapter
     end
 
-    # The Faraday connection shared by this client's requests
+    # The Faraday connection shared by this client's requests: the adapter, then
+    # the global 'config.connection' block, then the block given to Client.new
     # @return [Faraday::Connection]
     def connection
-      @connection ||= ::Faraday.new { |faraday| faraday.adapter(adapter) }
+      @connection ||= ::Faraday.new do |faraday|
+        faraday.adapter(adapter)
+        [config.connection, @connection_block].compact.each { |block| block.call(faraday) }
+      end
     end
 
     def config
