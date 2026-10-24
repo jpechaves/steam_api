@@ -49,8 +49,8 @@ RSpec.describe SteamApiClient::Request do
       expect(SteamApiClient::FailureHandler.instance).to have_received(:call).with(response)
     end
 
-    it "builds the response with the endpoint's struct" do
-      expect(request.run.send(:response_struct)).to be(SteamApiClient::Structs::PlayerSummaries)
+    it "builds the response with the endpoint" do
+      expect(request.run.send(:endpoint)).to be(endpoint)
     end
 
     it "sends a GET without a body or a JSON content type" do

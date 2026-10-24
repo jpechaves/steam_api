@@ -121,8 +121,7 @@ module SteamApiClient
     # Keeps the token out of logs, consoles and error trackers
     # @return [String]
     def inspect
-      token = api_token.nil? ? "nil" : "[REDACTED]"
-      "#<#{self.class.name} api_token=#{token} timeout=#{timeout} connect_timeout=#{connect_timeout} adapter=#{adapter.inspect}>"
+      Configuration.inspect_settings(self)
     end
 
     def base_endpoint

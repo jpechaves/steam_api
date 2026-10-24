@@ -6,7 +6,7 @@ RSpec.describe SteamApiClient::Endpoint do
   let(:endpoint) do
     described_class.new(
       :example, "IExample/GetThing/v1/",
-      returns: SteamApiClient::Structs::PlayerLevel,
+      returns: :integer, at: %i[response level],
       params: {
         steamid: param.integer,
         appids: param.integer_list,
@@ -71,24 +71,54 @@ RSpec.describe SteamApiClient::Endpoint do
   describe "#key?" do
     it "needs the API key unless told otherwise" do
       expect(endpoint.key?).to be(true)
-      expect(described_class.new(:x, "I/M/v1/", returns: Object, key: false).key?).to be(false)
+      expect(described_class.new(:x, "I/M/v1/", returns: :integer, key: false).key?).to be(false)
     end
   end
 
   describe "#api" do
     it "is the Web API by default, or the Storefront" do
       expect(endpoint.api).to eq(:web)
-      expect(described_class.new(:x, "appdetails/", api: :store, returns: Object).api).to eq(:store)
+      expect(described_class.new(:x, "appdetails/", api: :store, returns: :integer).api).to eq(:store)
     end
 
     it "rejects other APIs" do
-      expect { described_class.new(:x, "x/", api: :community, returns: Object) }.to raise_error(ArgumentError, /api must be :web or :store/)
+      expect { described_class.new(:x, "x/", api: :community, returns: :integer) }.to raise_error(ArgumentError, /api must be :web or :store/)
+    end
+  end
+
+  describe "#result" do
+    it "reads the result at its path" do
+      expect(endpoint.result({response: {level: "7"}})).to eq(7)
+    end
+
+    it "is nil when Steam leaves it out or sends an empty object" do
+      expect(endpoint.result({})).to be_nil
+      expect(endpoint.result({response: {}})).to be_nil
+    end
+
+    it "is [] for lists Steam leaves out" do
+      list = described_class.new(:x, "I/M/v1/", returns: [:integer], at: %i[response ids])
+
+      expect(list.result({response: {}})).to eq([])
+      expect(list.result({response: {ids: ["1", 2]}})).to eq([1, 2])
+    end
+
+    it "accepts a callable instead of a path" do
+      first = described_class.new(:x, "x/", returns: :string, at: ->(json) { json.values.first })
+
+      expect(first.result({anything: "a"})).to eq("a")
+    end
+
+    it "raises Model::Error when the path goes through something that isn't an object" do
+      expect { endpoint.result({response: [1]}) }
+        .to raise_error(SteamApiClient::Model::Error, "expected an object at :level, got Array")
     end
   end
 
   it "is frozen" do
     expect(endpoint).to be_frozen
     expect(endpoint.params).to be_frozen
+    expect(endpoint.at).to be_frozen
   end
 end
 

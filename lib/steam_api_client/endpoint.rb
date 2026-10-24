@@ -4,100 +4,40 @@ module SteamApiClient
   class Endpoint
     APIS = %i[web store].freeze
 
-    # A query param: checks and converts the value given to #retrieve
-    class Param
-      TYPES = %i[integer integer_list string string_list boolean].freeze
-      NO_DEFAULT = Object.new.freeze
-      private_constant :NO_DEFAULT
-
-      attr_reader :type, :as, :default, :allowed
-
-      TYPES.each do |type|
-        define_singleton_method(type) { |**options| new(type, **options) }
-      end
-
-      # @param [Symbol] type one of TYPES
-      # @param [Symbol, nil] as the name Steam uses for the param, when it differs
-      # @param default the value used when the keyword isn't given. Without one, the keyword is required.
-      # @param [Array, nil] in the only values allowed
-      def initialize(type, as: nil, default: NO_DEFAULT, in: nil)
-        raise ArgumentError, "type must be one of #{TYPES.inspect}, got #{type.inspect}" unless TYPES.include?(type)
-
-        @type = type
-        @as = as
-        @default = default
-        @allowed = binding.local_variable_get(:in)
+    # Reads the value at a path of keys, nil when a key is missing
+    class KeyPath
+      def initialize(keys)
+        @keys = keys.dup.freeze
         freeze
       end
 
-      def required?
-        default.equal?(NO_DEFAULT)
-      end
+      # @raise [Model::Error] when the path goes through something that isn't an object
+      def call(json)
+        @keys.reduce(json) do |object, key|
+          raise Model::Error, "expected an object at #{key.inspect}, got #{object.class}" unless object.nil? || object.is_a?(Hash)
 
-      # @return the value as sent to Steam
-      # @raise [ArgumentError] if the value has the wrong type or isn't allowed
-      def convert(name, value)
-        converted = send(:"convert_#{type}", name, value)
-        return converted if allowed.nil? || allowed.include?(converted)
-
-        raise ArgumentError, "#{name} must be one of #{allowed.map(&:inspect).join(", ")}, got #{value.inspect}"
-      end
-
-      private
-
-      def convert_integer(name, value)
-        return value if value.is_a?(::Integer)
-        return Integer(value, 10) if value.is_a?(::String) && value.match?(/\A-?\d+\z/)
-
-        invalid(name, "an Integer", value)
-      end
-
-      def convert_string(name, value)
-        return value.to_s if value.is_a?(::String) || value.is_a?(::Symbol)
-
-        invalid(name, "a String", value)
-      end
-
-      def convert_boolean(name, value)
-        return value if value == true || value == false
-
-        invalid(name, "true or false", value)
-      end
-
-      # Lists are sent comma-separated
-      def convert_integer_list(name, value)
-        list(name, value) { |item| convert_integer(name, item) }
-      end
-
-      def convert_string_list(name, value)
-        list(name, value) { |item| convert_string(name, item) }
-      end
-
-      def list(name, value, &)
-        invalid(name, "an Array", value) unless value.is_a?(::Array)
-
-        value.map(&).join(",")
-      end
-
-      def invalid(name, expected, value)
-        raise ArgumentError, "#{name} must be #{expected}, got #{value.inspect}"
+          object&.[](key)
+        end
       end
     end
 
-    attr_reader :name, :path, :api, :params, :returns
+    attr_reader :name, :path, :api, :params, :returns, :at
 
     # @param [Symbol] name the client method, e.g. :player_level
     # @param [String] path Web API: "<interface>/<method>/<version>/"; Storefront: "<method>/"
-    # @param [Class] returns the response struct
+    # @param returns what #retrieve returns, as a Model type: a model, [model] for a list, or :integer
+    # @param [Array<Symbol>, #call] at where the result is in Steam's JSON: a path of keys, or a callable
+    #   that takes the JSON (the result is nil when a key is missing)
     # @param [Symbol] api :web (api.steampowered.com) or :store (store.steampowered.com/api)
     # @param [Boolean] key whether Steam needs the API key
     # @param [Hash{Symbol => Param}] params the keyword arguments of #retrieve, in query order
-    def initialize(name, path, returns:, api: :web, key: true, params: {})
+    def initialize(name, path, returns:, at: [], api: :web, key: true, params: {})
       raise ArgumentError, "api must be :web or :store, got #{api.inspect}" unless APIS.include?(api)
 
       @name = name
       @path = path.freeze
       @returns = returns
+      @at = at.respond_to?(:call) ? at : KeyPath.new(at)
       @api = api
       @key = key
       @params = params.freeze
@@ -118,6 +58,18 @@ module SteamApiClient
       params.each_with_object({}) do |(name, param), query|
         query[param.as || name] = param.convert(name, arguments.fetch(name) { param.default })
       end
+    end
+
+    # The result of a call, from Steam's JSON. Steam answers with an empty object when
+    # the data isn't visible (e.g. a private profile), which is nil, or [] for lists.
+    # @param [Hash] json the parsed response body, with symbol keys
+    # @raise [Model::Error] if the JSON doesn't match the result's type
+    def result(json)
+      value = at.call(json)
+      value = nil if value == {}
+      return [] if value.nil? && returns.is_a?(Array)
+
+      Model.cast(returns, value)
     end
 
     private

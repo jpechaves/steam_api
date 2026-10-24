@@ -51,7 +51,7 @@ RSpec.describe "Client connection customization" do
 
     result = client.game_current_players.retrieve(appid: 440)
 
-    expect(result.response.player_count).to eq(7)
+    expect(result).to eq(7)
     expect(client.connection.builder.adapter).to eq(Faraday::Adapter::Test)
     stubs.verify_stubbed_calls
   end

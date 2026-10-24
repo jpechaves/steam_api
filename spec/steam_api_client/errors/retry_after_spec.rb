@@ -42,7 +42,7 @@ RSpec.describe "Retry-After on rate limit and unavailable errors" do
 
   it "reads the header from a Faraday response through SteamApiClient::Response, case-insensitively" do
     raw = Faraday::Response.new(status: 429, body: "slow down", response_headers: Faraday::Utils::Headers.new("retry-after" => "7"))
-    response = SteamApiClient::Response.new(raw_response: raw, response_struct: nil, request: nil)
+    response = SteamApiClient::Response.new(raw_response: raw, endpoint: nil, request: nil)
 
     expect(SteamApiClient::Errors::HttpTooManyRequests.new(response).retry_after).to eq(7)
   end

@@ -28,7 +28,7 @@ RSpec.describe "Steam API endpoints" do
 
       result = client.player_summaries.retrieve(steamids: [76561197960435530, 76561197960265731])
 
-      expect(result.response.players.first).to have_attributes(steamid: 76561197960435530, personaname: "Robin")
+      expect(result).to contain_exactly(have_attributes(steam_id: 76561197960435530, persona_name: "Robin"))
     end
   end
 
@@ -37,7 +37,7 @@ RSpec.describe "Steam API endpoints" do
       stub_steam("#{web_api}/ISteamUser/ResolveVanityURL/v0001/?key=test-key&vanityurl=gabelogannewell",
         {response: {steamid: "76561197960287930", success: 1}})
 
-      expect(client.player_steamid.retrieve(vanityurl: "gabelogannewell").response).to have_attributes(steamid: 76561197960287930, success: 1)
+      expect(client.player_steamid.retrieve(vanityurl: "gabelogannewell")).to eq(76561197960287930)
     end
   end
 
@@ -46,7 +46,7 @@ RSpec.describe "Steam API endpoints" do
       stub_steam("#{web_api}/ISteamUser/GetFriendList/v0001/?key=test-key&steamid=76561197960435530&relationship=all",
         {friendslist: {friends: [{steamid: "76561197960265731", relationship: "friend", friend_since: 0}]}})
 
-      expect(client.player_friends.retrieve(steamid: 76561197960435530).friendslist.friends.first).to have_attributes(relationship: "friend")
+      expect(client.player_friends.retrieve(steamid: 76561197960435530)).to eq([SteamApiClient::Friend.new(steam_id: 76561197960265731, relationship: "friend", friend_since: 0)])
     end
   end
 
@@ -55,7 +55,7 @@ RSpec.describe "Steam API endpoints" do
       stub_steam("#{web_api}/IPlayerService/GetSteamLevel/v0001/?key=test-key&steamid=76561197960435530",
         {response: {player_level: 42}})
 
-      expect(client.player_level.retrieve(steamid: 76561197960435530).response.player_level).to eq(42)
+      expect(client.player_level.retrieve(steamid: 76561197960435530)).to eq(42)
     end
   end
 
@@ -70,7 +70,7 @@ RSpec.describe "Steam API endpoints" do
 
       result = client.player_owned_games.retrieve(steamid: 76561197960435530, include_appinfo: true)
 
-      expect(result.response).to have_attributes(game_count: 1, games: [have_attributes(appid: 440, name: "Team Fortress 2")])
+      expect(result).to have_attributes(game_count: 1, games: [have_attributes(app_id: 440, name: "Team Fortress 2", rtime_last_played: 1700000000)])
     end
   end
 
@@ -80,7 +80,7 @@ RSpec.describe "Steam API endpoints" do
         response: {total_count: 1, games: [{appid: 570, name: "Dota 2", playtime_2weeks: 60, playtime_forever: 600, img_icon_url: "icon"}]}
       })
 
-      expect(client.player_recent_games.retrieve(steamid: 76561197960435530).response.games.first).to have_attributes(appid: 570, playtime_2weeks: 60)
+      expect(client.player_recent_games.retrieve(steamid: 76561197960435530).games.first).to have_attributes(app_id: 570, playtime_2weeks: 60)
     end
   end
 
@@ -93,7 +93,7 @@ RSpec.describe "Steam API endpoints" do
 
       result = client.player_achievements.retrieve(appid: 440, steamid: 76561197960435530)
 
-      expect(result.playerstats).to have_attributes(success: true, achievements: [have_attributes(apiname: "TF_PLAY_GAME_EVERYCLASS")])
+      expect(result).to have_attributes(game_name: "Team Fortress 2", achievements: [have_attributes(api_name: "TF_PLAY_GAME_EVERYCLASS", achieved: true)])
     end
   end
 
@@ -103,7 +103,7 @@ RSpec.describe "Steam API endpoints" do
         playerstats: {steamID: "76561197960435530", gameName: "Team Fortress 2", achievements: [{name: "TF_PLAY_GAME_EVERYCLASS", achieved: 1}]}
       })
 
-      expect(client.player_game_stats.retrieve(appid: 440, steamid: 76561197960435530).playerstats).to have_attributes(gameName: "Team Fortress 2")
+      expect(client.player_game_stats.retrieve(appid: 440, steamid: 76561197960435530)).to have_attributes(game_name: "Team Fortress 2", steam_id: 76561197960435530)
     end
   end
 
@@ -116,7 +116,7 @@ RSpec.describe "Steam API endpoints" do
         }]}
       })
 
-      expect(client.app_news.retrieve(appid: 440, count: 2).appnews.newsitems.first).to have_attributes(title: "Update")
+      expect(client.app_news.retrieve(appid: 440, count: 2)).to contain_exactly(have_attributes(title: "Update", feed_label: "Community", app_id: 440))
     end
   end
 
@@ -125,7 +125,7 @@ RSpec.describe "Steam API endpoints" do
       stub_steam("#{web_api}/ISteamUserStats/GetGlobalAchievementPercentagesForApp/v0002/?gameid=440",
         {achievementpercentages: {achievements: [{name: "TF_SCOUT_LONG_DISTANCE_RUNNER", percent: "49.6"}]}})
 
-      expect(client.app_global_achievements.retrieve(appid: 440).achievementpercentages.achievements.first).to have_attributes(name: "TF_SCOUT_LONG_DISTANCE_RUNNER")
+      expect(client.app_global_achievements.retrieve(appid: 440)).to eq([SteamApiClient::GlobalAchievement.new(name: "TF_SCOUT_LONG_DISTANCE_RUNNER", percent: 49.6)])
     end
   end
 
@@ -133,7 +133,7 @@ RSpec.describe "Steam API endpoints" do
     it "calls ISteamUserStats/GetNumberOfCurrentPlayers/v0001 without the API key" do
       stub_steam("#{web_api}/ISteamUserStats/GetNumberOfCurrentPlayers/v0001/?appid=440", {response: {player_count: 83494, result: 1}})
 
-      expect(client.game_current_players.retrieve(appid: 440).response).to have_attributes(player_count: 83494, result: 1)
+      expect(client.game_current_players.retrieve(appid: 440)).to eq(83494)
     end
   end
 
@@ -144,7 +144,42 @@ RSpec.describe "Steam API endpoints" do
 
       result = client.app_details.retrieve(appid: 570, filters: ["basic", "price_overview"], country_code: "BR", locale: "pt")
 
-      expect(result).to have_attributes(appid: 570, response: have_attributes(success: true, data: have_attributes(name: "Dota 2")))
+      expect(result).to be_a(SteamApiClient::AppDetails).and(have_attributes(app_id: 570, name: "Dota 2", is_free: true))
+    end
+  end
+
+  describe "#retrieve_raw" do
+    it "returns Steam's JSON untouched" do
+      stub_steam("#{web_api}/IPlayerService/GetSteamLevel/v0001/?key=test-key&steamid=76561197960435530",
+        {response: {player_level: 42, new_field: "x"}})
+
+      expect(client.player_level.retrieve_raw(steamid: 76561197960435530)).to eq(response: {player_level: 42, new_field: "x"})
+    end
+
+    it "raises ResponseParseError when the body isn't a JSON object" do
+      stub_request(:get, "#{web_api}/ISteamUserStats/GetNumberOfCurrentPlayers/v0001/?appid=440").to_return(status: 200, body: "[]")
+
+      expect { client.game_current_players.retrieve_raw(appid: 440) }.to raise_error(SteamApiClient::Errors::ResponseParseError)
+    end
+  end
+
+  describe "empty results" do
+    it "returns [] for lists Steam leaves out" do
+      stub_steam("#{web_api}/ISteamUser/GetFriendList/v0001/?key=test-key&steamid=1&relationship=all", {friendslist: {}})
+
+      expect(client.player_friends.retrieve(steamid: 1)).to eq([])
+    end
+
+    it "returns nil for an unavailable app" do
+      stub_steam("#{store_api}/appdetails/?appids=1&filters=&cc=US&l=en", {"1": {success: false}})
+
+      expect(client.app_details.retrieve(appid: 1)).to be_nil
+    end
+
+    it "returns nil when the profile isn't visible (Steam sends an empty object)" do
+      stub_steam("#{web_api}/IPlayerService/GetSteamLevel/v0001/?key=test-key&steamid=1", {response: {}})
+
+      expect(client.player_level.retrieve(steamid: 1)).to be_nil
     end
   end
 
@@ -220,7 +255,7 @@ RSpec.describe "Steam API endpoints" do
         it "still calls endpoints that don't need one" do
           stub_steam("#{web_api}/ISteamUserStats/GetNumberOfCurrentPlayers/v0001/?appid=440", {response: {player_count: 1, result: 1}})
 
-          expect(client.game_current_players.retrieve(appid: 440).response.player_count).to eq(1)
+          expect(client.game_current_players.retrieve(appid: 440)).to eq(1)
         end
       end
     end

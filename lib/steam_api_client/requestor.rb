@@ -12,10 +12,17 @@ module SteamApiClient
 
     # Calls the endpoint. The keyword arguments are the endpoint's params
     # (see SteamApiClient::Endpoints).
-    # @return [SteamApiClient::Structs::Base] the endpoint's response struct
+    # @return [Data, Array, Integer, nil] the endpoint's result
     # @raise [ArgumentError] on missing, unknown or invalid arguments
     def retrieve(**params)
-      Request.new(endpoint: endpoint, params: params, client: client).run.result
+      run(params).result
+    end
+
+    # Calls the endpoint and returns Steam's JSON untouched (keys symbolized), e.g.
+    # for fields the result doesn't have
+    # @return [Hash]
+    def retrieve_raw(**params)
+      run(params).json
     end
 
     # Keeps the client (and its token) out of the output
@@ -27,5 +34,9 @@ module SteamApiClient
     private
 
     attr_reader :client
+
+    def run(params)
+      Request.new(endpoint: endpoint, params: params, client: client).run
+    end
   end
 end

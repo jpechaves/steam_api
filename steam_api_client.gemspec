@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.description = <<~DESCRIPTION.tr("\n", " ").strip
     A Ruby client for the Steam Web API (player summaries, friends, owned and recent games,
     achievements, stats, levels, vanity URLs, app news, current players) and the Storefront API
-    (app details). Responses come back as typed structs, and HTTP failures as specific error classes.
+    (app details). Results come back as plain Ruby Data objects with snake_case fields, and HTTP failures as specific error classes. Its only dependency is Faraday.
   DESCRIPTION
   spec.homepage = "https://github.com/jpechaves/steam_api"
   spec.license = "MIT"
@@ -33,9 +33,6 @@ Gem::Specification.new do |spec|
   end
   spec.require_paths = ["lib"]
 
-  # Typed struct and value objects for Ruby.
-  # See: [https://rubygems.org/gems/dry-struct]
-  spec.add_dependency "dry-struct", "~> 1.6"
   # HTTP client with pluggable adapters (Net::HTTP by default) and middleware.
   # See [https://rubygems.org/gems/faraday]
   spec.add_dependency "faraday", "~> 2.0"
