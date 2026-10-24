@@ -14,6 +14,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Changed
 
 - `Client.configure` / `Client.config` use a plain Ruby `SteamApiClient::Configuration` instead of dry-configurable, which the gem no longer depends on. The settings and their defaults are unchanged. New: `Client.reset_config!` restores the defaults (handy in specs), `config.to_h`, and `config.inspect` hides the token (#82).
+- Endpoints are declared as data: each is one `SteamApiClient::Endpoint` in `SteamApiClient::Endpoints::ALL`, and `client.<name>` returns a `SteamApiClient::Requestor` for it (#87). Every `retrieve` keeps its keyword arguments, defaults and results. Differences:
+  - Arguments are checked with Ruby's own messages (`missing keyword: :steamid`, `unknown keyword: :steam_id`), and invalid values raise `ArgumentError` naming the argument (e.g. `steamid must be an Integer, got "abc"`), instead of a `Dry::Struct::Error`. `nil` is rejected too (before, an empty value was sent to Steam). Numeric strings are still accepted for IDs.
+  - **Breaking (internal classes):** `SteamApiClient::Requestors::*`, `SteamApiClient::Structs::Requests::*` and `SteamApiClient::Errors::EndpointKindNotSupported` are removed, and `Request.new` takes `endpoint:, params:, client:`. Code that only uses `client.<endpoint>.retrieve` is unaffected.
 
 ### Security
 
