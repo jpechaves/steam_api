@@ -1,0 +1,27 @@
+name: Endpoint request
+description: Ask for a Steam Web API or Storefront endpoint the gem doesn't cover yet
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Check the [map of every Steam endpoint](https://github.com/jpechaves/steam_api/issues/88) first:
+        it lists each method's versions, parameters and whether it needs an API key.
+  - type: input
+    id: method
+    attributes:
+      label: Interface and method
+      placeholder: "IPlayerService/GetBadges v1, or store.steampowered.com/api/packagedetails"
+    validations:
+      required: true
+  - type: input
+    id: docs
+    attributes:
+      label: Steam documentation
+      description: A link to Steam's (or the community's) documentation of the endpoint.
+  - type: textarea
+    id: use_case
+    attributes:
+      label: What you'd use it for
+    validations:
+      required: true
