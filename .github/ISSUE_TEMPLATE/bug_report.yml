@@ -1,0 +1,51 @@
+name: Bug report
+description: Something in the gem doesn't work as documented
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ⚠️ **Never paste your Steam Web API key**, or a full request URL (it contains `key=...`).
+        Replace it with `[REDACTED]`. Security problems go to the private advisory form, not here.
+  - type: input
+    id: gem_version
+    attributes:
+      label: Gem version
+      description: "`SteamApiClient::VERSION`"
+      placeholder: "0.11.0"
+    validations:
+      required: true
+  - type: input
+    id: ruby_version
+    attributes:
+      label: Ruby version
+      description: "`ruby -v`"
+      placeholder: "ruby 3.4.1"
+    validations:
+      required: true
+  - type: input
+    id: endpoint
+    attributes:
+      label: Endpoint
+      placeholder: "client.player_summaries"
+  - type: textarea
+    id: call
+    attributes:
+      label: The call
+      description: The code that fails, without your API key.
+      render: ruby
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Include the error class and message, and the backtrace if there is one.
+    validations:
+      required: true

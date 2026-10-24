@@ -180,15 +180,9 @@ $ bin/release --dry-run  # show what would happen without building, pushing or t
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at [GitHub Repository](https://github.com/jpechaves/steam_api). This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Code of Conduct](https://github.com/jpechaves/steam_api/blob/main/CODE_OF_CONDUCT.md).
+Bug reports, endpoint requests and pull requests are welcome on [GitHub](https://github.com/jpechaves/steam_api). Every change starts with an issue; see [CONTRIBUTING.md](CONTRIBUTING.md) for the setup, the checks and the CHANGELOG rules. Security problems go through [SECURITY.md](SECURITY.md), not public issues.
 
-### How to Contribute
-
-1. Fork the repository.
-2. Create a new branch for your feature or bug fix.
-3. Write tests for your changes.
-4. Run the tests to ensure everything works.
-5. Submit a pull request.
+This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## License
 

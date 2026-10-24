@@ -1,0 +1,21 @@
+name: Feature request
+description: Suggest a change or an addition to the gem
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What are you trying to do, and what gets in the way today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: How it could work, ideally with a code sample of the API you'd like.
+      render: ruby
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
