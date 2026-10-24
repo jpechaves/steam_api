@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Gem metadata: a description, and links to the source code, changelog, bug tracker and documentation on the RubyGems page (#84).
 - Customize the Faraday connection (middleware, adapter options, test stubs) with a block: `Client.new { |faraday| ... }` per client, or `Client.configure { |c| c.connection { |faraday| ... } }` for every client (#85).
+- [docs/USAGE.md](docs/USAGE.md), shipped with the gem: every endpoint and what it returns, configuration, errors and retries, and Steam's limits. The README links to it (#83).
 - `retrieve_raw` on every endpoint returns Steam's JSON untouched (keys symbolized), for fields the results don't expose (#81).
 
 ### Changed

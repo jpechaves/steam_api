@@ -4,7 +4,7 @@ RSpec.describe "steam_api_client.gemspec" do
   subject(:gemspec) { Gem::Specification.load(File.expand_path("../../steam_api_client.gemspec", __dir__)) }
 
   it "packages only the library code and its docs" do
-    expect(gemspec.files).to all(match(%r{\A(?:lib/.+\.rb|LICENSE|README\.md|CHANGELOG\.md)\z}))
+    expect(gemspec.files).to all(match(%r{\A(?:lib/.+\.rb|docs/.+\.md|LICENSE|README\.md|CHANGELOG\.md)\z}))
   end
 
   it "includes the entry point, the version file and the docs" do
@@ -13,7 +13,8 @@ RSpec.describe "steam_api_client.gemspec" do
       "lib/steam_api_client/version.rb",
       "LICENSE",
       "README.md",
-      "CHANGELOG.md"
+      "CHANGELOG.md",
+      "docs/USAGE.md"
     )
   end
 
