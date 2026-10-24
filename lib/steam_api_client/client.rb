@@ -27,22 +27,34 @@ module SteamApiClient
   # https://store.steampowered.com/api/<method>?appids=1,2,3&filters=basic,recommendations
   # For more information, vist: https://wiki.teamfortress.com/wiki/User:RJackson/StorefrontAPI
   class Client
-    extend ::Dry::Configurable
-
     BASE_ENDPOINT = "https://api.steampowered.com"
     STOREFRONT_API_ENDPOINT = "https://store.steampowered.com/api/"
-    DEFAULT_TIMEOUT = 10
-    DEFAULT_CONNECT_TIMEOUT = 5
-    DEFAULT_ADAPTER = :net_http
+    DEFAULT_TIMEOUT = Configuration::DEFAULT_TIMEOUT
+    DEFAULT_CONNECT_TIMEOUT = Configuration::DEFAULT_CONNECT_TIMEOUT
+    DEFAULT_ADAPTER = Configuration::DEFAULT_ADAPTER
 
-    setting :api_token
-    # Maximum time, in seconds, for the whole request
-    setting :timeout, default: DEFAULT_TIMEOUT
-    # Maximum time, in seconds, to establish the connection
-    setting :connect_timeout, default: DEFAULT_CONNECT_TIMEOUT
-    # Faraday adapter used for the requests, e.g. :net_http (default) or any
-    # adapter gem the app installs
-    setting :adapter, default: DEFAULT_ADAPTER
+    # Built eagerly, so threads never race to create it
+    @config = Configuration.new
+
+    class << self
+      # The global settings shared by every client
+      # @return [SteamApiClient::Configuration]
+      attr_reader :config
+
+      # SteamApiClient::Client.configure { |config| config.api_token = "..." }
+      # @yieldparam [SteamApiClient::Configuration] config
+      # @return [Class] the client class
+      def configure
+        yield config
+        self
+      end
+
+      # Restores the default settings (e.g. between specs)
+      # @return [SteamApiClient::Configuration]
+      def reset_config!
+        @config = Configuration.new
+      end
+    end
 
     attr_writer :api_token, :timeout, :connect_timeout
 

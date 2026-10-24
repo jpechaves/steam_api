@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-`steam_api_client` is a Ruby gem wrapping the Steam Web API (`https://api.steampowered.com`) and the Storefront API (`https://store.steampowered.com/api/`). Runtime dependencies are only `dry-configurable`, `dry-struct`, and `faraday` (Net::HTTP adapter by default, configurable with `Client.configure { |c| c.adapter = ... }`). Ruby 3.3.4 is used locally (`.ruby-version`); the gemspec requires `>= 3.3` (3.0–3.2 are end-of-life), CI tests 3.3, 3.4 and 4.0.
+`steam_api_client` is a Ruby gem wrapping the Steam Web API (`https://api.steampowered.com`) and the Storefront API (`https://store.steampowered.com/api/`). Runtime dependencies are only `dry-struct` and `faraday` (Net::HTTP adapter by default, configurable with `Client.configure { |c| c.adapter = ... }`). Ruby 3.3.4 is used locally (`.ruby-version`); the gemspec requires `>= 3.3` (3.0–3.2 are end-of-life), CI tests 3.3, 3.4 and 4.0.
 
 ## Commands
 
@@ -51,6 +51,6 @@ Pipeline: `Requestor` → `RequestStruct.build_from_params` → `SteamApiClient:
 ### Gotchas
 
 - `Client.new` takes a keyword arg: `SteamApiClient::Client.new(api_token: "...")` (the README's positional example is outdated).
-- `Client#api_token` returns the instance token, falling back to the class-level `Client.configure` value. Specs that call `configure` must reset it (`after { described_class.config.api_token = nil }`) because the setting is global.
+- `Client#api_token` returns the instance token, falling back to the class-level `Client.configure` value. The settings are global (a plain `SteamApiClient::Configuration`); `spec_helper` calls `Client.reset_config!` after every example, so specs can call `configure` freely.
 - ActiveSupport is not a dependency — don't use `as_json`, `deep_symbolize_keys`, etc. `Dry::Struct#to_h` already returns a recursively symbolized hash.
 - SimpleCov loads stdlib gems (e.g. `json`) during specs, which can mask missing requires in `lib/steam_api_client.rb`. Check with `bundle exec ruby -Ilib -e 'require "steam_api_client"; ...'` outside RSpec.
