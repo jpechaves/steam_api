@@ -31,22 +31,19 @@ SimpleCov runs automatically with the specs and measures `lib/` only (line + bra
 
 ## Architecture
 
-Every endpoint is implemented as three pieces wired together through a shared pipeline:
+Every endpoint is **one declaration** in `lib/steam_api_client/endpoints.rb` (`Endpoints::ALL`) plus a response struct:
 
-1. **Requestor** (`lib/steam_api_client/requestors/*.rb`, subclass of `Requestors::Base`) — the public method (usually `retrieve`) exposed on the client. It calls `build_request_and_run(RequestStructClass, ResponseStructClass, **params)`.
-2. **Request struct** (`lib/steam_api_client/structs/requests/get_*.rb`) — a Dry::Struct describing the HTTP call. Subclasses either:
-   - `Requests::Abstract` for the Web API: must define `interface`, `path`, `version` (each with a trailing `/`, e.g. `"ISteamUser/"`, `"GetPlayerSummaries/"`, `"v0002/"`), or
-   - `Requests::StorefrontAbstract` for the Storefront API: defines only `path`; default `query_params` includes `cc`/`l`.
-   Each also defines `self.build_from_params(params)` (validates required keys, raises `ArgumentError` if missing), `query_params`, and usually overrides `needs_authorization?` (adds `key=<api_token>` to the query when true; `Request` raises `Errors::MissingApiToken` up front if the client has no token). `endpoint_kind` (`:base_endpoint` / `:storefront_endpoint`) selects the URL builder in `Request`.
+1. **Endpoint** (`SteamApiClient::Endpoint`) — name (the client method), path (Web API: `"<Interface>/<Method>/<version>/"`, e.g. `"ISteamUser/GetPlayerSummaries/v0002/"`; Storefront: `"appdetails/"` with `api: :store`), `key:` (whether Steam needs the API key, default true), `returns:` (the response struct) and `params:`, a Hash of `Endpoint::Param` (`integer`, `integer_list`, `string`, `string_list`, `boolean`; options `default:` (otherwise required), `as:` (Steam's name, e.g. `appid` → `gameid`), `in:` (allowlist)). `Endpoint#query` checks the keyword arguments with Ruby's own messages (`missing keyword: :steamid`, `unknown keyword: :x`), converts them (numeric strings → Integer; lists comma-joined) and raises `ArgumentError` on invalid values.
+2. **Requestor** (`SteamApiClient::Requestor`) — `Client` defines one method per `Endpoints::ALL` entry returning a requestor; `retrieve(**params)` runs the request and returns `response.result`.
 3. **Response struct** (`lib/steam_api_client/structs/*.rb`, subclass of `Structs::Base`) — a Dry::Struct mirroring the JSON payload; `build_from_response(hash)` defaults to `new(**hash)` but can be overridden to reshape the payload (e.g. `AppDetails::Details` unwraps the app-id-keyed top level). Use `attribute?` for fields Steam may omit; shared types live in `Structs::Types` (incl. `Types::Optional::String/Integer`). `Types::Integer`/`Float`/`String`/`Bool` convert and validate values (Steam sends numbers as strings) but let `nil` through, because Steam sends `null` for missing values. Live-check `app_details` against a range of apps after changing types: required non-nil fields broke 31 of 48 real apps.
 
-Pipeline: `Requestor` → `RequestStruct.build_from_params` → `SteamApiClient::Request` (builds the URL with `URI.join` and runs it through `Client#connection`, a Faraday connection; Faraday timeouts become `Errors::HttpTimeout` and connection/TLS failures `Errors::ConnectionError`) → `#run` → `SteamApiClient::Response` (wraps the `Faraday::Response`; `#result` parses JSON with symbolized keys into the response struct, raising `Errors::ResponseParseError` with the JSON/Dry::Struct error as `cause` when that fails) → `FailureHandler.instance.call` raises `SteamApiClient::Errors::*` subclasses of `ApiError` by status code / timeout.
+Pipeline: `client.<name>.retrieve(**params)` → `SteamApiClient::Request` (`Endpoint#query`, then `Errors::MissingApiToken` if the endpoint needs a key and the client has none, then the URL with `URI.join` and the key first; runs a GET through `Client#connection`, a Faraday connection; Faraday timeouts become `Errors::HttpTimeout` and connection/TLS failures `Errors::ConnectionError`) → `#run` → `SteamApiClient::Response` (wraps the `Faraday::Response`; `#result` parses JSON with symbolized keys into the response struct, raising `Errors::ResponseParseError` with the JSON/Dry::Struct error as `cause` when that fails) → `FailureHandler.instance.call` raises `SteamApiClient::Errors::*` subclasses of `ApiError` by status code / timeout.
 
 ### Adding a new endpoint
 
-- Create the request struct, response struct, and requestor (plus specs mirroring the `lib/` path under `spec/`).
-- **Register every new file manually in `lib/steam_api_client.rb`** — there is no autoloading, and require order matters (nested struct classes such as `PlayerSummary` or `AppDetails::*` must be required before the structs that reference them).
-- Add an `attr_reader` and instantiate the requestor in `SteamApiClient::Client#initialize`.
+- Declare it in `Endpoints::ALL`, and write its response struct (plus a spec under `spec/steam_api_client/structs/`). Add its exact URL to `spec/steam_api_client/endpoints_spec.rb` and its name to the list in `endpoint_spec.rb`.
+- **Register the new struct file manually in `lib/steam_api_client.rb`** — there is no autoloading, and require order matters (nested struct classes such as `PlayerSummary` or `AppDetails::*` must be required before the structs that reference them; `endpoints.rb` after every struct).
+- Every endpoint is a GET with its params in the query string. Steam's POST endpoints (see #88) take form-encoded params; `Request` would need that first.
 
 ### Gotchas
 

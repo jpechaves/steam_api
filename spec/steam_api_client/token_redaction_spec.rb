@@ -6,11 +6,7 @@ RSpec.describe "API token redaction" do
   let(:client) { SteamApiClient::Client.new(api_token: token) }
   let(:url) { "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=#{token}&steamids=123" }
   let(:request) do
-    SteamApiClient::Request.new(
-      request_struct: SteamApiClient::Structs::Requests::GetPlayerSummaries.new(steamids: [123]),
-      response_struct: SteamApiClient::Structs::PlayerSummaries,
-      client: client
-    )
+    SteamApiClient::Request.new(endpoint: SteamApiClient::Endpoints::ALL[:player_summaries], params: {steamids: [123]}, client: client)
   end
 
   def expect_redacted(text)
@@ -51,14 +47,10 @@ RSpec.describe "API token redaction" do
     end
 
     it "shows URLs without a key as they are" do
-      storefront = SteamApiClient::Request.new(
-        request_struct: SteamApiClient::Structs::Requests::GetAppDetails.new(appid: 570, filters: [], cc: "US", l: "en"),
-        response_struct: SteamApiClient::Structs::AppDetails::Details,
-        client: client
-      )
+      storefront = SteamApiClient::Request.new(endpoint: SteamApiClient::Endpoints::ALL[:app_details], params: {appid: 570}, client: client)
 
       expect(storefront.inspect).to eq(
-        "#<SteamApiClient::Request GET https://store.steampowered.com/api/appdetails/?cc=US&l=en&appids=570&filters=>"
+        "#<SteamApiClient::Request GET https://store.steampowered.com/api/appdetails/?appids=570&filters=&cc=US&l=en>"
       )
     end
   end

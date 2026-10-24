@@ -1,15 +1,23 @@
 module SteamApiClient
+  # One call to an endpoint: builds the URL from the arguments and sends it
+  # through the client's Faraday connection
   class Request
     # The API token in a request URL's query string
     API_KEY_PARAM = /(?<=[?&]key=)[^&]*/
-    def initialize(request_struct:, response_struct:, client:)
+
+    # @param [SteamApiClient::Endpoint] endpoint
+    # @param [Hash] params the keyword arguments given to #retrieve
+    # @param [SteamApiClient::Client] client
+    # @raise [ArgumentError] on missing, unknown or invalid params
+    # @raise [SteamApiClient::Errors::MissingApiToken] if the endpoint needs a token and the client has none
+    def initialize(endpoint:, params:, client:)
       @failure_handler = SteamApiClient::FailureHandler.instance
-      @request_struct = request_struct
-      @response_struct = response_struct
+      @endpoint = endpoint
       @client = client
 
+      query = endpoint.query(params)
       ensure_api_token!
-      build_request
+      @url = build_url(query)
     end
 
     def run
@@ -17,7 +25,7 @@ module SteamApiClient
 
       raw_response = perform
 
-      Response.new(raw_response: raw_response, response_struct: response_struct, request: self).tap do |response|
+      Response.new(raw_response: raw_response, response_struct: endpoint.returns, request: self).tap do |response|
         failure_handler.call(response)
       end
     end
@@ -25,17 +33,18 @@ module SteamApiClient
     # Shows the method and the URL, with the API token redacted
     # @return [String]
     def inspect
-      "#<#{self.class.name} #{request_struct.method.upcase} #{url.sub(API_KEY_PARAM, "[REDACTED]")}>"
+      "#<#{self.class.name} GET #{url.sub(API_KEY_PARAM, "[REDACTED]")}>"
     end
 
     private
 
-    attr_accessor :request_struct, :response_struct, :client, :url, :failure_handler
+    attr_reader :endpoint, :client, :url, :failure_handler
 
     # Sends the request through the client's Faraday connection, turning
-    # Faraday's network errors into the gem's errors (the original is #cause)
+    # Faraday's network errors into the gem's errors (the original is #cause).
+    # Every Steam endpoint is a GET, with its params in the query string.
     def perform
-      client.connection.run_request(request_struct.method, url, body, headers) do |request|
+      client.connection.run_request(:get, url, nil, nil) do |request|
         request_options.each { |option, value| request.options.public_send(:"#{option}=", value) }
       end
     rescue ::Faraday::TimeoutError
@@ -58,65 +67,21 @@ module SteamApiClient
       {timeout: client.timeout, open_timeout: client.connect_timeout}
     end
 
-    # GET requests (every Steam endpoint so far) carry their params in the query string
-    def body
-      request_struct.body.to_json unless request_struct.method == :get
-    end
-
-    def headers
-      return {} if request_struct.method == :get
-
-      {"Content-Type" => "application/json"}
-    end
-
     def ensure_api_token!
-      return unless request_struct.needs_authorization?
+      return unless endpoint.key?
       return unless client.api_token.to_s.empty?
 
       raise SteamApiClient::Errors::MissingApiToken
     end
 
-    def build_request
-      url = nil
+    # The API key goes first, then the endpoint's params
+    def build_url(query)
+      query = {key: client.api_token}.merge(query) if endpoint.key?
+      base = (endpoint.api == :store) ? client.storefront_endpoint : client.base_endpoint
 
-      case request_struct.endpoint_kind
-      when :base_endpoint then url = build_base_url
-      when :storefront_endpoint then url = build_storefront_url
-      else raise SteamApiClient::Errors::EndpointKindNotSupported
-      end
-
-      @url = url.to_s
-    end
-
-    def build_base_url
-      url = URI.join(
-        client.base_endpoint,
-        request_struct.interface,
-        request_struct.path,
-        request_struct.version
-      )
-      url.query = query_params
-
-      url
-    end
-
-    def build_storefront_url
-      url = URI.join(
-        client.storefront_endpoint,
-        request_struct.path
-      )
-      url.query = query_params
-
-      url
-    end
-
-    def query_params
-      all_params = {}.tap do |params|
-        params[:key] = client.api_token if request_struct.needs_authorization?
-        params.merge!(request_struct.query_params)
-      end
-
-      URI.encode_www_form(all_params)
+      url = URI.join(base, endpoint.path)
+      url.query = URI.encode_www_form(query)
+      url.to_s
     end
   end
 end

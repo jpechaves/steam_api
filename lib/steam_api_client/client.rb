@@ -58,19 +58,11 @@ module SteamApiClient
 
     attr_writer :api_token, :timeout, :connect_timeout
 
-    attr_reader \
-      :app_details,
-      :app_global_achievements,
-      :app_news,
-      :game_current_players,
-      :player_achievements,
-      :player_friends,
-      :player_game_stats,
-      :player_level,
-      :player_owned_games,
-      :player_recent_games,
-      :player_steamid,
-      :player_summaries
+    # One method per endpoint, e.g. client.player_level.retrieve(steamid: ...)
+    # @see SteamApiClient::Endpoints
+    Endpoints::ALL.each_key do |name|
+      define_method(name) { @requestors.fetch(name) }
+    end
 
     # Initialize the client
     # @param [String] api_token - An existing api token.
@@ -87,18 +79,7 @@ module SteamApiClient
       @adapter = adapter
       @connection_block = connection_block
 
-      @app_details ||= SteamApiClient::Requestors::AppDetails.new(self)
-      @app_global_achievements ||= SteamApiClient::Requestors::AppGlobalAchievements.new(self)
-      @app_news ||= SteamApiClient::Requestors::AppNews.new(self)
-      @game_current_players ||= SteamApiClient::Requestors::GameCurrentPlayers.new(self)
-      @player_achievements ||= SteamApiClient::Requestors::PlayerAchievements.new(self)
-      @player_friends ||= SteamApiClient::Requestors::PlayerFriends.new(self)
-      @player_game_stats ||= SteamApiClient::Requestors::PlayerGameStats.new(self)
-      @player_level ||= SteamApiClient::Requestors::PlayerLevel.new(self)
-      @player_owned_games ||= SteamApiClient::Requestors::PlayerOwnedGames.new(self)
-      @player_recent_games ||= SteamApiClient::Requestors::PlayerRecentGames.new(self)
-      @player_steamid ||= SteamApiClient::Requestors::PlayerSteamId.new(self)
-      @player_summaries ||= SteamApiClient::Requestors::PlayerSummaries.new(self)
+      @requestors = Endpoints::ALL.transform_values { |endpoint| Requestor.new(self, endpoint) }
     end
 
     # The token sent on authorized requests. Falls back to the value set
