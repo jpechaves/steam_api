@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- Gem metadata: a description, and links to the source code, changelog, bug tracker and documentation on the RubyGems page (#84).
+
 ## [0.11.0] - 2026-10-23
 
 ### Added

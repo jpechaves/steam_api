@@ -9,11 +9,20 @@ Gem::Specification.new do |spec|
   spec.email = ["pedrochaveslimas3@gmail.com"]
 
   spec.summary = "A ruby client to fetch from the public Steam Web API"
+  spec.description = <<~DESCRIPTION.tr("\n", " ").strip
+    A Ruby client for the Steam Web API (player summaries, friends, owned and recent games,
+    achievements, stats, levels, vanity URLs, app news, current players) and the Storefront API
+    (app details). Responses come back as typed structs, and HTTP failures as specific error classes.
+  DESCRIPTION
   spec.homepage = "https://github.com/jpechaves/steam_api"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 3.3"
 
   spec.metadata["homepage_uri"] = spec.homepage
+  spec.metadata["source_code_uri"] = spec.homepage
+  spec.metadata["changelog_uri"] = "#{spec.homepage}/blob/main/CHANGELOG.md"
+  spec.metadata["bug_tracker_uri"] = "#{spec.homepage}/issues"
+  spec.metadata["documentation_uri"] = "https://rubydoc.info/gems/steam_api_client"
   # Require MFA for every `gem push` of this gem
   spec.metadata["rubygems_mfa_required"] = "true"
 

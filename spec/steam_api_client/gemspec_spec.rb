@@ -22,6 +22,19 @@ RSpec.describe "steam_api_client.gemspec" do
     expect(gemspec.metadata["homepage_uri"]).to eq(gemspec.homepage)
   end
 
+  it "links the source, changelog, bug tracker and documentation on RubyGems" do
+    expect(gemspec.metadata).to include(
+      "source_code_uri" => "https://github.com/jpechaves/steam_api",
+      "changelog_uri" => "https://github.com/jpechaves/steam_api/blob/main/CHANGELOG.md",
+      "bug_tracker_uri" => "https://github.com/jpechaves/steam_api/issues",
+      "documentation_uri" => "https://rubydoc.info/gems/steam_api_client"
+    )
+  end
+
+  it "has a description besides the summary" do
+    expect(gemspec.description).to be_a(String).and(satisfy { |text| text.length > gemspec.summary.length })
+  end
+
   it "requires a maintained Ruby (3.3 or newer)" do
     expect(gemspec.required_ruby_version).to eq(Gem::Requirement.new(">= 3.3"))
   end
