@@ -1,5 +1,7 @@
 module SteamApiClient
   class Request
+    # The API token in a request URL's query string
+    API_KEY_PARAM = /(?<=[?&]key=)[^&]*/
     def initialize(request_struct:, response_struct:, client:)
       @failure_handler = SteamApiClient::FailureHandler.instance
       @request_struct = request_struct
@@ -18,6 +20,12 @@ module SteamApiClient
       Response.new(raw_response: raw_response, response_struct: response_struct, request: self).tap do |response|
         failure_handler.call(response)
       end
+    end
+
+    # Shows the method and the URL, with the API token redacted
+    # @return [String]
+    def inspect
+      "#<#{self.class.name} #{request_struct.method.upcase} #{url.sub(API_KEY_PARAM, "[REDACTED]")}>"
     end
 
     private

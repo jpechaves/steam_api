@@ -54,6 +54,12 @@ module SteamApiClient
       raise Errors::ResponseParseError.new(self, response_struct)
     end
 
+    # Shows the status and the request, with the API token redacted
+    # @return [String]
+    def inspect
+      "#<#{self.class.name} status=#{status_code} request=#{request.inspect}>"
+    end
+
     private
 
     attr_accessor :raw_response, :response_struct
