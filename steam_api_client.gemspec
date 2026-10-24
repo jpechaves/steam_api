@@ -29,7 +29,7 @@ Gem::Specification.new do |spec|
   # Ship only the library code and its docs. Development files (bin/, specs,
   # Gemfile, tooling config) stay out of the packaged gem.
   spec.files = Dir.chdir(__dir__) do
-    Dir["lib/**/*.rb", "LICENSE", "README.md", "CHANGELOG.md"]
+    Dir["lib/**/*.rb", "docs/**/*.md", "LICENSE", "README.md", "CHANGELOG.md"]
   end
   spec.require_paths = ["lib"]
 

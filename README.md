@@ -4,10 +4,6 @@
   - [Features](#features)
   - [Installation](#installation)
   - [Usage](#usage)
-    - [Configuring the Client](#configuring-the-client)
-    - [Example Requests](#example-requests)
-      - [Get Player Summaries](#get-player-summaries)
-      - [Get App Details](#get-app-details)
   - [Development](#development)
     - [Requirements](#requirements)
     - [Initial Setup](#initial-setup)
@@ -64,93 +60,25 @@ require "steam_api_client"
 
 ## Usage
 
-### Configuring the Client
-
 ```ruby
 SteamApiClient::Client.configure do |config|
-  config.api_token = "your-API-token-value"
-end
-```
-
-Alternatively, you can initialize the client directly:
-
-```ruby
-client = SteamApiClient::Client.new(api_token: "your-API-token-value")
-```
-
-Requests time out after 10 seconds (5 seconds to connect) and raise `SteamApiClient::Errors::HttpTimeout`. You can change this globally or per client, in seconds:
-
-```ruby
-SteamApiClient::Client.configure do |config|
-  config.timeout = 30
-  config.connect_timeout = 2
+  config.api_token = ENV.fetch("STEAM_API_KEY") # https://steamcommunity.com/dev/apikey
 end
 
-client = SteamApiClient::Client.new(api_token: "your-API-token-value", timeout: 5)
-```
+client = SteamApiClient::Client.new
 
-If Steam can't be reached at all (DNS failure, refused connection, TLS error), requests raise `SteamApiClient::Errors::ConnectionError` instead.
-
-Requests go through [Faraday](https://github.com/lostisland/faraday) with its default `Net::HTTP` adapter. To use another one, add its gem to your Gemfile and set it globally or per client:
-
-```ruby
-SteamApiClient::Client.configure do |config|
-  config.adapter = :httpx # from the httpx gem
-end
-
-client = SteamApiClient::Client.new(api_token: "your-API-token-value", adapter: :net_http)
-```
-
-To customize the Faraday connection itself (middleware, adapter options, test stubs), pass a block, globally or per client. It runs after the adapter is set, so it can also replace it, with options. The global block runs first:
-
-```ruby
-SteamApiClient::Client.configure do |config|
-  config.connection { |faraday| faraday.adapter :net_http_persistent, pool_size: 5 }
-end
-
-client = SteamApiClient::Client.new(api_token: "your-API-token-value") do |faraday|
-  faraday.request :instrumentation # from your app's middleware
-end
-```
-
-> **Logging:** Steam only accepts the API key in the query string, so a logger that prints request URLs prints your key. Filter it out:
->
-> ```ruby
-> client = SteamApiClient::Client.new(api_token: "your-API-token-value") do |faraday|
->   faraday.response :logger, Rails.logger, headers: false do |logger|
->     logger.filter(/(key=)[^&\s]+/, '\1[REDACTED]')
->   end
-> end
-> ```
-
-### Example Requests
-
-#### Get Player Summaries
-
-```ruby
-client = SteamApiClient::Client.new(api_token: "your-API-token-value")
 player = client.player_summaries.retrieve(steamids: [76561197960435530]).first
 player.persona_name # => "Robin"
-player.steam_id     # => 76561197960435530
+
+client.player_level.retrieve(steamid: player.steam_id)                  # => 32
+client.player_owned_games.retrieve(steamid: player.steam_id)            # => OwnedGames, or nil when private
+client.app_details.retrieve(appid: 440, filters: ["basic"]).name        # => "Team Fortress 2"
+client.game_current_players.retrieve(appid: 440)                        # => 88231
 ```
 
-#### Get App Details
+Results are immutable `Data` objects with snake_case fields (or Integers, or Arrays of them). HTTP errors raise `SteamApiClient::Errors::*` classes, e.g. `HttpTooManyRequests` with `#retry_after`.
 
-```ruby
-client = SteamApiClient::Client.new
-app = client.app_details.retrieve(appid: 1091500, filters: ["basic"]) # nil when the app is unavailable
-app.name     # => "Cyberpunk 2077"
-app.to_h     # => {app_id: 1091500, type: "game", name: "Cyberpunk 2077", ...}
-```
-
-Results are immutable `Data` objects (or Integers, or Arrays of them), so they compare by value and work with pattern matching. To get Steam's JSON untouched, e.g. for a field the gem doesn't expose, use `retrieve_raw`:
-
-```ruby
-client.player_level.retrieve(steamid: 76561197960435530)     # => 32
-client.player_level.retrieve_raw(steamid: 76561197960435530) # => {response: {player_level: 32}}
-```
-
-For more examples, see the [Usage](#usage) section above.
+**See [docs/USAGE.md](docs/USAGE.md)** for every endpoint and what it returns, configuration (timeouts, adapter, Faraday middleware, logging without leaking the key), errors and retries, and Steam's limits.
 
 ## Development
 
