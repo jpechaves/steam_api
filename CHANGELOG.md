@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Gem metadata: a description, and links to the source code, changelog, bug tracker and documentation on the RubyGems page (#84).
 
+### Security
+
+- `Client`, `Request` and `Response` no longer show the API token in `inspect` (and `pp`), so consoles, logs and error trackers don't leak it. The token shows as `[REDACTED]`, the `key=` value in URLs too (#80).
+
 ## [0.11.0] - 2026-10-23
 
 ### Added
