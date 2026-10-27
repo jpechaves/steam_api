@@ -20,7 +20,7 @@ bin/standardrb --fix                         # autofix style
 bundle exec rubycritic lib --no-browser      # Flay/Flog/Reek analysis (report in tmp/rubycritic; Reek reads .reek.yml)
 bundle exec bundler-audit check --update     # known advisories in Gemfile.lock
 bin/bump patch|minor|major [--date Y-M-D]    # release PR prep: bump version.rb + Gemfile.lock, move [Unreleased] under the new version
-bin/release [--dry-run]                      # publish the gemspec version to RubyGems (MFA prompt) and push tag v<version>; no-op if already released
+bin/release [--dry-run]                      # publish the gemspec version to RubyGems (MFA prompt) and push tag v<version>; no-op if already released, refuses while [Unreleased] has entries
 ```
 
 CI (`.github/workflows/ci.yml`) runs three jobs: `lint` (standardrb), `analysis` (RubyCritic with a `--minimum-score` gate; raise it when the score improves) and `test` (rspec matrix). `.github/workflows/audit.yml` runs bundler-audit on push, PRs and weekly. `.github/workflows/changelog.yml` runs `bin/check_changelog`: PRs that touch `lib/` or the gemspec must update `CHANGELOG.md` unless labelled `skip-changelog` (check locally with `bin/check_changelog origin/main`).

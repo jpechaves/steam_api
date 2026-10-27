@@ -40,6 +40,7 @@ class Release
     return already_released if published && remote_tag
 
     ensure_changelog_entry!
+    ensure_nothing_unreleased!
     ensure_remote_tag_matches_head!
     return tag_published_version if published
 
@@ -63,6 +64,16 @@ class Release
     return if changelog.call.include?("## [#{tag.delete_prefix("v")}]")
 
     raise Error, "CHANGELOG.md has no \"## [#{tag.delete_prefix("v")}]\" section. Add one before releasing."
+  end
+
+  # Entries under [Unreleased] are changes on main that aren't part of this
+  # version, so publishing main would ship them under the wrong CHANGELOG section
+  def ensure_nothing_unreleased!
+    unreleased = changelog.call[/^## \[Unreleased\]\s*$(.*?)(?=^## \[|\z)/m, 1]
+    return if unreleased.nil? || unreleased.strip.empty?
+
+    raise Error, "CHANGELOG.md has entries under \"## [Unreleased]\": main has changes that aren't part of #{tag}. " \
+      "Run bin/bump to release them as a new version."
   end
 
   def ensure_remote_tag_matches_head!
