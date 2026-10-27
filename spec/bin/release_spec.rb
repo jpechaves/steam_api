@@ -167,6 +167,41 @@ RSpec.describe Release do
     end
   end
 
+  context "when the CHANGELOG has entries under [Unreleased]" do
+    let(:changelog) { "## [Unreleased]\n\n### Added\n\n- Something new (#200).\n\n## [1.2.3] - 2026-10-23\n" }
+
+    it "aborts before publishing" do
+      expect { release.call }.to raise_error(Release::Error, /entries under "## \[Unreleased\]".*aren't part of v1.2.3/)
+      expect(shell.commands).not_to include(build, push, tag, push_tag)
+    end
+
+    context "and the version is published but not tagged" do
+      let(:published) { true }
+
+      it "aborts before tagging" do
+        expect { release.call }.to raise_error(Release::Error, /entries under "## \[Unreleased\]"/)
+        expect(shell.commands).not_to include(tag, push_tag)
+      end
+    end
+
+    context "and the version is already released" do
+      let(:published) { true }
+      let(:remote_tag) { "#{head}\trefs/tags/v1.2.3\n" }
+
+      it "still reports it as released" do
+        expect(release.call).to eq(:already_released)
+      end
+    end
+  end
+
+  context "when the CHANGELOG has no [Unreleased] section" do
+    let(:changelog) { "## [1.2.3] - 2026-10-23\n\n### Fixed\n\n- A bug (#199).\n" }
+
+    it "releases" do
+      expect(release.call).to eq(:released)
+    end
+  end
+
   context "with a dry run" do
     let(:dry_run) { true }
 

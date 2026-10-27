@@ -60,3 +60,4 @@ A release is its own issue and pull request:
    moves `[Unreleased]` under the new version.
 2. Merge the release pull request.
 3. `bin/release` from an up-to-date `main`: publishes the gem (MFA) and pushes the `v<version>` tag.
+   It refuses to run while `[Unreleased]` has entries: those changes aren't part of the version.
