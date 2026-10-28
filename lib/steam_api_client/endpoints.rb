@@ -57,6 +57,26 @@ module SteamApiClient
         }
       ),
 
+      # The apps featured on the store's front page => Featured
+      # @see https://wiki.teamfortress.com/wiki/User:RJackson/StorefrontAPI#featured
+      Endpoint.new(
+        :featured, "featured/", api: :store, key: false, returns: Featured,
+        params: {
+          country_code: param.string(as: :cc, default: "US"),
+          locale: param.string(as: :l, default: "en")
+        }
+      ),
+
+      # The store front page's specials, top sellers, new releases and upcoming apps => FeaturedCategories
+      # @see https://wiki.teamfortress.com/wiki/User:RJackson/StorefrontAPI#featuredcategories
+      Endpoint.new(
+        :featured_categories, "featuredcategories/", api: :store, key: false, returns: FeaturedCategories,
+        params: {
+          country_code: param.string(as: :cc, default: "US"),
+          locale: param.string(as: :l, default: "en")
+        }
+      ),
+
       # Number of players currently in a game => Integer
       # @see https://wiki.teamfortress.com/wiki/WebAPI/GetNumberOfCurrentPlayers
       Endpoint.new(

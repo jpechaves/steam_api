@@ -202,6 +202,26 @@ RSpec.describe "Steam API endpoints" do
     end
   end
 
+  describe "#featured" do
+    it "calls the Storefront featured endpoint with country code and language, without the API key" do
+      stub_steam("#{store_api}/featured/?cc=BR&l=portuguese",
+        {featured_win: [{id: 440, name: "Team Fortress 2", final_price: 0}], status: 1})
+
+      result = client.featured.retrieve(country_code: "BR", locale: "portuguese")
+
+      expect(result).to have_attributes(featured_win: [have_attributes(id: 440, final_price: 0)], featured_mac: [])
+    end
+  end
+
+  describe "#featured_categories" do
+    it "calls the Storefront featuredcategories endpoint (US and English by default), without the API key" do
+      stub_steam("#{store_api}/featuredcategories/?cc=US&l=en",
+        {specials: {id: "cat_specials", name: "Specials", items: [{id: 440}]}, status: 1})
+
+      expect(client.featured_categories.retrieve).to have_attributes(specials: have_attributes(items: [have_attributes(id: 440)]), top_sellers: nil)
+    end
+  end
+
   describe "#retrieve_raw" do
     it "returns Steam's JSON untouched" do
       stub_steam("#{web_api}/IPlayerService/GetSteamLevel/v0001/?key=test-key&steamid=76561197960435530",

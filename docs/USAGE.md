@@ -281,6 +281,34 @@ client.store_search.retrieve(term: "portal").first
 
 `price` is `nil` for free apps, `metascore` when the app has no Metacritic score. No match is `[]`.
 
+#### `featured`
+
+The apps featured on the store's front page, per platform. Storefront API, no key needed. Takes `country_code:` and `locale:`.
+
+```ruby
+featured = client.featured.retrieve(country_code: "DE", locale: "german")
+featured.featured_win.first
+# => #<data SteamApiClient::FeaturedItem id=3447280, type=0, name="Fantasy World Manager", discounted=true, discount_percent=10,
+#     original_price=1499, final_price=1349, currency="EUR", discount_expiration=1794416432, ...>
+```
+
+`SteamApiClient::Featured` fields: `large_capsules`, `featured_win`, `featured_mac`, `featured_linux` (each a list of `FeaturedItem`, `[]` when empty), `layout`.
+
+`SteamApiClient::FeaturedItem` fields: `id`, `type` (`0` for apps), `name`, `discounted`, `discount_percent`, `original_price` and `final_price` (in cents; `original_price` is `nil` for free apps), `currency`, `discount_expiration` (unix time, `nil` when not discounted), `large_capsule_image`, `small_capsule_image`, `header_image`, `windows_available`, `mac_available`, `linux_available`, `streaming_video_available`, `controller_support`.
+
+#### `featured_categories`
+
+The store front page's lists: specials, upcoming apps, top sellers and new releases. Storefront API, no key needed. Takes `country_code:` and `locale:`.
+
+```ruby
+lists = client.featured_categories.retrieve
+lists.specials
+# => #<data SteamApiClient::FeaturedCategories::Category id="cat_specials", name="Specials", items=[#<data SteamApiClient::FeaturedItem ...>, ...]>
+lists.top_sellers.items.map(&:name)
+```
+
+`SteamApiClient::FeaturedCategories` fields: `specials`, `coming_soon`, `top_sellers`, `new_releases`, each a `FeaturedCategories::Category` (`id`, `name` in the requested language, `items`: `FeaturedItem`), or `nil` when Steam leaves the list out. Steam also sends the spotlights, the daily deal, genres and trailers, whose shapes vary: use `retrieve_raw` for those.
+
 #### `app_news`
 
 The latest news of an app. `count:` is required, `maxlength:` (default 300) shortens each item's contents.
@@ -389,7 +417,7 @@ Don't retry other 4xx errors: they won't succeed on their own.
 
 ## Limits and caveats
 
-- **Rate limits.** Steam's [Web API terms](https://steamcommunity.com/dev/apiterms) allow 100,000 calls per day per key. The Storefront API (`app_details`, `package_details`, `app_dlc`, `store_search`) is rate limited per IP address, commonly reported at about 200 requests per 5 minutes. Both answer `429` when you go over. Cache what you can.
+- **Rate limits.** Steam's [Web API terms](https://steamcommunity.com/dev/apiterms) allow 100,000 calls per day per key. The Storefront API (`app_details`, `package_details`, `app_dlc`, `store_search`, `featured`, `featured_categories`) is rate limited per IP address, commonly reported at about 200 requests per 5 minutes. Both answer `429` when you go over. Cache what you can.
 - **The Storefront API is unofficial.** The Storefront endpoints use the API behind Steam's store and Big Picture mode. Valve doesn't document it, and its fields change without notice.
 - **Private profiles.** What a player hides depends on their privacy settings. Depending on the endpoint, Steam answers with an error (`player_achievements`: 403, `player_game_stats`: 400, `player_friends`: 401) or with empty data, which the gem returns as `nil` or `[]` (`player_owned_games`, `player_recent_games`, `player_level`, `player_wishlist`, `player_wishlist_count`, `player_followed_games`). Steam answers the same way for an empty wishlist, so the wishlist endpoints can't tell the two apart. `player_summaries` still returns the public part of the profile.
 - **The key is in the URL.** Steam requires `?key=...` in the query string. Treat logs of request URLs as secrets (see [Configuration](#configuration)), and [rotate your key](https://steamcommunity.com/dev/apikey) if it leaks.
