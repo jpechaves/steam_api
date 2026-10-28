@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Added
 
 - `player_wishlist`, `player_wishlist_count` and `player_followed_games`: a player's wishlist and the apps they follow in the store. No API key needed (#104).
+- `package_details`, `app_dlc` and `store_search` from the Storefront API: a package's apps and price, an app's DLC, and a search of the store by name. No API key needed (#107).
 
 ## [1.0.0] - 2026-10-24
 

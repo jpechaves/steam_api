@@ -1,0 +1,28 @@
+{
+  "197845": {
+    "success": true,
+    "data": {
+      "name": "Team Fortress 2 - Commercial License",
+      "page_image": null,
+      "small_logo": null,
+      "apps": [
+        {
+          "id": 440,
+          "name": "Team Fortress 2"
+        }
+      ],
+      "platforms": {
+        "windows": true,
+        "mac": false,
+        "linux": true
+      },
+      "controller": {
+        "full_gamepad": false
+      },
+      "release_date": {
+        "coming_soon": false,
+        "date": "Oct 10, 2007"
+      }
+    }
+  }
+}

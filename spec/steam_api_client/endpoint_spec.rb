@@ -125,9 +125,10 @@ end
 RSpec.describe SteamApiClient::Endpoints do
   it "declares every endpoint the client exposes, by name" do
     expect(described_class::ALL.keys).to contain_exactly(
-      :app_details, :app_global_achievements, :app_news, :game_current_players, :player_achievements,
-      :player_followed_games, :player_friends, :player_game_stats, :player_level, :player_owned_games,
-      :player_recent_games, :player_steamid, :player_summaries, :player_wishlist, :player_wishlist_count
+      :app_details, :app_dlc, :app_global_achievements, :app_news, :game_current_players, :package_details,
+      :player_achievements, :player_followed_games, :player_friends, :player_game_stats, :player_level, :player_owned_games,
+      :player_recent_games, :player_steamid, :player_summaries, :player_wishlist, :player_wishlist_count,
+      :store_search
     )
     expect(described_class::ALL).to all(satisfy { |name, endpoint| endpoint.name == name })
   end
@@ -136,8 +137,8 @@ RSpec.describe SteamApiClient::Endpoints do
     keyless = described_class::ALL.values.reject(&:key?).map(&:name)
 
     expect(keyless).to contain_exactly(
-      :app_details, :app_global_achievements, :app_news, :game_current_players,
-      :player_followed_games, :player_wishlist, :player_wishlist_count
+      :app_details, :app_dlc, :app_global_achievements, :app_news, :game_current_players, :package_details,
+      :player_followed_games, :player_wishlist, :player_wishlist_count, :store_search
     )
   end
 end
