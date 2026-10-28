@@ -107,6 +107,31 @@ RSpec.describe "Steam API endpoints" do
     end
   end
 
+  describe "#player_wishlist" do
+    it "calls IWishlistService/GetWishlist/v1 without the API key" do
+      stub_steam("#{web_api}/IWishlistService/GetWishlist/v1/?steamid=76561197960435530",
+        {response: {items: [{appid: 440, priority: 1, date_added: 1700000000}]}})
+
+      expect(client.player_wishlist.retrieve(steamid: 76561197960435530)).to eq([SteamApiClient::WishlistItem.new(app_id: 440, priority: 1, date_added: 1700000000)])
+    end
+  end
+
+  describe "#player_wishlist_count" do
+    it "calls IWishlistService/GetWishlistItemCount/v1 without the API key" do
+      stub_steam("#{web_api}/IWishlistService/GetWishlistItemCount/v1/?steamid=76561197960435530", {response: {count: 19}})
+
+      expect(client.player_wishlist_count.retrieve(steamid: 76561197960435530)).to eq(19)
+    end
+  end
+
+  describe "#player_followed_games" do
+    it "calls IStoreService/GetGamesFollowed/v1 without the API key" do
+      stub_steam("#{web_api}/IStoreService/GetGamesFollowed/v1/?steamid=76561197960435530", {response: {appids: [400, 440]}})
+
+      expect(client.player_followed_games.retrieve(steamid: 76561197960435530)).to eq([400, 440])
+    end
+  end
+
   describe "#app_news" do
     it "calls ISteamNews/GetNewsForApp/v0002 without the API key" do
       stub_steam("#{web_api}/ISteamNews/GetNewsForApp/v0002/?appid=440&count=2&maxlength=300", {
@@ -145,6 +170,35 @@ RSpec.describe "Steam API endpoints" do
       result = client.app_details.retrieve(appid: 570, filters: ["basic", "price_overview"], country_code: "BR", locale: "pt")
 
       expect(result).to be_a(SteamApiClient::AppDetails).and(have_attributes(app_id: 570, name: "Dota 2", is_free: true))
+    end
+  end
+
+  describe "#package_details" do
+    it "calls the Storefront packagedetails endpoint with country code and language, without the API key" do
+      stub_steam("#{store_api}/packagedetails/?packageids=469&cc=BR&l=pt",
+        {"469": {success: true, data: {name: "The Orange Box", apps: [{id: 440, name: "Team Fortress 2"}]}}})
+
+      result = client.package_details.retrieve(packageid: 469, country_code: "BR", locale: "pt")
+
+      expect(result).to be_a(SteamApiClient::PackageDetails).and(have_attributes(package_id: 469, name: "The Orange Box"))
+    end
+  end
+
+  describe "#app_dlc" do
+    it "calls the Storefront dlcforapp endpoint (US and English by default), without the API key" do
+      stub_steam("#{store_api}/dlcforapp/?appid=440&cc=US&l=en",
+        {status: 1, appid: "440", name: "Team Fortress 2", dlc: [{id: 629330, name: "Fight Songs"}]})
+
+      expect(client.app_dlc.retrieve(appid: 440)).to have_attributes(app_id: 440, dlc: [have_attributes(id: 629330, name: "Fight Songs")])
+    end
+  end
+
+  describe "#store_search" do
+    it "calls the Storefront storesearch endpoint with the term encoded, without the API key" do
+      stub_steam("#{store_api}/storesearch/?term=half%20life&cc=US&l=en",
+        {total: 1, items: [{type: "app", name: "Half-Life", id: 70, metascore: "96"}]})
+
+      expect(client.store_search.retrieve(term: "half life")).to contain_exactly(have_attributes(id: 70, name: "Half-Life", metascore: 96))
     end
   end
 

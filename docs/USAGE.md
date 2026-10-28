@@ -191,6 +191,33 @@ stats.achievements.first # => #<data SteamApiClient::PlayerGameStats::Achievemen
 
 Stat values are Integers or Floats, as the game defines them. A private profile, or a game without stats, raises `Errors::HttpBadRequest`.
 
+#### `player_wishlist`
+
+The apps on a player's wishlist. No key needed.
+
+```ruby
+client.player_wishlist.retrieve(steamid: 76561198000000001).first
+# => #<data SteamApiClient::WishlistItem app_id=202350, priority=3, date_added=1403384867>
+```
+
+`priority` is the player's ranking of the app, and `date_added` a unix timestamp. A private or empty wishlist is `[]`. An ID that isn't a valid SteamID (e.g. `1`) raises `Errors::HttpBadRequest`, here and in the two endpoints below.
+
+#### `player_wishlist_count`
+
+The number of apps on a player's wishlist, or `nil` when it's private or empty. No key needed.
+
+```ruby
+client.player_wishlist_count.retrieve(steamid: 76561198000000001) # => 19
+```
+
+#### `player_followed_games`
+
+The app IDs a player follows in the store, or `[]` when the profile is private. No key needed.
+
+```ruby
+client.player_followed_games.retrieve(steamid: 76561198000000001) # => [400, 440, 620, ...]
+```
+
 ### Apps
 
 #### `app_details`
@@ -210,6 +237,49 @@ client.app_details.retrieve(appid: 440).platforms
 ```
 
 `SteamApiClient::AppDetails` fields: `app_id`, `type`, `name`, `required_age`, `is_free`, `dlc`, `detailed_description`, `about_the_game`, `short_description`, `supported_languages`, `header_image`, `website`, `pc_requirements` / `mac_requirements` / `linux_requirements` (`AppDetails::Requirements`: `minimum`, `recommended`, as HTML), `developers`, `publishers`, `price_overview` (`AppDetails::Price`, in cents; `nil` for free apps), `packages`, `package_groups` (`AppDetails::PackageGroup` with `subs`: `AppDetails::Package`), `platforms`, `metacritic` (`score`, `url`), `categories` and `genres` (`id`, `description`), `screenshots`, `movies` (`AppDetails::Movie` with DASH and HLS streams), `recommendations` (the number of user reviews), `achievements` (`total`, `highlighted`), `release_date` (`coming_soon`, `date`), `support_info` (`url`, `email`), `background`, `background_raw`, `content_descriptors` (`ids`, `notes`).
+
+#### `package_details`
+
+A package (a bundle, or a "sub" such as an edition or a license) in the store, or `nil` when it's unavailable. Storefront API, no key needed. Takes one `packageid:` (Steam rejects several at once), and `country_code:` / `locale:` like `app_details`. Package IDs are in `app_details`' `packages` and `package_groups`.
+
+```ruby
+package = client.package_details.retrieve(packageid: 469)
+package.name   # => "The Orange Box"
+package.apps   # => [#<data SteamApiClient::PackageDetails::App id=220, name="Half-Life 2">, ...]
+package.price  # => #<data SteamApiClient::PackageDetails::Price currency="USD", initial=1999, final=1999, discount_percent=0, individual=1998>
+```
+
+`SteamApiClient::PackageDetails` fields: `package_id`, `name`, `page_content` (HTML), `purchase_text`, `page_image`, `header_image`, `small_logo`, `apps` (`id`, `name`), `price` (in cents; `individual` is what the apps cost on their own; `nil` for free packages), `platforms` and `release_date` (as in `AppDetails`), `controller` (`full_gamepad`). An invalid ID such as `0` raises `Errors::HttpBadRequest`.
+
+#### `app_dlc`
+
+An app's DLC, or `nil` when the app is unknown. Storefront API, no key needed. Takes `appid:`, `country_code:` and `locale:`.
+
+```ruby
+result = client.app_dlc.retrieve(appid: 292030)
+result.name # => "The Witcher 3: Wild Hunt — Remastered"
+result.dlc.last
+# => #<data SteamApiClient::AppDlc::Dlc id=1229320, name="The Witcher 3: Wild Hunt — Remastered Soundtrack", header_image="https://...",
+#     price_overview=#<data SteamApiClient::AppDlc::Price currency="USD", initial=1099, final=1099, discount_percent=0>,
+#     platforms=#<data SteamApiClient::AppDetails::Platforms windows=true, mac=true, linux=true>,
+#     release_date=#<data SteamApiClient::AppDlc::ReleaseDates steam=1581374766, mac=1581374752, linux=1581374752>, controller_support="full">
+```
+
+`price_overview` is `nil` for free DLC and DLC not sold on its own. `release_date` has a unix time per platform (`steam`, `mac`, `linux`), each `nil` when Steam doesn't know it. Steam sometimes adds milliseconds, and the time is then a Float.
+
+#### `store_search`
+
+Apps in the store matching a search term, at most 10 (Steam's limit, with no paging). Storefront API, no key needed. Takes `term:`, `country_code:` and `locale:`.
+
+```ruby
+client.store_search.retrieve(term: "portal").first
+# => #<data SteamApiClient::StoreSearchResult id=620, type="app", name="Portal 2",
+#     price=#<data SteamApiClient::StoreSearchResult::Price currency="USD", initial=999, final=999>, tiny_image="https://...",
+#     metascore=95, platforms=#<data SteamApiClient::AppDetails::Platforms windows=true, mac=false, linux=true>,
+#     streaming_video=false, controller_support="full">
+```
+
+`price` is `nil` for free apps, `metascore` when the app has no Metacritic score. No match is `[]`.
 
 #### `app_news`
 
@@ -319,8 +389,8 @@ Don't retry other 4xx errors: they won't succeed on their own.
 
 ## Limits and caveats
 
-- **Rate limits.** Steam's [Web API terms](https://steamcommunity.com/dev/apiterms) allow 100,000 calls per day per key. The Storefront API (`app_details`) is rate limited per IP address, commonly reported at about 200 requests per 5 minutes. Both answer `429` when you go over. Cache what you can.
-- **The Storefront API is unofficial.** `app_details` uses the API behind Steam's store and Big Picture mode. Valve doesn't document it, and its fields change without notice.
-- **Private profiles.** What a player hides depends on their privacy settings. Depending on the endpoint, Steam answers with an error (`player_achievements`: 403, `player_game_stats`: 400, `player_friends`: 401) or with empty data, which the gem returns as `nil` (`player_owned_games`, `player_recent_games`, `player_level`). `player_summaries` still returns the public part of the profile.
+- **Rate limits.** Steam's [Web API terms](https://steamcommunity.com/dev/apiterms) allow 100,000 calls per day per key. The Storefront API (`app_details`, `package_details`, `app_dlc`, `store_search`) is rate limited per IP address, commonly reported at about 200 requests per 5 minutes. Both answer `429` when you go over. Cache what you can.
+- **The Storefront API is unofficial.** The Storefront endpoints use the API behind Steam's store and Big Picture mode. Valve doesn't document it, and its fields change without notice.
+- **Private profiles.** What a player hides depends on their privacy settings. Depending on the endpoint, Steam answers with an error (`player_achievements`: 403, `player_game_stats`: 400, `player_friends`: 401) or with empty data, which the gem returns as `nil` or `[]` (`player_owned_games`, `player_recent_games`, `player_level`, `player_wishlist`, `player_wishlist_count`, `player_followed_games`). Steam answers the same way for an empty wishlist, so the wishlist endpoints can't tell the two apart. `player_summaries` still returns the public part of the profile.
 - **The key is in the URL.** Steam requires `?key=...` in the query string. Treat logs of request URLs as secrets (see [Configuration](#configuration)), and [rotate your key](https://steamcommunity.com/dev/apikey) if it leaks.
 - **SteamIDs are 64 bit Integers** (e.g. `76561197960435530`). Use `player_steamid` to get one from a vanity URL.
