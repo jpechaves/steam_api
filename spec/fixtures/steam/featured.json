@@ -1,0 +1,85 @@
+{
+  "large_capsules": [],
+  "featured_win": [
+    {
+      "id": 3447280,
+      "type": 0,
+      "name": "Fantasy World Manager",
+      "discounted": true,
+      "discount_percent": 10,
+      "original_price": 1499,
+      "final_price": 1349,
+      "currency": "USD",
+      "large_capsule_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3447280/d01ce9d10fbdbe032ca923d8ccf1de9f0621ac09/capsule_616x353.jpg?t=1793199635",
+      "small_capsule_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3447280/1b099b21185c4f04402c9ff55588ae8b0fab423d/capsule_184x69.jpg?t=1793199635",
+      "windows_available": true,
+      "mac_available": false,
+      "linux_available": false,
+      "streamingvideo_available": false,
+      "discount_expiration": 1794416432,
+      "header_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3447280/9f3f45bbfb4e08fd66a926776c08239011f1b73d/header.jpg?t=1793199635"
+    },
+    {
+      "id": 2124120,
+      "type": 0,
+      "name": "SULFUR",
+      "discounted": false,
+      "discount_percent": 0,
+      "original_price": 2999,
+      "final_price": 2999,
+      "currency": "USD",
+      "large_capsule_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2124120/c800801a8d013e599dc0b76ecbc6fbe7161eeaf4/capsule_616x353.jpg?t=1793205259",
+      "small_capsule_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2124120/939ba19f0fa15e399329ae380b2de0cb15593ea3/capsule_184x69.jpg?t=1793205259",
+      "windows_available": true,
+      "mac_available": false,
+      "linux_available": false,
+      "streamingvideo_available": false,
+      "header_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2124120/03b396d14a933238b49b0bfd434b59140f88435a/header.jpg?t=1793205259",
+      "controller_support": "full"
+    }
+  ],
+  "featured_mac": [
+    {
+      "id": 2747660,
+      "type": 0,
+      "name": "Zombie Assault: Resurgence",
+      "discounted": true,
+      "discount_percent": 20,
+      "original_price": 1499,
+      "final_price": 1199,
+      "currency": "USD",
+      "large_capsule_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2747660/36c306d5be74e4e665f4e892d9a5e6455f18c701/capsule_616x353.jpg?t=1793199249",
+      "small_capsule_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2747660/5c4c842eace973c048ad554b16f1cefac16fe787/capsule_184x69.jpg?t=1793199249",
+      "windows_available": true,
+      "mac_available": true,
+      "linux_available": false,
+      "streamingvideo_available": false,
+      "discount_expiration": 1794416430,
+      "header_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2747660/85fc252c60283cffa45df4ed2e2d14d9ccbb0e6b/header.jpg?t=1793199249",
+      "controller_support": "full"
+    }
+  ],
+  "featured_linux": [
+    {
+      "id": 4922630,
+      "type": 0,
+      "name": "The Long Dark: Iron Road",
+      "discounted": true,
+      "discount_percent": 10,
+      "original_price": 2499,
+      "final_price": 2249,
+      "currency": "USD",
+      "large_capsule_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4922630/da3b361a25ac8923be3d88f64f2ee254f67b4610/capsule_616x353.jpg?t=1793123897",
+      "small_capsule_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4922630/dd7e2d08c5de7178ca56b88c454045c764f1a6d8/capsule_184x69.jpg?t=1793123897",
+      "windows_available": true,
+      "mac_available": true,
+      "linux_available": true,
+      "streamingvideo_available": false,
+      "discount_expiration": 1793725206,
+      "header_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4922630/0b918724bd55061f2e3b9f259ad044f524ed9f5f/header.jpg?t=1793123897",
+      "controller_support": "full"
+    }
+  ],
+  "layout": "defcon1",
+  "status": 1
+}
