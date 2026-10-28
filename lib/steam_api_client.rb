@@ -30,6 +30,7 @@ require_relative "steam_api_client/models/player_game_stats"
 require_relative "steam_api_client/models/news_item"
 require_relative "steam_api_client/models/global_achievement"
 require_relative "steam_api_client/models/app_details"
+require_relative "steam_api_client/models/wishlist_item"
 
 require_relative "steam_api_client/endpoints"
 require_relative "steam_api_client/client"

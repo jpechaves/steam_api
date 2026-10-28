@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- `player_wishlist`, `player_wishlist_count` and `player_followed_games`: a player's wishlist and the apps they follow in the store. No API key needed (#104).
+
 ## [1.0.0] - 2026-10-24
 
 ### Added
