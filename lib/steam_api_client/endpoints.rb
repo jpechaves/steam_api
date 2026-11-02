@@ -58,7 +58,7 @@ module SteamApiClient
       ),
 
       # The achievements and stats an app defines => AppSchema, or nil when it has none
-      # @see https://developer.valvesoftware.com/wiki/Steam_Web_API#GetSchemaForGame_.28v2.29
+      # @see https://steamapi.xpaw.me/#ISteamUserStats/GetSchemaForGame
       Endpoint.new(
         :app_schema, "ISteamUserStats/GetSchemaForGame/v0002/", returns: AppSchema, at: %i[game],
         params: {

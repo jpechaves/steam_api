@@ -24,7 +24,7 @@ module SteamApiClient
   )
 
   # The achievements and stats an app defines, from `app_schema`
-  # @see https://developer.valvesoftware.com/wiki/Steam_Web_API#GetSchemaForGame_.28v2.29
+  # @see https://steamapi.xpaw.me/#ISteamUserStats/GetSchemaForGame
   AppSchema = Model.define(
     # Often "" or an internal name like "ValveTestApp260"
     game_name: [:string, from: :gameName, optional: true],
