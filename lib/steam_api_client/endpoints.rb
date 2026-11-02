@@ -62,6 +62,13 @@ module SteamApiClient
         params: {appid: param.integer, steamid: param.integer}
       ),
 
+      # The apps a player follows in the store => [Integer] app IDs ([] when not public)
+      # @see https://steamapi.xpaw.me/#IStoreService/GetGamesFollowed
+      Endpoint.new(
+        :player_followed_games, "IStoreService/GetGamesFollowed/v1/", key: false, returns: [:integer], at: %i[response appids],
+        params: {steamid: param.integer}
+      ),
+
       # A player's friend list, if public => [Friend]
       # @see https://developer.valvesoftware.com/wiki/Steam_Web_API#GetFriendList_.28v0001.29
       Endpoint.new(
@@ -116,6 +123,20 @@ module SteamApiClient
       Endpoint.new(
         :player_summaries, "ISteamUser/GetPlayerSummaries/v0002/", returns: [PlayerSummary], at: %i[response players],
         params: {steamids: param.integer_list}
+      ),
+
+      # A player's wishlist => [WishlistItem] ([] when empty or not public)
+      # @see https://steamapi.xpaw.me/#IWishlistService/GetWishlist
+      Endpoint.new(
+        :player_wishlist, "IWishlistService/GetWishlist/v1/", key: false, returns: [WishlistItem], at: %i[response items],
+        params: {steamid: param.integer}
+      ),
+
+      # The number of apps on a player's wishlist => Integer, or nil when empty or not public
+      # @see https://steamapi.xpaw.me/#IWishlistService/GetWishlistItemCount
+      Endpoint.new(
+        :player_wishlist_count, "IWishlistService/GetWishlistItemCount/v1/", key: false, returns: :integer, at: %i[response count],
+        params: {steamid: param.integer}
       )
     ].to_h { |endpoint| [endpoint.name, endpoint] }.freeze
   end

@@ -107,6 +107,31 @@ RSpec.describe "Steam API endpoints" do
     end
   end
 
+  describe "#player_wishlist" do
+    it "calls IWishlistService/GetWishlist/v1 without the API key" do
+      stub_steam("#{web_api}/IWishlistService/GetWishlist/v1/?steamid=76561197960435530",
+        {response: {items: [{appid: 440, priority: 1, date_added: 1700000000}]}})
+
+      expect(client.player_wishlist.retrieve(steamid: 76561197960435530)).to eq([SteamApiClient::WishlistItem.new(app_id: 440, priority: 1, date_added: 1700000000)])
+    end
+  end
+
+  describe "#player_wishlist_count" do
+    it "calls IWishlistService/GetWishlistItemCount/v1 without the API key" do
+      stub_steam("#{web_api}/IWishlistService/GetWishlistItemCount/v1/?steamid=76561197960435530", {response: {count: 19}})
+
+      expect(client.player_wishlist_count.retrieve(steamid: 76561197960435530)).to eq(19)
+    end
+  end
+
+  describe "#player_followed_games" do
+    it "calls IStoreService/GetGamesFollowed/v1 without the API key" do
+      stub_steam("#{web_api}/IStoreService/GetGamesFollowed/v1/?steamid=76561197960435530", {response: {appids: [400, 440]}})
+
+      expect(client.player_followed_games.retrieve(steamid: 76561197960435530)).to eq([400, 440])
+    end
+  end
+
   describe "#app_news" do
     it "calls ISteamNews/GetNewsForApp/v0002 without the API key" do
       stub_steam("#{web_api}/ISteamNews/GetNewsForApp/v0002/?appid=440&count=2&maxlength=300", {

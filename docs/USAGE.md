@@ -191,6 +191,33 @@ stats.achievements.first # => #<data SteamApiClient::PlayerGameStats::Achievemen
 
 Stat values are Integers or Floats, as the game defines them. A private profile, or a game without stats, raises `Errors::HttpBadRequest`.
 
+#### `player_wishlist`
+
+The apps on a player's wishlist. No key needed.
+
+```ruby
+client.player_wishlist.retrieve(steamid: 76561198000000001).first
+# => #<data SteamApiClient::WishlistItem app_id=202350, priority=3, date_added=1403384867>
+```
+
+`priority` is the player's ranking of the app, and `date_added` a unix timestamp. A private or empty wishlist is `[]`. An ID that isn't a valid SteamID (e.g. `1`) raises `Errors::HttpBadRequest`, here and in the two endpoints below.
+
+#### `player_wishlist_count`
+
+The number of apps on a player's wishlist, or `nil` when it's private or empty. No key needed.
+
+```ruby
+client.player_wishlist_count.retrieve(steamid: 76561198000000001) # => 19
+```
+
+#### `player_followed_games`
+
+The app IDs a player follows in the store, or `[]` when the profile is private. No key needed.
+
+```ruby
+client.player_followed_games.retrieve(steamid: 76561198000000001) # => [400, 440, 620, ...]
+```
+
 ### Apps
 
 #### `app_details`
@@ -321,6 +348,6 @@ Don't retry other 4xx errors: they won't succeed on their own.
 
 - **Rate limits.** Steam's [Web API terms](https://steamcommunity.com/dev/apiterms) allow 100,000 calls per day per key. The Storefront API (`app_details`) is rate limited per IP address, commonly reported at about 200 requests per 5 minutes. Both answer `429` when you go over. Cache what you can.
 - **The Storefront API is unofficial.** `app_details` uses the API behind Steam's store and Big Picture mode. Valve doesn't document it, and its fields change without notice.
-- **Private profiles.** What a player hides depends on their privacy settings. Depending on the endpoint, Steam answers with an error (`player_achievements`: 403, `player_game_stats`: 400, `player_friends`: 401) or with empty data, which the gem returns as `nil` (`player_owned_games`, `player_recent_games`, `player_level`). `player_summaries` still returns the public part of the profile.
+- **Private profiles.** What a player hides depends on their privacy settings. Depending on the endpoint, Steam answers with an error (`player_achievements`: 403, `player_game_stats`: 400, `player_friends`: 401) or with empty data, which the gem returns as `nil` or `[]` (`player_owned_games`, `player_recent_games`, `player_level`, `player_wishlist`, `player_wishlist_count`, `player_followed_games`). Steam answers the same way for an empty wishlist, so the wishlist endpoints can't tell the two apart. `player_summaries` still returns the public part of the profile.
 - **The key is in the URL.** Steam requires `?key=...` in the query string. Treat logs of request URLs as secrets (see [Configuration](#configuration)), and [rotate your key](https://steamcommunity.com/dev/apikey) if it leaks.
 - **SteamIDs are 64 bit Integers** (e.g. `76561197960435530`). Use `player_steamid` to get one from a vanity URL.
