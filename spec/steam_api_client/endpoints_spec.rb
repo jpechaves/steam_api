@@ -32,6 +32,30 @@ RSpec.describe "Steam API endpoints" do
     end
   end
 
+  describe "#player_bans" do
+    it "calls ISteamUser/GetPlayerBans/v1 with comma-separated steamids" do
+      stub_steam("#{web_api}/ISteamUser/GetPlayerBans/v1/?key=test-key&steamids=76561197960435530%2C76561197960265731", {
+        players: [{SteamId: "76561197960435530", CommunityBanned: false, VACBanned: true, NumberOfVACBans: 1,
+                   DaysSinceLastBan: 10, NumberOfGameBans: 0, EconomyBan: "none"}]
+      })
+
+      result = client.player_bans.retrieve(steamids: [76561197960435530, 76561197960265731])
+
+      expect(result).to contain_exactly(have_attributes(steam_id: 76561197960435530, vac_banned: true, days_since_last_ban: 10))
+    end
+  end
+
+  describe "#player_badges" do
+    it "calls IPlayerService/GetBadges/v1" do
+      stub_steam("#{web_api}/IPlayerService/GetBadges/v1/?key=test-key&steamid=76561197960435530", {
+        response: {badges: [{badgeid: 13, level: 5, completion_time: 1700000000, xp: 100, scarcity: 1000}],
+                   player_xp: 100, player_level: 1, player_xp_needed_to_level_up: 100, player_xp_needed_current_level: 0}
+      })
+
+      expect(client.player_badges.retrieve(steamid: 76561197960435530)).to have_attributes(player_level: 1, badges: [have_attributes(badge_id: 13, app_id: nil)])
+    end
+  end
+
   describe "#player_steamid" do
     it "calls ISteamUser/ResolveVanityURL/v0001" do
       stub_steam("#{web_api}/ISteamUser/ResolveVanityURL/v0001/?key=test-key&vanityurl=gabelogannewell",

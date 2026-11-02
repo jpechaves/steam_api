@@ -191,6 +191,33 @@ stats.achievements.first # => #<data SteamApiClient::PlayerGameStats::Achievemen
 
 Stat values are Integers or Floats, as the game defines them. A private profile, or a game without stats, raises `Errors::HttpBadRequest`.
 
+#### `player_bans`
+
+🔑 The ban status of up to 100 players. Steam leaves out IDs it doesn't know, and silently ignores IDs after the 100th.
+
+```ruby
+client.player_bans.retrieve(steamids: [76561197960435530, 76561198000000001])
+# => [#<data SteamApiClient::PlayerBan steam_id=76561197960435530, community_banned=false, vac_banned=false, number_of_vac_bans=0,
+#      days_since_last_ban=0, number_of_game_bans=0, economy_ban="none">, ...]
+```
+
+`days_since_last_ban` counts from the last VAC or game ban (`0` when never banned). `number_of_game_bans` are bans set by game developers. `economy_ban` is the trade ban status: `"none"`, `"probation"` or `"banned"`.
+
+#### `player_badges`
+
+🔑 A player's badges and Steam level progress, or `nil` when the profile isn't public.
+
+```ruby
+progress = client.player_badges.retrieve(steamid: 76561198000000001)
+progress.player_level                 # => 157
+progress.player_xp_needed_to_level_up # => 1530
+progress.badges.first
+# => #<data SteamApiClient::PlayerBadges::Badge badge_id=13, level=1280, completion_time=1787785402, xp=1530, scarcity=251922,
+#     app_id=nil, community_item_id=nil, border_color=nil>
+```
+
+`scarcity` is how many players have the badge. Game (trading card) badges also have `app_id`, `community_item_id` and `border_color` (`1` for foil). Times are unix timestamps. An ID that isn't a valid SteamID raises `Errors::HttpBadRequest`.
+
 #### `player_wishlist`
 
 The apps on a player's wishlist. No key needed.
@@ -419,6 +446,6 @@ Don't retry other 4xx errors: they won't succeed on their own.
 
 - **Rate limits.** Steam's [Web API terms](https://steamcommunity.com/dev/apiterms) allow 100,000 calls per day per key. The Storefront API (`app_details`, `package_details`, `app_dlc`, `store_search`, `featured`, `featured_categories`) is rate limited per IP address, commonly reported at about 200 requests per 5 minutes. Both answer `429` when you go over. Cache what you can.
 - **The Storefront API is unofficial.** The Storefront endpoints use the API behind Steam's store and Big Picture mode. Valve doesn't document it, and its fields change without notice.
-- **Private profiles.** What a player hides depends on their privacy settings. Depending on the endpoint, Steam answers with an error (`player_achievements`: 403, `player_game_stats`: 400, `player_friends`: 401) or with empty data, which the gem returns as `nil` or `[]` (`player_owned_games`, `player_recent_games`, `player_level`, `player_wishlist`, `player_wishlist_count`, `player_followed_games`). Steam answers the same way for an empty wishlist, so the wishlist endpoints can't tell the two apart. `player_summaries` still returns the public part of the profile.
+- **Private profiles.** What a player hides depends on their privacy settings. Depending on the endpoint, Steam answers with an error (`player_achievements`: 403, `player_game_stats`: 400, `player_friends`: 401) or with empty data, which the gem returns as `nil` or `[]` (`player_owned_games`, `player_recent_games`, `player_level`, `player_badges`, `player_wishlist`, `player_wishlist_count`, `player_followed_games`). Steam answers the same way for an empty wishlist, so the wishlist endpoints can't tell the two apart. `player_summaries` still returns the public part of the profile.
 - **The key is in the URL.** Steam requires `?key=...` in the query string. Treat logs of request URLs as secrets (see [Configuration](#configuration)), and [rotate your key](https://steamcommunity.com/dev/apikey) if it leaks.
 - **SteamIDs are 64 bit Integers** (e.g. `76561197960435530`). Use `player_steamid` to get one from a vanity URL.

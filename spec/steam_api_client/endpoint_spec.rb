@@ -126,7 +126,8 @@ RSpec.describe SteamApiClient::Endpoints do
   it "declares every endpoint the client exposes, by name" do
     expect(described_class::ALL.keys).to contain_exactly(
       :app_details, :app_dlc, :app_global_achievements, :app_news, :featured, :featured_categories,
-      :game_current_players, :package_details, :player_achievements, :player_followed_games, :player_friends, :player_game_stats, :player_level, :player_owned_games,
+      :game_current_players, :package_details, :player_achievements, :player_badges, :player_bans,
+      :player_followed_games, :player_friends, :player_game_stats, :player_level, :player_owned_games,
       :player_recent_games, :player_steamid, :player_summaries, :player_wishlist, :player_wishlist_count,
       :store_search
     )

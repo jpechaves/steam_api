@@ -1,0 +1,27 @@
+{
+  "response": {
+    "badges": [
+      {
+        "badgeid": 13,
+        "level": 1280,
+        "completion_time": 1787785402,
+        "xp": 1530,
+        "scarcity": 251922
+      },
+      {
+        "badgeid": 1,
+        "appid": 440,
+        "level": 5,
+        "completion_time": 1368666033,
+        "xp": 500,
+        "communityitemid": "1000000000000000001",
+        "border_color": 0,
+        "scarcity": 447491
+      }
+    ],
+    "player_xp": 131270,
+    "player_level": 157,
+    "player_xp_needed_to_level_up": 1530,
+    "player_xp_needed_current_level": 131200
+  }
+}
