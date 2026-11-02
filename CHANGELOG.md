@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- `featured` and `featured_categories` from the Storefront API: the apps on the store's front page, and its specials, top sellers, new releases and upcoming apps. No API key needed (#108).
+
 ## [1.2.0] - 2026-11-02
 
 ### Added

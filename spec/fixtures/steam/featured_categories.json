@@ -1,0 +1,153 @@
+{
+  "0": {
+    "id": "cat_spotlight",
+    "name": "Spotlights",
+    "items": [
+      {
+        "name": "MIDWEEK DEAL",
+        "header_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/spotlights/dcf62339d572eecb81837717/8f0d31861159af29e8e7c6e9ad8cfdf2a5fc98ff/vertical_capsule_english.png?t=1791401968",
+        "body": "Offer ends %1$s.",
+        "url": "https://store.steampowered.com/app/867210"
+      }
+    ]
+  },
+  "6": {
+    "id": "cat_dailydeal",
+    "name": "Daily Deal",
+    "items": [
+      {
+        "id": 1167950,
+        "type": 0,
+        "discounted": true,
+        "currency": "USD",
+        "original_price": 1299,
+        "final_price": 129,
+        "discount_percent": 90,
+        "name": "Vampire's Fall: Origins",
+        "header_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1167950/header.jpg?t=1723621830",
+        "purchase_package": 399075
+      }
+    ]
+  },
+  "specials": {
+    "id": "cat_specials",
+    "name": "Specials",
+    "items": [
+      {
+        "id": 4348910,
+        "type": 0,
+        "name": "Probably Stolen - Cyberpunk Shopkeeper Sim",
+        "discounted": true,
+        "discount_percent": 10,
+        "original_price": 1999,
+        "final_price": 1799,
+        "currency": "USD",
+        "large_capsule_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4348910/dc11c819aee22e98fe66d0a1172be4c1ebd40f45/capsule_616x353_alt_assets_3.jpg?t=1793194696",
+        "small_capsule_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4348910/b34bac92cd37260ecead20b181eda3d0f928a373/capsule_184x69.jpg?t=1793194696",
+        "windows_available": true,
+        "mac_available": false,
+        "linux_available": false,
+        "streamingvideo_available": false,
+        "discount_expiration": 1794416439,
+        "header_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4348910/b241a3bc1cb144e70a4840157e127212738ea5b3/header_alt_assets_3.jpg?t=1793194696"
+      }
+    ]
+  },
+  "coming_soon": {
+    "id": "cat_comingsoon",
+    "name": "Coming Soon",
+    "items": [
+      {
+        "id": 5233670,
+        "type": 0,
+        "name": "Just One More Coin",
+        "discounted": true,
+        "discount_percent": 40,
+        "original_price": 499,
+        "final_price": 299,
+        "currency": "USD",
+        "large_capsule_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/5233670/0d51a1bf0fd72f7d4c2eb7eb08b93622f140197d/capsule_616x353.jpg?t=1793208699",
+        "small_capsule_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/5233670/d85f269025abcb75ed166dd3541d98ea9f65fb4a/capsule_184x69.jpg?t=1793208699",
+        "windows_available": true,
+        "mac_available": false,
+        "linux_available": false,
+        "streamingvideo_available": false,
+        "discount_expiration": 1794416438,
+        "header_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/5233670/5c92e128abf5282a42ca83670982cc9ab2aa9d8a/header.jpg?t=1793208699"
+      }
+    ]
+  },
+  "top_sellers": {
+    "id": "cat_topsellers",
+    "name": "Top Sellers",
+    "items": [
+      {
+        "id": 4435490,
+        "type": 0,
+        "name": "Call of Duty®: Modern Warfare® 4",
+        "discounted": false,
+        "discount_percent": 0,
+        "original_price": 6999,
+        "final_price": 6999,
+        "currency": "USD",
+        "large_capsule_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4435490/be8aded41f612f9c6c59581351adfa65b0461042/capsule_616x353_alt_assets_1.jpg?t=1793201144",
+        "small_capsule_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4435490/50d218e79ead2650bc6b7360995cc8dd3fbe2c29/capsule_184x69.jpg?t=1793201144",
+        "windows_available": true,
+        "mac_available": false,
+        "linux_available": false,
+        "streamingvideo_available": false,
+        "header_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4435490/0c492be3204835d71e8b454b6eb1817f8ff68c0d/header.jpg?t=1793201144",
+        "controller_support": "full"
+      }
+    ]
+  },
+  "new_releases": {
+    "id": "cat_newreleases",
+    "name": "New Releases",
+    "items": [
+      {
+        "id": 5191970,
+        "type": 0,
+        "name": "Mimic2 - Idle MMORPG",
+        "discounted": false,
+        "discount_percent": 0,
+        "original_price": null,
+        "final_price": 0,
+        "currency": "USD",
+        "large_capsule_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/5191970/84d2207f7cc545f2abf19fd7dbe9401820b1dfe0/capsule_616x353.jpg?t=1793206762",
+        "small_capsule_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/5191970/fe19eec0a3b4e03a12edbe0a2ca4ecb568e1beab/capsule_184x69.jpg?t=1793206762",
+        "windows_available": true,
+        "mac_available": false,
+        "linux_available": false,
+        "streamingvideo_available": false,
+        "header_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/5191970/02fe7e50681f59c096634f12d10123f488508338/header.jpg?t=1793206762"
+      },
+      {
+        "id": 4646350,
+        "type": 0,
+        "name": "Nooodles: Brutalism Edition",
+        "discounted": false,
+        "discount_percent": 0,
+        "original_price": 399,
+        "final_price": 399,
+        "currency": "USD",
+        "large_capsule_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4646350/fc77ad1261d21ed7cd7440f9f505aef94d5affdd/capsule_616x353.jpg?t=1793207966",
+        "small_capsule_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4646350/d95852c169cf2c5b33a9406563fd59352fc8c0c2/capsule_184x69.jpg?t=1793207966",
+        "windows_available": true,
+        "mac_available": false,
+        "linux_available": true,
+        "streamingvideo_available": false,
+        "header_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4646350/7cb6c6ad2b65afb17dfded77575538e2361b5602/header.jpg?t=1793207966"
+      }
+    ]
+  },
+  "genres": {
+    "id": "cat_genres",
+    "name": "Genres"
+  },
+  "trailerslideshow": {
+    "id": "cat_trailerslideshow",
+    "name": "Trailer TV"
+  },
+  "status": 1
+}
