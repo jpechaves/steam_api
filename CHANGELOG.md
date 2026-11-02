@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-11-02
+
 ### Added
 
 - `package_details`, `app_dlc` and `store_search` from the Storefront API: a package's apps and price, an app's DLC, and a search of the store by name. No API key needed (#107).
@@ -208,7 +210,8 @@ The versions below were bumped in `version.rb` during development but **never pu
 
 - Initial gem skeleton.
 
-[Unreleased]: https://github.com/jpechaves/steam_api/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/jpechaves/steam_api/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/jpechaves/steam_api/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/jpechaves/steam_api/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/jpechaves/steam_api/compare/v0.10.0...v1.0.0
 [0.11.0]: https://github.com/jpechaves/steam_api/compare/v0.10.0...v0.11.0
