@@ -173,6 +173,35 @@ RSpec.describe "Steam API endpoints" do
     end
   end
 
+  describe "#package_details" do
+    it "calls the Storefront packagedetails endpoint with country code and language, without the API key" do
+      stub_steam("#{store_api}/packagedetails/?packageids=469&cc=BR&l=pt",
+        {"469": {success: true, data: {name: "The Orange Box", apps: [{id: 440, name: "Team Fortress 2"}]}}})
+
+      result = client.package_details.retrieve(packageid: 469, country_code: "BR", locale: "pt")
+
+      expect(result).to be_a(SteamApiClient::PackageDetails).and(have_attributes(package_id: 469, name: "The Orange Box"))
+    end
+  end
+
+  describe "#app_dlc" do
+    it "calls the Storefront dlcforapp endpoint (US and English by default), without the API key" do
+      stub_steam("#{store_api}/dlcforapp/?appid=440&cc=US&l=en",
+        {status: 1, appid: "440", name: "Team Fortress 2", dlc: [{id: 629330, name: "Fight Songs"}]})
+
+      expect(client.app_dlc.retrieve(appid: 440)).to have_attributes(app_id: 440, dlc: [have_attributes(id: 629330, name: "Fight Songs")])
+    end
+  end
+
+  describe "#store_search" do
+    it "calls the Storefront storesearch endpoint with the term encoded, without the API key" do
+      stub_steam("#{store_api}/storesearch/?term=half%20life&cc=US&l=en",
+        {total: 1, items: [{type: "app", name: "Half-Life", id: 70, metascore: "96"}]})
+
+      expect(client.store_search.retrieve(term: "half life")).to contain_exactly(have_attributes(id: 70, name: "Half-Life", metascore: 96))
+    end
+  end
+
   describe "#retrieve_raw" do
     it "returns Steam's JSON untouched" do
       stub_steam("#{web_api}/IPlayerService/GetSteamLevel/v0001/?key=test-key&steamid=76561197960435530",

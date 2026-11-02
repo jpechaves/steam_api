@@ -105,13 +105,15 @@ module SteamApiClient
   ) do
     # Steam keys the response by app ID: {"570": {"success": true, "data": {...}}}.
     # Returns the data, or nil when the app is unavailable (success: false).
+    # The Storefront's other details endpoints (packagedetails) answer the same way.
     # @param [Hash] json
+    # @param [Symbol] id_key the key the ID is added under
     # @return [Hash, nil]
-    def self.unwrap(json)
-      app_id, entry = json.first
+    def self.unwrap(json, id_key: :steam_appid)
+      id, entry = json.first
       return unless entry.is_a?(Hash) && entry[:success]
 
-      {steam_appid: app_id.to_s}.merge(entry.fetch(:data, {}))
+      {id_key => id.to_s}.merge(entry.fetch(:data, {}))
     end
   end
   parts.each { |name, model| AppDetails.const_set(name, model) }

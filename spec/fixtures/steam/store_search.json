@@ -1,0 +1,57 @@
+{
+  "total": 3,
+  "items": [
+    {
+      "type": "app",
+      "name": "Portal 2",
+      "id": 620,
+      "price": {
+        "currency": "USD",
+        "initial": 999,
+        "final": 999
+      },
+      "tiny_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/620/bd23943dcd0280aa2cdc066e2f86d2185cfd4cce/capsule_231x87.jpg?t=1790187113",
+      "metascore": "95",
+      "platforms": {
+        "windows": true,
+        "mac": false,
+        "linux": true
+      },
+      "streamingvideo": false,
+      "controller_support": "full"
+    },
+    {
+      "type": "app",
+      "name": "Portal: Revolution",
+      "id": 601360,
+      "tiny_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/601360/072c9e764f4e3c1d7a9b832741e4eda033665860/capsule_231x87.jpg?t=1764365933",
+      "metascore": "",
+      "platforms": {
+        "windows": true,
+        "mac": false,
+        "linux": true
+      },
+      "streamingvideo": false,
+      "controller_support": "full"
+    },
+    {
+      "type": "app",
+      "name": "Bridge Constructor Portal - Portal Proficiency",
+      "id": 1113550,
+      "price": {
+        "currency": "USD",
+        "initial": 399,
+        "final": 99
+      },
+      "tiny_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1113550/capsule_231x87.jpg?t=1717674841",
+      "metascore": "",
+      "platforms": {
+        "windows": true,
+        "mac": true,
+        "linux": true
+      },
+      "streamingvideo": false,
+      "controller_support": "full"
+    }
+  ]
+}

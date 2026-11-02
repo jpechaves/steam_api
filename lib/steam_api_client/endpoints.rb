@@ -26,6 +26,16 @@ module SteamApiClient
         }
       ),
 
+      # An app's DLC => AppDlc, or nil when the app is unknown
+      Endpoint.new(
+        :app_dlc, "dlcforapp/", api: :store, key: false, returns: AppDlc, at: AppDlc.method(:unwrap),
+        params: {
+          appid: param.integer,
+          country_code: param.string(as: :cc, default: "US"),
+          locale: param.string(as: :l, default: "en")
+        }
+      ),
+
       # Global achievement unlock percentages of an app => [GlobalAchievement]
       # @see https://developer.valvesoftware.com/wiki/Steam_Web_API#GetGlobalAchievementPercentagesForApp_.28v0002.29
       Endpoint.new(
@@ -53,6 +63,19 @@ module SteamApiClient
         :game_current_players, "ISteamUserStats/GetNumberOfCurrentPlayers/v0001/",
         key: false, returns: :integer, at: %i[response player_count],
         params: {appid: param.integer}
+      ),
+
+      # Details of a package (a bundle or a sub) in the store => PackageDetails, or nil when unavailable
+      # @see https://wiki.teamfortress.com/wiki/User:RJackson/StorefrontAPI#packagedetails
+      Endpoint.new(
+        :package_details, "packagedetails/", api: :store, key: false, returns: PackageDetails,
+        at: PackageDetails.method(:unwrap),
+        params: {
+          # Steam rejects several IDs at once
+          packageid: param.integer(as: :packageids),
+          country_code: param.string(as: :cc, default: "US"),
+          locale: param.string(as: :l, default: "en")
+        }
       ),
 
       # A player's achievements in an app => PlayerAchievements
@@ -137,6 +160,17 @@ module SteamApiClient
       Endpoint.new(
         :player_wishlist_count, "IWishlistService/GetWishlistItemCount/v1/", key: false, returns: :integer, at: %i[response count],
         params: {steamid: param.integer}
+      ),
+
+      # Apps in the store matching a search term => [StoreSearchResult] (at most 10)
+      Endpoint.new(
+        :store_search, "storesearch/", api: :store, key: false, returns: [StoreSearchResult],
+        at: StoreSearchResult.method(:unwrap),
+        params: {
+          term: param.string,
+          country_code: param.string(as: :cc, default: "US"),
+          locale: param.string(as: :l, default: "en")
+        }
       )
     ].to_h { |endpoint| [endpoint.name, endpoint] }.freeze
   end
