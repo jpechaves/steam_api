@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-11-02
+
 ### Added
 
 - `featured` and `featured_categories` from the Storefront API: the apps on the store's front page, and its specials, top sellers, new releases and upcoming apps. No API key needed (#108).
@@ -214,7 +216,8 @@ The versions below were bumped in `version.rb` during development but **never pu
 
 - Initial gem skeleton.
 
-[Unreleased]: https://github.com/jpechaves/steam_api/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/jpechaves/steam_api/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/jpechaves/steam_api/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/jpechaves/steam_api/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/jpechaves/steam_api/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/jpechaves/steam_api/compare/v0.10.0...v1.0.0
