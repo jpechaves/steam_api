@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-11-02
+
 ### Added
 
 - `player_wishlist`, `player_wishlist_count` and `player_followed_games`: a player's wishlist and the apps they follow in the store. No API key needed (#104).
@@ -202,7 +204,8 @@ The versions below were bumped in `version.rb` during development but **never pu
 
 - Initial gem skeleton.
 
-[Unreleased]: https://github.com/jpechaves/steam_api/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/jpechaves/steam_api/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/jpechaves/steam_api/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/jpechaves/steam_api/compare/v0.10.0...v1.0.0
 [0.11.0]: https://github.com/jpechaves/steam_api/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/jpechaves/steam_api/compare/v0.9.1...v0.10.0
