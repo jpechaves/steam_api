@@ -169,6 +169,26 @@ RSpec.describe "Steam API endpoints" do
     end
   end
 
+  describe "#app_list" do
+    it "calls IStoreService/GetAppList/v1 with the filters and paging (games only, 10,000 per page by default)" do
+      stub_steam("#{web_api}/IStoreService/GetAppList/v1/?key=test-key&include_games=true&include_dlc=false&include_software=false" \
+        "&include_videos=false&include_hardware=false&if_modified_since=0&last_appid=0&max_results=10000", {
+          response: {apps: [{appid: 10, name: "Counter-Strike", last_modified: 1745368572, price_change_number: 1}], have_more_results: true, last_appid: 10}
+        })
+
+      expect(client.app_list.retrieve).to have_attributes(apps: [have_attributes(app_id: 10)], have_more_results: true, last_app_id: 10)
+    end
+
+    it "asks for the next page from last_appid" do
+      stub_steam("#{web_api}/IStoreService/GetAppList/v1/?key=test-key&include_games=true&include_dlc=true&include_software=false" \
+        "&include_videos=false&include_hardware=false&if_modified_since=0&last_appid=10&max_results=2", {response: {apps: [{appid: 20, name: "TFC"}]}})
+
+      result = client.app_list.retrieve(include_dlc: true, last_appid: 10, max_results: 2)
+
+      expect(result).to have_attributes(apps: [have_attributes(app_id: 20, last_modified: nil)], have_more_results: false)
+    end
+  end
+
   describe "#app_global_achievements" do
     it "calls ISteamUserStats/GetGlobalAchievementPercentagesForApp/v0002 without the API key" do
       stub_steam("#{web_api}/ISteamUserStats/GetGlobalAchievementPercentagesForApp/v0002/?gameid=440",

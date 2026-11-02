@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- `app_list`: the apps in the store, a page at a time (up to 50,000 per call), filtered by type or by last change (#109).
+
 ## [1.5.0] - 2026-11-04
 
 ### Added

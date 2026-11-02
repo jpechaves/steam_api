@@ -336,6 +336,36 @@ lists.top_sellers.items.map(&:name)
 
 `SteamApiClient::FeaturedCategories` fields: `specials`, `coming_soon`, `top_sellers`, `new_releases`, each a `FeaturedCategories::Category` (`id`, `name` in the requested language, `items`: `FeaturedItem`), or `nil` when Steam leaves the list out. Steam also sends the spotlights, the daily deal, genres and trailers, whose shapes vary: use `retrieve_raw` for those.
 
+#### `app_list`
+
+🔑 One page of the apps in the store, in app ID order. It's the way to find an app's ID by name across the whole catalog (`store_search` returns at most 10 results). `nil` when there's nothing: past the last page, or no app changed since `if_modified_since`.
+
+- `include_games:` (default `true`), `include_dlc:`, `include_software:`, `include_videos:`, `include_hardware:` (default `false`) pick the types.
+- `max_results:` is the page size, 10,000 by default, up to 50,000.
+- `last_appid:` starts after that app: pass the previous page's `last_app_id` to get the next page.
+- `if_modified_since:` (unix time) only returns apps changed since then.
+
+```ruby
+page = client.app_list.retrieve(max_results: 5)
+# => #<data SteamApiClient::AppList apps=[#<data SteamApiClient::AppList::App app_id=10, name="Counter-Strike",
+#     last_modified=1745368572, price_change_number=39636801>, ...], have_more_results=true, last_app_id=50>
+
+# Every game, a page at a time (about 200,000 in 4 calls)
+apps = []
+last_appid = 0
+loop do
+  page = client.app_list.retrieve(last_appid: last_appid, max_results: 50_000)
+  break unless page
+
+  apps.concat(page.apps)
+  break unless page.have_more_results
+
+  last_appid = page.last_app_id
+end
+```
+
+On the last page Steam leaves out `have_more_results` (so `false`) and `last_app_id` (`nil`).
+
 #### `app_news`
 
 The latest news of an app. `count:` is required, `maxlength:` (default 300) shortens each item's contents.
