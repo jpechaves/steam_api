@@ -1,0 +1,27 @@
+{
+  "game": {
+    "gameName": "Cyberpunk 2077",
+    "gameVersion": "15",
+    "availableGameStats": {
+      "achievements": [
+        {
+          "name": "TheWorld",
+          "defaultvalue": 0,
+          "displayName": "The World",
+          "hidden": 0,
+          "description": "Complete the main storyline.",
+          "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1091500/25c57ecea783efc3f9d04eec43401264ed5eb9b2.jpg",
+          "icongray": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1091500/961e51e8bd9e1ec292687055b6d1a4486b0e124d.jpg"
+        },
+        {
+          "name": "TheFool",
+          "defaultvalue": 0,
+          "displayName": "The Fool",
+          "hidden": 1,
+          "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1091500/7975d6e5d790b88f030195e3b1a38e49a5de1c8d.jpg",
+          "icongray": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/1091500/961e51e8bd9e1ec292687055b6d1a4486b0e124d.jpg"
+        }
+      ]
+    }
+  }
+}

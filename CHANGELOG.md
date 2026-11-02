@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- `app_schema`: the achievements and stats an app defines, with display names, descriptions, icons and the hidden flag (#105).
+
 ## [1.3.0] - 2026-11-02
 
 ### Added
