@@ -8,9 +8,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
-- `player_wishlist`, `player_wishlist_count` and `player_followed_games`: a player's wishlist and the apps they follow in the store. No API key needed (#104).
-- `package_details`, `app_dlc` and `store_search` from the Storefront API: a package's apps and price, an app's DLC, and a search of the store by name. No API key needed (#107).
 - `featured` and `featured_categories` from the Storefront API: the apps on the store's front page, and its specials, top sellers, new releases and upcoming apps. No API key needed (#108).
+
+## [1.2.0] - 2026-11-02
+
+### Added
+
+- `package_details`, `app_dlc` and `store_search` from the Storefront API: a package's apps and price, an app's DLC, and a search of the store by name. No API key needed (#107).
+
+## [1.1.0] - 2026-11-02
+
+### Added
+
+- `player_wishlist`, `player_wishlist_count` and `player_followed_games`: a player's wishlist and the apps they follow in the store. No API key needed (#104).
 
 ## [1.0.0] - 2026-10-24
 
@@ -204,7 +214,9 @@ The versions below were bumped in `version.rb` during development but **never pu
 
 - Initial gem skeleton.
 
-[Unreleased]: https://github.com/jpechaves/steam_api/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/jpechaves/steam_api/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/jpechaves/steam_api/compare/v1.1.0...v1.2.0
+[1.1.0]: https://github.com/jpechaves/steam_api/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/jpechaves/steam_api/compare/v0.10.0...v1.0.0
 [0.11.0]: https://github.com/jpechaves/steam_api/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/jpechaves/steam_api/compare/v0.9.1...v0.10.0
