@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.6.0] - 2026-11-04
+
 ### Added
 
 - `app_list`: the apps in the store, a page at a time (up to 50,000 per call), filtered by type or by last change (#109).
@@ -232,7 +234,8 @@ The versions below were bumped in `version.rb` during development but **never pu
 
 - Initial gem skeleton.
 
-[Unreleased]: https://github.com/jpechaves/steam_api/compare/v1.5.0...HEAD
+[Unreleased]: https://github.com/jpechaves/steam_api/compare/v1.6.0...HEAD
+[1.6.0]: https://github.com/jpechaves/steam_api/compare/v1.5.0...v1.6.0
 [1.5.0]: https://github.com/jpechaves/steam_api/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/jpechaves/steam_api/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/jpechaves/steam_api/compare/v1.2.0...v1.3.0
