@@ -1,0 +1,40 @@
+{
+  "game": {
+    "gameName": "Portal 2",
+    "gameVersion": "1108170007",
+    "availableGameStats": {
+      "achievements": [
+        {
+          "name": "ACH.SURVIVE_CONTAINER_RIDE",
+          "defaultvalue": 0,
+          "displayName": "Wake Up Call",
+          "hidden": 0,
+          "description": "Survive the manual override",
+          "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/620/SURVIVE_CONTAINER_RIDE.jpg",
+          "icongray": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/620/SURVIVE_CONTAINER_RIDE_BW.jpg"
+        },
+        {
+          "name": "ACH.WAKE_UP",
+          "defaultvalue": 0,
+          "displayName": "You Monster",
+          "hidden": 0,
+          "description": "Reunite with GLaDOS",
+          "icon": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/620/WAKE_UP.jpg",
+          "icongray": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/620/WAKE_UP_BW.jpg"
+        }
+      ],
+      "stats": [
+        {
+          "name": "PS3.SP.progress",
+          "defaultvalue": 0,
+          "displayName": null
+        },
+        {
+          "name": "PS3.bitfield_01_004",
+          "defaultvalue": 0,
+          "displayName": null
+        }
+      ]
+    }
+  }
+}

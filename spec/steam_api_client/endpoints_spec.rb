@@ -178,6 +178,20 @@ RSpec.describe "Steam API endpoints" do
     end
   end
 
+  describe "#app_schema" do
+    it "calls ISteamUserStats/GetSchemaForGame/v0002 with the language (english by default)" do
+      stub_steam("#{web_api}/ISteamUserStats/GetSchemaForGame/v0002/?key=test-key&appid=620&l=english", {
+        game: {gameName: "Portal 2", gameVersion: "1", availableGameStats: {
+          achievements: [{name: "ACH.WAKE_UP", defaultvalue: 0, displayName: "You Monster", hidden: 0, description: "Reunite with GLaDOS"}]
+        }}
+      })
+
+      result = client.app_schema.retrieve(appid: 620)
+
+      expect(result).to have_attributes(game_name: "Portal 2", achievements: [have_attributes(name: "ACH.WAKE_UP", display_name: "You Monster", hidden: false)], stats: [])
+    end
+  end
+
   describe "#game_current_players" do
     it "calls ISteamUserStats/GetNumberOfCurrentPlayers/v0001 without the API key" do
       stub_steam("#{web_api}/ISteamUserStats/GetNumberOfCurrentPlayers/v0001/?appid=440", {response: {player_count: 83494, result: 1}})
