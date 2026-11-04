@@ -58,6 +58,10 @@ A release is its own issue and pull request:
 
 1. `bin/bump patch|minor|major` on a release branch: bumps `version.rb` and `Gemfile.lock`, and
    moves `[Unreleased]` under the new version.
+   Label the release pull request `release`, so GitHub's generated release notes leave it out.
 2. Merge the release pull request.
 3. `bin/release` from an up-to-date `main`: publishes the gem (MFA) and pushes the `v<version>` tag.
    It refuses to run while `[Unreleased]` has entries: those changes aren't part of the version.
+4. The tag push runs `.github/workflows/release.yml`, which creates the GitHub Release: the version's
+   CHANGELOG section, then GitHub's generated list of merged pull requests. To create one for an older
+   tag, run the workflow by hand: `gh workflow run release.yml -f tag=v1.2.0`.
