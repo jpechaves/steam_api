@@ -1,0 +1,18 @@
+{
+  "response": {
+    "apps": [
+      {
+        "appid": 5533800,
+        "name": "Free Lances: Blood for Profit",
+        "last_modified": 1793638159,
+        "price_change_number": 0
+      },
+      {
+        "appid": 5535090,
+        "name": "Pocket Murim",
+        "last_modified": 1793643547,
+        "price_change_number": 0
+      }
+    ]
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "response": {
+    "apps": [
+      {
+        "appid": 10,
+        "name": "Counter-Strike",
+        "last_modified": 1745368572,
+        "price_change_number": 39636801
+      },
+      {
+        "appid": 20,
+        "name": "Team Fortress Classic",
+        "last_modified": 1745368565,
+        "price_change_number": 39636822
+      },
+      {
+        "appid": 30,
+        "name": "Day of Defeat",
+        "last_modified": 1745368580,
+        "price_change_number": 39636803
+      }
+    ],
+    "have_more_results": true,
+    "last_appid": 30
+  }
+}

@@ -44,6 +44,26 @@ module SteamApiClient
         params: {appid: param.integer(as: :gameid)}
       ),
 
+      # One page of the apps in the store, by app ID => AppList, or nil when there's nothing
+      # (past the last page, or nothing modified since if_modified_since)
+      # @see https://steamapi.xpaw.me/#IStoreService/GetAppList
+      Endpoint.new(
+        :app_list, "IStoreService/GetAppList/v1/", returns: AppList, at: %i[response],
+        params: {
+          include_games: param.boolean(default: true),
+          include_dlc: param.boolean(default: false),
+          include_software: param.boolean(default: false),
+          include_videos: param.boolean(default: false),
+          include_hardware: param.boolean(default: false),
+          # Only apps changed since then, in unix time (0 for all)
+          if_modified_since: param.integer(default: 0),
+          # The previous page's last_app_id (0 for the first page)
+          last_appid: param.integer(default: 0),
+          # Apps per page, up to 50,000
+          max_results: param.integer(default: 10_000)
+        }
+      ),
+
       # Latest news of an app => [NewsItem]
       # @see https://developer.valvesoftware.com/wiki/Steam_Web_API#GetNewsForApp_.28v0002.29
       Endpoint.new(
