@@ -1,0 +1,42 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative "_script_helpers"
+require_relative "_release_notes"
+
+include ScriptHelpers
+
+USAGE = <<~TEXT
+  Usage: bin/release_notes TAG --repo OWNER/NAME --notes-file PATH [--changelog PATH]
+
+  Writes the GitHub Release notes for TAG (its section of the CHANGELOG, CHANGELOG.md by
+  default, with links to files at the tag) to the notes file, and prints "previous_tag=<tag>", the previous released tag (yanked
+  versions skipped), for `gh release create --notes-start-tag`. Used by
+  .github/workflows/release.yml.
+
+  Example: bin/release_notes v1.5.0 --repo jpechaves/steam_api --notes-file notes.md
+TEXT
+
+if __FILE__ == $0
+  if is_first_argument?("-h", "--help")
+    puts USAGE
+    exit 0
+  end
+
+  tag, *options = ARGV
+  options = {"--changelog" => "CHANGELOG.md"}.merge(options.each_slice(2).to_h)
+  repo, notes_file, changelog = options.values_at("--repo", "--notes-file", "--changelog")
+  if tag.nil? || repo.nil? || notes_file.nil? || options.size != 3
+    puts USAGE
+    exit 1
+  end
+
+  begin
+    result = ReleaseNotes.call(changelog: File.read(changelog), tag: tag, repo: repo)
+  rescue ReleaseNotes::Error => error
+    abort_with_message("❌ #{error.message}")
+  end
+
+  File.write(notes_file, "#{result.notes}\n")
+  puts "previous_tag=#{result.previous_tag}"
+end

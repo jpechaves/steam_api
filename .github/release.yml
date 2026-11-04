@@ -1,0 +1,6 @@
+# GitHub's generated release notes (the "What's Changed" list under each
+# Release): release PRs only bump the version, so they're left out.
+changelog:
+  exclude:
+    labels:
+      - release

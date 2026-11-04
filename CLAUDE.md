@@ -23,11 +23,11 @@ bin/bump patch|minor|major [--date Y-M-D]    # release PR prep: bump version.rb 
 bin/release [--dry-run]                      # publish the gemspec version to RubyGems (MFA prompt) and push tag v<version>; no-op if already released, refuses while [Unreleased] has entries
 ```
 
-CI (`.github/workflows/ci.yml`) runs three jobs: `lint` (standardrb), `analysis` (RubyCritic with a `--minimum-score` gate; raise it when the score improves) and `test` (rspec matrix). `.github/workflows/audit.yml` runs bundler-audit on push, PRs and weekly. `.github/workflows/changelog.yml` runs `bin/check_changelog`: PRs that touch `lib/` or the gemspec must update `CHANGELOG.md` unless labelled `skip-changelog` (check locally with `bin/check_changelog origin/main`).
+CI (`.github/workflows/ci.yml`) runs three jobs: `lint` (standardrb), `analysis` (RubyCritic with a `--minimum-score` gate; raise it when the score improves) and `test` (rspec matrix). `.github/workflows/audit.yml` runs bundler-audit on push, PRs and weekly. `.github/workflows/release.yml` creates the GitHub Release when `bin/release` pushes a `v*` tag (or by hand: `gh workflow run release.yml -f tag=vX.Y.Z`): the CHANGELOG section via `bin/release_notes`, then GitHub's generated PR list (`.github/release.yml` leaves out PRs labelled `release`, so label release PRs). Yanked versions get no release. `.github/workflows/changelog.yml` runs `bin/check_changelog`: PRs that touch `lib/` or the gemspec must update `CHANGELOG.md` unless labelled `skip-changelog` (check locally with `bin/check_changelog origin/main`).
 
 SimpleCov runs automatically with the specs and measures `lib/` only (line + branch coverage; CI fails below 98% line / 95% branch, local runs don't). Specs never hit the network: `spec_helper` calls `WebMock.disable_net_connect!`, and requests are stubbed with `stub_request` (exact URL). Real, anonymized Steam responses live in `spec/fixtures/steam/` and run through the pipeline with `parse_steam_fixture` (`spec/support/steam_fixtures.rb`).md`, grouped as Added / Changed / Fixed / Security, with the issue number. CI-, `bin/`- and spec-only changes get no entry.
 - PRs never bump the version. A release is its own issue and PR: run `bin/bump patch|minor|major` on a release branch, commit, merge, then run `bin/release` from an up-to-date `main`.
-- `bin/` scripts keep their logic in `bin/_*.rb` (`Release`, `Bump`) so it can be tested from `spec/bin/` without running git or touching RubyGems.
+- `bin/` scripts keep their logic in `bin/_*.rb` (`Release`, `Bump`, `ReleaseNotes`) so it can be tested from `spec/bin/` without running git or touching RubyGems.
 
 ## Architecture
 

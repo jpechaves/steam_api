@@ -1,0 +1,58 @@
+name: Release
+
+# Creates the GitHub Release for a version tag. bin/release pushes the tag after
+# publishing the gem; run it by hand with a tag to backfill an older version.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to create the release for, e.g. v1.5.0"
+        required: true
+
+permissions:
+  contents: write # create the release
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TAG: ${{ inputs.tag || github.ref_name }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # The scripts from the default branch (older tags don't have bin/release_notes)
+          ref: ${{ github.event.repository.default_branch }}
+          fetch-depth: 0 # every tag, to find the newest and read the CHANGELOG as released
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+      - name: Build the notes from the CHANGELOG
+        id: notes
+        run: |
+          git show "$TAG:CHANGELOG.md" > "$RUNNER_TEMP/CHANGELOG.md"
+          bin/release_notes "$TAG" --repo "$GITHUB_REPOSITORY" --notes-file "$RUNNER_TEMP/notes.md" \
+            --changelog "$RUNNER_TEMP/CHANGELOG.md" >> "$GITHUB_OUTPUT"
+      - name: Create the release
+        env:
+          PREVIOUS_TAG: ${{ steps.notes.outputs.previous_tag }}
+        run: |
+          if gh release view "$TAG" > /dev/null 2>&1; then
+            echo "$TAG already has a release."
+            exit 0
+          fi
+          # A version can be yanked after its tag, so check the current CHANGELOG
+          if grep -qF "## [${TAG#v}] " CHANGELOG.md && grep -F "## [${TAG#v}] " CHANGELOG.md | grep -qF "[YANKED]"; then
+            echo "$TAG was yanked; it gets no release."
+            exit 0
+          fi
+
+          # Only the newest version is "Latest", so a backfill doesn't take it
+          newest=$(git tag --list "v*" --sort=-v:refname | head -n 1)
+          latest=$([ "$TAG" = "$newest" ] && echo true || echo false)
+
+          # The CHANGELOG section, then GitHub's generated list of merged PRs since the previous release
+          gh release create "$TAG" --verify-tag --title "$TAG" --latest="$latest" \
+            --notes-file "$RUNNER_TEMP/notes.md" --generate-notes ${PREVIOUS_TAG:+--notes-start-tag "$PREVIOUS_TAG"}
