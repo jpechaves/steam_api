@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- `player_bans` and `player_badges`: VAC, game, community and trade ban status of up to 100 players, and a player's badges and level progress (#106).
+
 ## [1.4.0] - 2026-11-04
 
 ### Added

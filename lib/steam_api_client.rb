@@ -23,6 +23,8 @@ require_relative "steam_api_client/errors/missing_api_token"
 require_relative "steam_api_client/errors/response_parse_error"
 
 require_relative "steam_api_client/models/player_summary"
+require_relative "steam_api_client/models/player_ban"
+require_relative "steam_api_client/models/player_badges"
 require_relative "steam_api_client/models/friend"
 require_relative "steam_api_client/models/game"
 require_relative "steam_api_client/models/player_achievements"

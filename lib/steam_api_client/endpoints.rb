@@ -116,6 +116,20 @@ module SteamApiClient
         params: {appid: param.integer, steamid: param.integer}
       ),
 
+      # A player's badges and Steam level progress => PlayerBadges, or nil when the profile isn't public
+      # @see https://steamapi.xpaw.me/#IPlayerService/GetBadges
+      Endpoint.new(
+        :player_badges, "IPlayerService/GetBadges/v1/", returns: PlayerBadges, at: %i[response],
+        params: {steamid: param.integer}
+      ),
+
+      # Ban status of up to 100 players => [PlayerBan] (unknown IDs are left out)
+      # @see https://steamapi.xpaw.me/#ISteamUser/GetPlayerBans
+      Endpoint.new(
+        :player_bans, "ISteamUser/GetPlayerBans/v1/", returns: [PlayerBan], at: %i[players],
+        params: {steamids: param.integer_list}
+      ),
+
       # The apps a player follows in the store => [Integer] app IDs ([] when not public)
       # @see https://steamapi.xpaw.me/#IStoreService/GetGamesFollowed
       Endpoint.new(
