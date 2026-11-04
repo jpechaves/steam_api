@@ -329,6 +329,28 @@ client.app_global_achievements.retrieve(appid: 440).first
 # => #<data SteamApiClient::GlobalAchievement name="TF_SCOUT_LONG_DISTANCE_RUNNER", percent=49.5>
 ```
 
+#### `app_schema`
+
+🔑 The achievements and stats an app defines, with display names, descriptions and icons in the requested language. `locale:` defaults to `"english"` (Steam's language names, e.g. `"portuguese"`). `nil` when the app has neither.
+
+```ruby
+schema = client.app_schema.retrieve(appid: 620)
+schema.game_name # => "Portal 2"
+schema.achievements.first
+# => #<data SteamApiClient::AppSchema::Achievement name="ACH.SURVIVE_CONTAINER_RIDE", display_name="Wake Up Call",
+#     description="Survive the manual override", hidden=false, icon="https://...jpg", icon_gray="https://..._BW.jpg", default_value=0>
+schema.stats.first # => #<data SteamApiClient::AppSchema::Stat name="PS3.SP.progress", display_name=nil, default_value=0>
+```
+
+Achievement `name`s are the API names `player_achievements` and `app_global_achievements` return, so the schema adds display names and icons to them:
+
+```ruby
+titles = schema.achievements.to_h { [_1.name, _1.display_name] }
+client.player_achievements.retrieve(appid: 620, steamid: id).achievements.select(&:achieved).map { titles[_1.api_name] }
+```
+
+Hidden achievements usually have no `description` (`nil`). `game_name` is often `""` or an internal name. An unknown app raises `Errors::HttpBadRequest`, and an unreleased one `Errors::HttpForbidden`.
+
 #### `game_current_players`
 
 The number of players in a game right now.

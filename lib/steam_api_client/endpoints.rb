@@ -57,6 +57,17 @@ module SteamApiClient
         }
       ),
 
+      # The achievements and stats an app defines => AppSchema, or nil when it has none
+      # @see https://steamapi.xpaw.me/#ISteamUserStats/GetSchemaForGame
+      Endpoint.new(
+        :app_schema, "ISteamUserStats/GetSchemaForGame/v0002/", returns: AppSchema, at: %i[game],
+        params: {
+          appid: param.integer,
+          # Language of the display names and descriptions, e.g. "portuguese"
+          locale: param.string(as: :l, default: "english")
+        }
+      ),
+
       # The apps featured on the store's front page => Featured
       # @see https://wiki.teamfortress.com/wiki/User:RJackson/StorefrontAPI#featured
       Endpoint.new(
