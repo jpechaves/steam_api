@@ -23,3 +23,23 @@ jobs:
           bundler-cache: true
       - name: Check gems for known advisories (bundler-audit)
         run: bundle exec bundler-audit check --update
+
+  # bundler-audit doesn't check the interpreter. Each job checks the Ruby CI
+  # resolves for its series (the newest patch release) and the local
+  # .ruby-version, against the advisory database bundler-audit downloads.
+  ruby-advisories:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: ["3.3", "3.4", "4.0"]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - name: Check Ruby for known advisories
+        run: |
+          bundle exec bundler-audit update
+          bin/check_ruby_advisories "$(ruby -e 'print RUBY_VERSION')" "$(cat .ruby-version)"
