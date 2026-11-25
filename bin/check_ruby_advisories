@@ -1,0 +1,52 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative "_script_helpers"
+require_relative "_ruby_advisories"
+
+include ScriptHelpers
+
+USAGE = <<~TEXT
+  Usage: bin/check_ruby_advisories [VERSION...] [--db PATH]
+
+  Fails when a Ruby version (the running Ruby by default) is affected by an advisory in
+  ruby-advisory-db (#{RubyAdvisories::DEFAULT_DATABASE} by default, where
+  `bundle exec bundler-audit update` puts it). bundler-audit only checks the gems.
+
+  Example: bin/check_ruby_advisories "$(cat .ruby-version)" "$RUBY_VERSION"
+TEXT
+
+if __FILE__ == $0
+  if is_first_argument?("-h", "--help")
+    puts USAGE
+    exit 0
+  end
+
+  versions = ARGV.dup
+  database = RubyAdvisories::DEFAULT_DATABASE
+  if (index = versions.index("--db"))
+    _, database = versions.slice!(index, 2)
+    if database.nil?
+      puts USAGE
+      exit 1
+    end
+  end
+  versions = [RUBY_VERSION] if versions.empty?
+
+  begin
+    advisories = RubyAdvisories.load(database)
+  rescue ArgumentError => error
+    abort_with_message("❌ #{error.message}")
+  end
+
+  affected = versions.to_h { |version| [version, RubyAdvisories.affecting(version, advisories)] }
+  affected.each do |version, found|
+    if found.empty?
+      print_message("✅ Ruby #{version}: no known advisories.")
+    else
+      print_message("❌ Ruby #{version} is affected by #{found.size} advisories:")
+      found.each { |advisory| puts "  - #{advisory}" }
+    end
+  end
+  exit(affected.values.all?(&:empty?) ? 0 : 1)
+end
